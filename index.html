@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1403 Qualitative Data</title>
+<style>
+  :root {
+    --bg: #f4f4f6;
+    --card: #ffffff;
+    --border: #dde1ea;
+    --text: #1a1a2e;
+    --subtext: #555;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --red: #dc2626;
+    --section-header: #1e293b;
+    --input-bg: #f8fafc;
+    --shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --subtext: #94a3b8;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --section-header: #e2e8f0;
+    --input-bg: #0f172a;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; transition: background 0.2s, color 0.2s; }
+  
+  /* HEADER */
+  header { background: var(--card); border-bottom: 2px solid var(--accent); padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.02em; color: var(--accent); }
+  .header-right { display: flex; gap: 0.5rem; align-items: center; }
+  .icon-btn { background: none; border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 1rem; transition: background 0.15s; }
+  .icon-btn:hover { background: var(--border); }
+
+  /* NAV TABS */
+  nav { display: flex; gap: 0; background: var(--card); border-bottom: 1px solid var(--border); overflow-x: auto; }
+  nav button { flex: 1; min-width: 80px; padding: 0.65rem 0.4rem; font-size: 0.78rem; font-weight: 600; border: none; background: none; color: var(--subtext); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; white-space: nowrap; }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg); }
+  nav button:hover:not(.active) { background: var(--bg); }
+
+  /* PAGES */
+  .page { display: none; padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* META FIELDS */
+  .meta-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .meta-field { flex: 1; min-width: 140px; }
+  .meta-field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--subtext); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-field input, .meta-field select { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.15s; }
+  .meta-field input:focus, .meta-field select:focus { border-color: var(--accent); }
+  .meta-field select option { background: var(--card); color: var(--text); }
+
+  /* SECTION CARD */
+  .section-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; box-shadow: var(--shadow); overflow: hidden; }
+  .section-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: none; border: none; color: var(--section-header); cursor: pointer; font-size: 1rem; font-weight: 700; text-align: left; gap: 0.5rem; }
+  .section-toggle:hover { background: var(--bg); }
+  .section-toggle-left { display: flex; align-items: center; gap: 0.6rem; }
+  .section-icon { font-size: 1.1rem; }
+  .chevron { font-size: 0.9rem; color: var(--subtext); transition: transform 0.2s; }
+  .section-card.open .chevron { transform: rotate(180deg); }
+  .section-body { display: none; padding: 0.9rem 1rem; border-top: 1px solid var(--border); }
+  .section-card.open .section-body { display: block; }
+
+  /* FIELDS */
+  .field-row { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .field-row:last-child { margin-bottom: 0; }
+  .field-wrap { flex: 1; }
+  .field-label { font-size: 0.8rem; font-weight: 600; color: var(--subtext); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .field-wrap input[type="text"], .field-wrap textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.15s; resize: vertical; font-family: inherit; }
+  .field-wrap input[type="text"]:focus, .field-wrap textarea:focus { border-color: var(--accent); }
+  .i-btn { background: none; border: 1.5px solid var(--border); border-radius: 50%; width: 26px; height: 26px; min-width: 26px; font-size: 0.75rem; font-weight: 700; color: var(--accent); cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 22px; transition: background 0.15s; }
+  .i-btn:hover { background: var(--accent); color: #fff; }
+
+  /* TOOLTIP/POPOVER */
+  .tooltip-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; padding: 1.5rem; }
+  .tooltip-overlay.show { display: flex; }
+  .tooltip-box { background: var(--card); border-radius: 14px; padding: 1.2rem 1.4rem; max-width: 380px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); position: relative; border: 1.5px solid var(--border); }
+  .tooltip-box h4 { font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; }
+  .tooltip-box p { font-size: 0.88rem; color: var(--text); line-height: 1.55; }
+  .tooltip-close { position: absolute; top: 0.75rem; right: 0.9rem; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--subtext); }
+
+  /* MAP CANVAS */
+  .map-container { margin-top: 0.5rem; }
+  .map-label { font-size: 0.8rem; font-weight: 600; color: var(--subtext); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .map-tools { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; align-items: center; }
+  .tool-btn { padding: 0.4rem 0.75rem; border-radius: 7px; border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .tool-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tool-btn:hover:not(.active) { border-color: var(--accent); }
+  canvas#fieldMap { border: 2px solid var(--border); border-radius: 10px; background: #1a2233; touch-action: none; max-width: 100%; display: block; cursor: crosshair; }
+
+  /* DATA VIEW */
+  .data-view { padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .team-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; box-shadow: var(--shadow); overflow: hidden; }
+  .team-header { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; font-weight: 700; font-size: 1rem; cursor: pointer; }
+  .team-header:hover { background: var(--bg); }
+  .team-body { display: none; border-top: 1px solid var(--border); }
+  .team-card.open .team-body { display: block; }
+  .match-entry { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+  .match-entry:last-child { border-bottom: none; }
+  .match-entry h4 { font-size: 0.85rem; font-weight: 700; color: var(--accent); margin-bottom: 0.4rem; }
+  .match-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.4rem; }
+  .match-item { background: var(--bg); border-radius: 7px; padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+  .match-item strong { display: block; color: var(--subtext); font-size: 0.7rem; text-transform: uppercase; }
+  .del-btn { background: none; border: 1.5px solid var(--red); color: var(--red); border-radius: 7px; padding: 0.3rem 0.6rem; font-size: 0.78rem; cursor: pointer; font-weight: 600; transition: background 0.15s; }
+  .del-btn:hover { background: var(--red); color: #fff; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--subtext); font-size: 0.95rem; }
+
+  /* SUBMIT */
+  .submit-bar { padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .submit-btn { width: 100%; padding: 0.9rem; background: var(--accent); color: #fff; font-size: 1.05rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; letter-spacing: 0.03em; transition: background 0.15s; }
+  .submit-btn:hover { background: var(--accent-hover); }
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 0.7rem 1.4rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  .offline-badge { background: #f59e0b; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 5px; }
+
+  @media (min-width: 640px) {
+    header h1 { font-size: 1.4rem; }
+    .page, .data-view, .submit-bar { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>1403 Qualitative Data</h1>
+  <div class="header-right">
+    <span id="offlineBadge" class="offline-badge" style="display:none">OFFLINE</span>
+    <button class="icon-btn" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="switchTab('form',this)">📋 Scout</button>
+  <button onclick="switchTab('data',this)">📊 Data</button>
+</nav>
+
+<!-- FORM PAGE -->
+<div id="formPage" class="page active">
+  <div class="meta-row">
+    <div class="meta-field">
+      <label>Match #</label>
+      <input type="text" id="matchNum" placeholder="e.g. 42">
+    </div>
+    <div class="meta-field">
+      <label>Team #</label>
+      <input type="text" id="teamNum" placeholder="e.g. 1403">
+    </div>
+    <div class="meta-field">
+      <label>Position</label>
+      <select id="alliancePos">
+        <option value="">Select position…</option>
+        <option>Red 1</option>
+        <option>Red 2</option>
+        <option>Red 3</option>
+        <option>Blue 1</option>
+        <option>Blue 2</option>
+        <option>Blue 3</option>
+      </select>
+    </div>
+    <div class="meta-field">
+      <label>Scouter</label>
+      <input type="text" id="scouterName" placeholder="Your name">
+    </div>
+  </div>
+
+  <!-- AUTON -->
+  <div class="section-card" id="sec-auton">
+    <button class="section-toggle" onclick="toggleSection('sec-auton')">
+      <span class="section-toggle-left"><span class="section-icon">🤖</span> Autonomous</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap">
+          <div class="field-label">Auto Climb</div>
+          <input type="text" id="autoClimb" placeholder="Did they climb during auto?">
+        </div>
+        <button class="i-btn" onclick="showTip('Auto Climb','Do they climb during auto? Answer yes or no.')">i</button>
+      </div>
+      <div class="map-container">
+        <div class="map-label">Autonomous Map <span style="font-weight:400;text-transform:none;color:var(--subtext)">(draw path &amp; mark shooting positions)</span></div>
+        <div class="map-tools">
+          <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">✏️ Draw</button>
+          <button class="tool-btn" id="toolX" onclick="setTool('x')">✕ Mark X</button>
+          <button class="tool-btn" id="toolErase" onclick="setTool('erase')">🧹 Erase</button>
+          <button class="tool-btn" onclick="clearCanvas()">🗑 Clear</button>
+        </div>
+        <canvas id="fieldMap" width="560" height="320"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOPPER & SCORING -->
+  <div class="section-card" id="sec-hopper">
+    <button class="section-toggle" onclick="toggleSection('sec-hopper')">
+      <span class="section-toggle-left"><span class="section-icon">⚙️</span> Hopper &amp; Scoring</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Hopper Integrity</div><input type="text" id="hopperIntact" placeholder="Did it stay intact? If no, when did it break?"></div>
+        <button class="i-btn" onclick="showTip('Hopper Integrity','Did the hopper stay intact the entire match? Yes or no — if no, specify when it broke.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Shooting Accuracy</div><input type="text" id="shootAccuracy" placeholder="Low / Medium / High"></div>
+        <button class="i-btn" onclick="showTip('Shooting Accuracy','Rate their shooting accuracy as low, medium, or high.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Shooting Location(s)</div><input type="text" id="shootLocation" placeholder="Describe or reference map markings"></div>
+        <button class="i-btn" onclick="showTip('Shooting Location','Where do they shoot from? Mark X on the map above; you can also describe here.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Fuel Missed</div><input type="text" id="fuelMissed" placeholder="Educated guess"></div>
+        <button class="i-btn" onclick="showTip('Fuel Missed','How much fuel was missed? Take an educated guess.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Fuel Shot</div><input type="text" id="fuelShot" placeholder="Educated guess"></div>
+        <button class="i-btn" onclick="showTip('Fuel Shot','Approximately how much fuel did they shoot total? Educated guess.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Jamming</div><input type="text" id="jammed" placeholder="Yes / No — specify if possible"></div>
+        <button class="i-btn" onclick="showTip('Jamming','Did they get jammed? Yes or no — specify circumstances if possible.')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTAKE -->
+  <div class="section-card" id="sec-intake">
+    <button class="section-toggle" onclick="toggleSection('sec-intake')">
+      <span class="section-toggle-left"><span class="section-icon">🔄</span> Intake</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Alliance Return Timing</div><input type="text" id="intakeTiming" placeholder="Yes / No"></div>
+        <button class="i-btn" onclick="showTip('Alliance Return Timing','Do they get back to their alliance in time to shoot during active shifts? Yes or no.')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDING -->
+  <div class="section-card" id="sec-feeding">
+    <button class="section-toggle" onclick="toggleSection('sec-feeding')">
+      <span class="section-toggle-left"><span class="section-icon">🤝</span> Feeding</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Feeding</div><input type="text" id="feeding" placeholder="Yes / No — explain effectiveness"></div>
+        <button class="i-btn" onclick="showTip('Feeding','Do they feed? Are they effective? Feeding = intaking and shooting fuel to their alliance area from the neutral zone.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Herding</div><input type="text" id="herding" placeholder="Yes / No — explain effectiveness"></div>
+        <button class="i-btn" onclick="showTip('Herding','Do they herd? How effective? Herding = pushing fuel with bumper under the trench.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Herd to Human Players</div><input type="text" id="herdHuman" placeholder="Low / Medium / High + notes"></div>
+        <button class="i-btn" onclick="showTip('Herd to Human Players','Do they herd specifically to human players? How effective is it? Rate low/medium/high.')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRIVER -->
+  <div class="section-card" id="sec-driver">
+    <button class="section-toggle" onclick="toggleSection('sec-driver')">
+      <span class="section-toggle-left"><span class="section-icon">🕹️</span> Driver</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Confidence &amp; Smoothness</div><input type="text" id="driverSmooth" placeholder="Smooth/confident or unconfident/confused?"></div>
+        <button class="i-btn" onclick="showTip('Driver Confidence','Was the driver smooth and confident, or did they seem unconfident/confused?')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Game Sense</div><input type="text" id="gameSense" placeholder="Notable decisions under pressure?"></div>
+        <button class="i-btn" onclick="showTip('Game Sense','How good was their game sense when a problem occurred? Note anything significant (e.g. switching to defense when their robot broke).')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Adaptation Under Pressure</div><input type="text" id="driverPressure" placeholder="How did they handle malfunctions / defense?"></div>
+        <button class="i-btn" onclick="showTip('Adaptation','How did they adapt/act under pressure? Describe how they handled malfunctions or defensive pressure.')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIMBING -->
+  <div class="section-card" id="sec-climbing">
+    <button class="section-toggle" onclick="toggleSection('sec-climbing')">
+      <span class="section-toggle-left"><span class="section-icon">🧗</span> Climbing</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Did They Climb?</div><input type="text" id="climbSuccess" placeholder="Yes / No + level if yes"></div>
+        <button class="i-btn" onclick="showTip('Climb Success','Did they climb? If yes, what level?')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Attempted to Climb?</div><input type="text" id="climbAttempt" placeholder="Yes / No"></div>
+        <button class="i-btn" onclick="showTip('Climb Attempt','Did they attempt to climb even if unsuccessful?')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Climb Start Time</div><input type="text" id="climbTime" placeholder="Approx. time they started climbing"></div>
+        <button class="i-btn" onclick="showTip('Climb Timing','Around what time (match clock) did they start to climb?')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEFENSE -->
+  <div class="section-card" id="sec-defense">
+    <button class="section-toggle" onclick="toggleSection('sec-defense')">
+      <span class="section-toggle-left"><span class="section-icon">🛡️</span> Defense</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Defense Zone</div><input type="text" id="defenseZone" placeholder="Where did they play defense?"></div>
+        <button class="i-btn" onclick="showTip('Defense Zone','Where did they go to play defense? Zone defense? Describe location.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Targeted Robot</div><input type="text" id="defenseTarget" placeholder="Yes / No + team # if yes"></div>
+        <button class="i-btn" onclick="showTip('Target','Did they target one specific robot? Yes or no, and list the team number if so.')">i</button>
+      </div>
+      <div class="field-row">
+        <div class="field-wrap"><div class="field-label">Pinning Penalties</div><input type="text" id="pinPenalty" placeholder="Yes / No"></div>
+        <button class="i-btn" onclick="showTip('Penalties','Did they receive any penalties for pinning?')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="section-card" id="sec-comments">
+    <button class="section-toggle" onclick="toggleSection('sec-comments')">
+      <span class="section-toggle-left"><span class="section-icon">💬</span> Comments</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap">
+          <div class="field-label">Additional Notes</div>
+          <textarea id="comments" rows="4" placeholder="Anything else notable you observed?"></textarea>
+        </div>
+        <button class="i-btn" onclick="showTip('Comments','Anything else notable that you observed during the match?')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-bar">
+    <button class="submit-btn" onclick="submitForm()">Submit Scouting Data</button>
+  </div>
+</div>
+
+<!-- DATA PAGE -->
+<div id="dataPage" class="page">
+  <div class="data-view" id="dataView">
+    <div class="empty-state" id="emptyState">No data submitted yet.</div>
+  </div>
+</div>
+
+<!-- TOOLTIP OVERLAY -->
+<div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTip(event)">
+  <div class="tooltip-box">
+    <button class="tooltip-close" onclick="closeTip()">✕</button>
+    <h4 id="tipTitle"></h4>
+    <p id="tipBody"></p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DARK MODE ───────────────────────────────────────────────
+let dark = localStorage.getItem('darkMode') === '1';
+function applyDark() { document.body.classList.toggle('dark', dark); }
+function toggleDark() { dark = !dark; localStorage.setItem('darkMode', dark?'1':'0'); applyDark(); }
+applyDark();
+
+// ─── OFFLINE DETECTION ───────────────────────────────────────
+function updateOnline() {
+  document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
+}
+window.addEventListener('online', () => { updateOnline(); flushPending(); });
+window.addEventListener('offline', updateOnline);
+updateOnline();
+
+// ─── TABS ─────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(tab + 'Page').classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'data') renderData();
+}
+
+// ─── SECTION TOGGLE ───────────────────────────────────────────
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ─── TOOLTIP ─────────────────────────────────────────────────
+function showTip(title, body) {
+  document.getElementById('tipTitle').textContent = title;
+  document.getElementById('tipBody').textContent = body;
+  document.getElementById('tooltipOverlay').classList.add('show');
+}
+function closeTip(e) {
+  if (!e || e.target === document.getElementById('tooltipOverlay') || e.currentTarget.classList?.contains('tooltip-close')) {
+    document.getElementById('tooltipOverlay').classList.remove('show');
+  }
+}
+
+// ─── CANVAS MAP ───────────────────────────────────────────────
+const canvas = document.getElementById('fieldMap');
+const ctx = canvas.getContext('2d');
+let tool = 'draw';
+let painting = false;
+let lastX = 0, lastY = 0;
+
+function setTool(t) {
+  tool = t;
+  ['draw','x','erase'].forEach(id => {
+    const el = document.getElementById('tool' + id.charAt(0).toUpperCase() + id.slice(1));
+    if (el) el.classList.toggle('active', id === t);
+  });
+}
+
+function drawField() {
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#1a2233';
+  ctx.fillRect(0, 0, W, H);
+
+  // Field border
+  ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2;
+  ctx.strokeRect(10, 10, W-20, H-20);
+
+  // Center line
+  ctx.setLineDash([6,4]); ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(W/2, 10); ctx.lineTo(W/2, H-10); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ─── HUB (center) ──────────────────────────────────────────
+  ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(W/2, H/2, 22, 0, Math.PI*2); ctx.stroke();
+  ctx.fillStyle = '#f59e0b22';
+  ctx.beginPath(); ctx.arc(W/2, H/2, 22, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#f59e0b'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('HUB', W/2, H/2 + 4);
+
+  // ─── RED TOWER (right side, vertically centered, near right wall) ──
+  drawTower(W-50, H/2, '#ef4444', 'TOWER');
+
+  // ─── BLUE TOWER (left side, vertically centered, near left wall) ──
+  drawTower(50, H/2, '#3b82f6', 'TOWER');
+
+  // ─── RED DEPOT (right side, upper area midway between top wall and tower) ──
+  drawDepot(W-50, H/4, '#ef4444', 'DEPOT');
+
+  // ─── BLUE DEPOT (left side, upper area) ──
+  drawDepot(50, H/4, '#3b82f6', 'DEPOT');
+
+  // ─── TRENCH (center horizontal line area) ──────────────────
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(W/2 - 70, H/2 - 10, 140, 20);
+  ctx.fillStyle = '#94a3b8'; ctx.font = '8px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('TRENCH', W/2, H/2 + 4);
+
+  // Labels
+  ctx.fillStyle = '#ef4444'; ctx.font = 'bold 10px Segoe UI';
+  ctx.fillText('RED', W - 35, 24);
+  ctx.fillStyle = '#3b82f6';
+  ctx.fillText('BLUE', 35, 24);
+}
+
+function drawTower(x, y, color, label) {
+  ctx.strokeStyle = color; ctx.lineWidth = 2;
+  ctx.strokeRect(x-14, y-14, 28, 28);
+  ctx.fillStyle = color + '33';
+  ctx.fillRect(x-14, y-14, 28, 28);
+  ctx.fillStyle = color; ctx.font = 'bold 7px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText(label, x, y+3);
+}
+
+function drawDepot(x, y, color, label) {
+  ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.setLineDash([4,3]);
+  ctx.strokeRect(x-16, y-10, 32, 20);
+  ctx.setLineDash([]);
+  ctx.fillStyle = color; ctx.font = 'bold 7px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText(label, x, y+3);
+}
+
+drawField();
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / r.width;
+  const scaleY = canvas.height / r.height;
+  const src = e.touches ? e.touches[0] : e;
+  return [(src.clientX - r.left) * scaleX, (src.clientY - r.top) * scaleY];
+}
+
+canvas.addEventListener('mousedown', e => { painting = true; [lastX, lastY] = getPos(e); if (tool==='x') stampX(...getPos(e)); });
+canvas.addEventListener('mousemove', e => { if (!painting) return; if (tool==='draw') drawLine(...getPos(e)); else if (tool==='erase') eraseLine(...getPos(e)); });
+canvas.addEventListener('mouseup', () => painting = false);
+canvas.addEventListener('mouseleave', () => painting = false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); painting = true; [lastX, lastY] = getPos(e); if (tool==='x') stampX(...getPos(e)); }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!painting) return; if (tool==='draw') drawLine(...getPos(e)); else if (tool==='erase') eraseLine(...getPos(e)); }, {passive:false});
+canvas.addEventListener('touchend', () => painting = false);
+
+function drawLine(x, y) {
+  ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+  [lastX, lastY] = [x, y];
+}
+function eraseLine(x, y) {
+  ctx.clearRect(x-10, y-10, 20, 20);
+  drawFieldSafe(x, y);
+  [lastX, lastY] = [x, y];
+}
+function drawFieldSafe() { /* partial redraw not needed for simple eraser */ }
+function stampX(x, y) {
+  ctx.strokeStyle = '#f87171'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  const s = 9;
+  ctx.beginPath(); ctx.moveTo(x-s,y-s); ctx.lineTo(x+s,y+s); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x+s,y-s); ctx.lineTo(x-s,y+s); ctx.stroke();
+}
+function clearCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); drawField(); }
+
+// ─── DATA STORAGE ─────────────────────────────────────────────
+function getStored() {
+  try { return JSON.parse(localStorage.getItem('scoutData') || '[]'); }
+  catch { return []; }
+}
+function saveStored(d) { localStorage.setItem('scoutData', JSON.stringify(d)); }
+function getPending() {
+  try { return JSON.parse(localStorage.getItem('pendingData') || '[]'); }
+  catch { return []; }
+}
+function savePending(d) { localStorage.setItem('pendingData', JSON.stringify(d)); }
+
+async function flushPending() {
+  const pending = getPending();
+  if (!pending.length || !navigator.onLine) return;
+  const stored = getStored();
+  pending.forEach(e => stored.push(e));
+  saveStored(stored);
+  savePending([]);
+  showToast('📶 Offline data synced!');
+}
+
+// ─── SUBMIT ───────────────────────────────────────────────────
+function collectForm() {
+  return {
+    id: Date.now(),
+    match: document.getElementById('matchNum').value.trim(),
+    team: document.getElementById('teamNum').value.trim(),
+    position: document.getElementById('alliancePos').value,
+    scouter: document.getElementById('scouterName').value.trim(),
+    mapImg: canvas.toDataURL(),
+    autoClimb: document.getElementById('autoClimb').value.trim(),
+    hopperIntact: document.getElementById('hopperIntact').value.trim(),
+    shootAccuracy: document.getElementById('shootAccuracy').value.trim(),
+    shootLocation: document.getElementById('shootLocation').value.trim(),
+    fuelMissed: document.getElementById('fuelMissed').value.trim(),
+    fuelShot: document.getElementById('fuelShot').value.trim(),
+    jammed: document.getElementById('jammed').value.trim(),
+    intakeTiming: document.getElementById('intakeTiming').value.trim(),
+    feeding: document.getElementById('feeding').value.trim(),
+    herding: document.getElementById('herding').value.trim(),
+    herdHuman: document.getElementById('herdHuman').value.trim(),
+    driverSmooth: document.getElementById('driverSmooth').value.trim(),
+    gameSense: document.getElementById('gameSense').value.trim(),
+    driverPressure: document.getElementById('driverPressure').value.trim(),
+    climbSuccess: document.getElementById('climbSuccess').value.trim(),
+    climbAttempt: document.getElementById('climbAttempt').value.trim(),
+    climbTime: document.getElementById('climbTime').value.trim(),
+    defenseZone: document.getElementById('defenseZone').value.trim(),
+    defenseTarget: document.getElementById('defenseTarget').value.trim(),
+    pinPenalty: document.getElementById('pinPenalty').value.trim(),
+    comments: document.getElementById('comments').value.trim(),
+    timestamp: new Date().toLocaleString()
+  };
+}
+
+function submitForm() {
+  const entry = collectForm();
+  if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
+
+  if (navigator.onLine) {
+    const stored = getStored();
+    stored.push(entry);
+    saveStored(stored);
+    showToast('✅ Data submitted!');
+  } else {
+    const pending = getPending();
+    pending.push(entry);
+    savePending(pending);
+    showToast('📥 Saved locally — will sync when online.');
+  }
+  resetForm();
+}
+
+function resetForm() {
+  ['matchNum','teamNum','scouterName','autoClimb','hopperIntact','shootAccuracy','shootLocation','fuelMissed','fuelShot','jammed','intakeTiming','feeding','herding','herdHuman','driverSmooth','gameSense','driverPressure','climbSuccess','climbAttempt','climbTime','defenseZone','defenseTarget','pinPenalty','comments'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('alliancePos').value = '';
+  clearCanvas();
+}
+
+// ─── DATA VIEW ────────────────────────────────────────────────
+const LABELS = {
+  position:'Position', scouter:'Scouter', autoClimb:'Auto Climb',
+  hopperIntact:'Hopper Integrity', shootAccuracy:'Accuracy', shootLocation:'Shoot Location',
+  fuelMissed:'Fuel Missed', fuelShot:'Fuel Shot', jammed:'Jammed',
+  intakeTiming:'Alliance Return', feeding:'Feeding', herding:'Herding',
+  herdHuman:'Herd to HP', driverSmooth:'Driver Confidence', gameSense:'Game Sense',
+  driverPressure:'Under Pressure', climbSuccess:'Climbed', climbAttempt:'Climb Attempt',
+  climbTime:'Climb Time', defenseZone:'Defense Zone', defenseTarget:'Target Robot',
+  pinPenalty:'Pin Penalty', comments:'Comments'
+};
+
+function renderData() {
+  const all = [...getStored(), ...getPending()];
+  const view = document.getElementById('dataView');
+  if (!all.length) { view.innerHTML = '<div class="empty-state">No data submitted yet.</div>'; return; }
+
+  // Group by team
+  const teams = {};
+  all.forEach(e => {
+    const t = e.team || 'Unknown';
+    if (!teams[t]) teams[t] = [];
+    teams[t].push(e);
+  });
+
+  let html = '';
+  Object.keys(teams).sort().forEach(team => {
+    const entries = teams[team];
+    html += `<div class="team-card" id="tc-${team}">
+      <div class="team-header" onclick="toggleTeam('tc-${team}')">
+        <span>Team ${team} <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${entries.length} match${entries.length>1?'es':''})</span></span>
+        <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
+      </div>
+      <div class="team-body">`;
+    entries.forEach(e => {
+      const isPending = getPending().find(p => p.id === e.id);
+      html += `<div class="match-entry">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+          <h4>Match ${e.match||'?'} ${isPending?'<span class="offline-badge" style="font-size:0.65rem">PENDING</span>':''}</h4>
+          <button class="del-btn" onclick="deleteEntry(${e.id})">Delete</button>
+        </div>
+        <div class="match-grid">`;
+      Object.keys(LABELS).forEach(k => {
+        if (e[k]) html += `<div class="match-item"><strong>${LABELS[k]}</strong>${e[k]}</div>`;
+      });
+      if (e.mapImg) html += `<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="${e.mapImg}" style="width:100%;border-radius:6px;margin-top:0.3rem"></div>`;
+      html += `</div></div>`;
+    });
+    html += `</div></div>`;
+  });
+  view.innerHTML = html;
+}
+
+function toggleTeam(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  let stored = getStored().filter(e => e.id !== id);
+  let pending = getPending().filter(e => e.id !== id);
+  saveStored(stored);
+  savePending(pending);
+  renderData();
+  showToast('🗑 Entry deleted.');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// On load
+flushPending();
+</script>
+</body>
+</html>
