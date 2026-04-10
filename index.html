@@ -515,17 +515,18 @@ function drawField() {
   drawRect(fx(651-53), fy(hubCY - 24.6), fw2(45), fh2(49.25), '#112288', '#2244ff', 2);
   label(fx(651-30.5), fy(hubCY), '#ccccff', '7', 'TOWER');
 
-  // ── NEUTRAL ZONE FUEL cluster (large, centered between HUBs) ──
-  // ~206in wide, 72in deep centered at field center
-  const fuelX = fx(325.6 - 103), fuelY = fy(hubCY - 36);
-  const fuelW = fw2(206), fuelH = fh2(72);
+  // ── NEUTRAL ZONE FUEL cluster ──
+  // 72in wide (x-axis), 206in tall (y-axis), centered on center line (x=325.6) and field height
+  const fuelW = fw2(72), fuelH = fh2(206);
+  const fuelX = fx(325.6) - fuelW / 2;
+  const fuelY = fy(hubCY) - fuelH / 2;
   ctx.fillStyle = 'rgba(232,168,0,0.18)';
   ctx.fillRect(fuelX, fuelY, fuelW, fuelH);
   ctx.strokeStyle = '#e8a800'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
   ctx.strokeRect(fuelX, fuelY, fuelW, fuelH);
   ctx.setLineDash([]);
-  // Dot grid
-  const dotR = 3.5, cols = 14, rows = 6;
+  // Dot grid: 6 cols x 14 rows
+  const dotR = 3.5, cols = 6, rows = 14;
   const cellW = fuelW / cols, cellH = fuelH / rows;
   ctx.fillStyle = '#e8a800';
   for (let r=0; r<rows; r++) for (let c=0; c<cols; c++) {
