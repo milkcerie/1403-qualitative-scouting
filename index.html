@@ -589,10 +589,12 @@ function clearCanvas() { dctx.clearRect(0, 0, drawCanvas.width, drawCanvas.heigh
 function clearCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); drawField(); }
 
 // ── STORAGE ───────────────────────────────────────────────────
-const getStored  = () => { try { return JSON.parse(localStorage.getItem('scoutData')||'[]'); } catch { return []; } };
-const saveStored = d => localStorage.setItem('scoutData', JSON.stringify(d));
+const getStored   = () => { try { return JSON.parse(localStorage.getItem('scoutData')||'[]'); } catch { return []; } };
+const saveStored  = d => localStorage.setItem('scoutData', JSON.stringify(d));
 const getPending  = () => { try { return JSON.parse(localStorage.getItem('pendingData')||'[]'); } catch { return []; } };
 const savePending = d => localStorage.setItem('pendingData', JSON.stringify(d));
+const getDeleted  = () => { try { return JSON.parse(localStorage.getItem('deletedData')||'[]'); } catch { return []; } };
+const saveDeleted = d => localStorage.setItem('deletedData', JSON.stringify(d));
 
 function flushPending() {
   const pending = getPending();
@@ -654,35 +656,67 @@ const SEC_LABELS = {
 function renderData() {
   const all = [...getStored(), ...getPending()];
   const view = document.getElementById('dataView');
-  if (!all.length) { view.innerHTML = '<div class="empty-state">No data submitted yet.</div>'; return; }
-
-  const teams = {};
-  all.forEach(e => { const t = e.team||'Unknown'; if (!teams[t]) teams[t]=[]; teams[t].push(e); });
-
   let html = '';
-  Object.keys(teams).sort().forEach(team => {
-    const entries = teams[team];
-    html += `<div class="team-card" id="teamcard-${team}">
-      <div class="team-header" onclick="toggleTeam('teamcard-${team}')">
-        <span>Team ${team} <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${entries.length} match${entries.length>1?'es':''})</span></span>
-        <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
-      </div><div class="team-body">`;
-    entries.forEach(e => {
-      const pending = getPending().find(p => p.id === e.id);
+
+  if (!all.length) {
+    html += '<div class="empty-state">No data submitted yet.</div>';
+  } else {
+    const teams = {};
+    all.forEach(e => { const t = e.team||'Unknown'; if (!teams[t]) teams[t]=[]; teams[t].push(e); });
+    Object.keys(teams).sort().forEach(team => {
+      const entries = teams[team];
+      html += `<div class="team-card" id="teamcard-${team}">
+        <div class="team-header" onclick="toggleTeam('teamcard-${team}')">
+          <span>Team ${team} <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${entries.length} match${entries.length>1?'es':''})</span></span>
+          <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
+        </div><div class="team-body">`;
+      entries.forEach(e => {
+        const pending = getPending().find(p => p.id === e.id);
+        html += `<div class="match-entry">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong style="font-size:0.9rem;color:var(--accent)">Match ${e.match||'?'} ${pending?'<span class="offline-badge" style="font-size:0.65rem">PENDING</span>':''}</strong>
+            <button class="del-btn" onclick="deleteEntry(${e.id})">Delete</button>
+          </div>
+          <div class="match-grid">`;
+        Object.keys(SEC_LABELS).forEach(k => {
+          if (e[k]) html += `<div class="match-item"><strong>${SEC_LABELS[k]}</strong>${e[k]}</div>`;
+        });
+        if (e.mapImg) html += `<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="${e.mapImg}" style="width:100%;border-radius:6px;margin-top:0.3rem"></div>`;
+        html += `</div></div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
+  // ── Recently Deleted ──
+  const deleted = getDeleted();
+  html += `<div class="team-card" id="teamcard-deleted" style="margin-top:1rem;border-color:var(--red)">
+    <div class="team-header" onclick="toggleTeam('teamcard-deleted')" style="color:var(--red)">
+      <span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${deleted.length} item${deleted.length!==1?'s':''})</span></span>
+      <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
+    </div>
+    <div class="team-body">`;
+  if (!deleted.length) {
+    html += '<div style="padding:0.75rem 1rem;color:var(--subtext);font-size:0.85rem">No recently deleted entries.</div>';
+  } else {
+    deleted.forEach(e => {
       html += `<div class="match-entry">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong style="font-size:0.9rem;color:var(--accent)">Match ${e.match||'?'} ${pending?'<span class="offline-badge" style="font-size:0.65rem">PENDING</span>':''}</strong>
-          <button class="del-btn" onclick="deleteEntry(${e.id})">Delete</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
+          <strong style="font-size:0.9rem;color:var(--subtext)">Team ${e.team||'?'} — Match ${e.match||'?'}</strong>
+          <span style="font-size:0.75rem;color:var(--subtext)">${e.deletedAt||''}</span>
+          <div style="display:flex;gap:0.4rem">
+            <button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry(${e.id})">Restore</button>
+            <button class="del-btn" onclick="permDeleteEntry(${e.id})">Delete Forever</button>
+          </div>
         </div>
-        <div class="match-grid">`;
+        <div class="match-grid" style="margin-top:0.4rem">`;
       Object.keys(SEC_LABELS).forEach(k => {
         if (e[k]) html += `<div class="match-item"><strong>${SEC_LABELS[k]}</strong>${e[k]}</div>`;
       });
-      if (e.mapImg) html += `<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="${e.mapImg}" style="width:100%;border-radius:6px;margin-top:0.3rem"></div>`;
       html += `</div></div>`;
     });
-    html += `</div></div>`;
-  });
+  }
+  html += `</div></div>`;
   view.innerHTML = html;
 }
 
@@ -693,10 +727,37 @@ function toggleTeam(id) {
 
 function deleteEntry(id) {
   if (!confirm('Delete this entry?')) return;
+  // Move to recently deleted (keep last 20)
+  const entry = [...getStored(), ...getPending()].find(e => e.id === id);
+  if (entry) {
+    const deleted = getDeleted();
+    deleted.unshift({ ...entry, deletedAt: new Date().toLocaleString() });
+    saveDeleted(deleted.slice(0, 20));
+  }
   saveStored(getStored().filter(e => e.id !== id));
   savePending(getPending().filter(e => e.id !== id));
   renderData();
-  showToast('🗑 Entry deleted.');
+  showToast('🗑 Entry deleted. See Recently Deleted to restore.');
+}
+
+function restoreEntry(id) {
+  const deleted = getDeleted();
+  const entry = deleted.find(e => e.id === id);
+  if (!entry) return;
+  const { deletedAt, ...restored } = entry;
+  const stored = getStored();
+  stored.push(restored);
+  saveStored(stored);
+  saveDeleted(deleted.filter(e => e.id !== id));
+  renderData();
+  showToast('♻️ Entry restored!');
+}
+
+function permDeleteEntry(id) {
+  if (!confirm('Permanently delete this entry? This cannot be undone.')) return;
+  saveDeleted(getDeleted().filter(e => e.id !== id));
+  renderData();
+  showToast('🗑 Permanently deleted.');
 }
 
 // ── TOAST ─────────────────────────────────────────────────────
