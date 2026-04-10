@@ -662,8 +662,8 @@ function renderData() {
   let html = '';
   Object.keys(teams).sort().forEach(team => {
     const entries = teams[team];
-    html += `<div class="team-card" id="tc-${CSS.escape(team)}">
-      <div class="team-header" onclick="toggleTeam('tc-${CSS.escape(team)}')">
+    html += `<div class="team-card" id="teamcard-${team}">
+      <div class="team-header" onclick="toggleTeam('teamcard-${team}')">
         <span>Team ${team} <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${entries.length} match${entries.length>1?'es':''})</span></span>
         <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
       </div><div class="team-body">`;
@@ -686,7 +686,10 @@ function renderData() {
   view.innerHTML = html;
 }
 
-function toggleTeam(id) { document.getElementById(id).classList.toggle('open'); }
+function toggleTeam(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
 
 function deleteEntry(id) {
   if (!confirm('Delete this entry?')) return;
