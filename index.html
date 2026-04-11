@@ -241,6 +241,13 @@
 </div>
 
 <div id="dataPage" class="page">
+  <div style="max-width:900px;margin:0 auto;padding:1rem">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:0.85rem 1rem;margin-bottom:0.75rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:0.8rem;font-weight:600;color:var(--subtext);white-space:nowrap">Cloud Bin ID:</span>
+      <input id="binIdInput" type="text" placeholder="Paste shared bin ID here…" style="flex:1;min-width:180px;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:0.85rem;outline:none;">
+      <button onclick="saveBinId()" style="padding:0.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;">Connect</button>
+    </div>
+  </div>
   <div class="data-view" id="dataView"></div>
 </div>
 
@@ -327,7 +334,7 @@ function switchTab(tab, btn) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(tab + 'Page').classList.add('active');
   btn.classList.add('active');
-  if (tab === 'data') renderData();
+  if (tab === 'data') { initBinIdInput(); renderData(); }
 }
 
 function toggleSection(id) { document.getElementById(id).classList.toggle('open'); }
@@ -660,7 +667,19 @@ async function permDeleteEntry(id) {
   showToast('🗑 Permanently deleted.');
 }
 
-// ── TOAST ──────────────────────────────────────────────────────
+function saveBinId() {
+  const input = document.getElementById('binIdInput').value.trim();
+  if (!input) { showToast('⚠️ Please paste a bin ID first.'); return; }
+  activeBinId = input;
+  localStorage.setItem('1403_binId', input);
+  showToast('✅ Connected to shared bin!');
+  renderData();
+}
+
+function initBinIdInput() {
+  const el = document.getElementById('binIdInput');
+  if (el && activeBinId) el.value = activeBinId;
+}
 function showToast(msg) {
   const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
