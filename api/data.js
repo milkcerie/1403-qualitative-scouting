@@ -13,7 +13,14 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${KV_TOKEN}` }
     });
     const json = await r.json();
-    return json.result ? JSON.parse(json.result) : { entries: [], deleted: [] };
+    if (!json.result) return { entries: [], deleted: [] };
+    // Handle both string and already-parsed object
+    try {
+      const val = typeof json.result === 'string' ? JSON.parse(json.result) : json.result;
+      return { entries: val.entries||[], deleted: val.deleted||[] };
+    } catch(e) {
+      return { entries: [], deleted: [] };
+    }
   }
 
   async function kvSet(data) {
