@@ -271,7 +271,7 @@
   </div>
 
   <div class="submit-bar">
-    <button class="submit-btn" onclick="submitForm()">Submit Scouting Data</button>
+    <button class="submit-btn" onclick="submitForm().catch(e=>showToast('Error: '+e.message))">Submit Scouting Data</button>
   </div>
 </div>
 
@@ -631,17 +631,22 @@ async function submitForm() {
   const entry = collectForm();
   if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
 
-  if (navigator.onLine) {
-    // Save to cloud
-    const cloud = await cloudGet();
-    cloud.push(entry);
-    await cloudSave(cloud);
-    // Mirror locally
+  try {
+    if (navigator.onLine) {
+      const cloud = await cloudGet();
+      cloud.push(entry);
+      await cloudSave(cloud);
+      // Mirror locally
+      const stored = getStored(); stored.push(entry); saveStored(stored);
+      showToast('✅ Data submitted!');
+    } else {
+      const pending = getPending(); pending.push(entry); savePending(pending);
+      showToast('📥 Saved locally — will sync when online.');
+    }
+  } catch(err) {
+    // Fallback: save locally if cloud fails
     const stored = getStored(); stored.push(entry); saveStored(stored);
-    showToast('✅ Data submitted to cloud!');
-  } else {
-    const pending = getPending(); pending.push(entry); savePending(pending);
-    showToast('📥 Saved locally — will sync when online.');
+    showToast('✅ Saved locally.');
   }
   resetForm();
 }
