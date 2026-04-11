@@ -14,7 +14,6 @@ export default async function handler(req, res) {
         headers: { Authorization: `Bearer ${KV_TOKEN}` }
       });
       const raw = await r.json();
-      console.log('Raw KV response type:', typeof raw.result);
 
       if (!raw.result) {
         return res.status(200).json({ entries: [], deleted: [] });
@@ -22,20 +21,10 @@ export default async function handler(req, res) {
 
       let data;
       if (typeof raw.result === 'object') {
-        // Already parsed
         data = raw.result;
-      } else if (typeof raw.result === 'string') {
-        try {
-          data = JSON.parse(raw.result);
-        } catch(e) {
-          // Maybe double-encoded
-          try {
-            data = JSON.parse(JSON.parse(raw.result));
-          } catch(e2) {
-            console.error('Could not parse result:', raw.result.slice(0, 100));
-            data = { entries: [], deleted: [] };
-          }
-        }
+      } else {
+        try { data = JSON.parse(raw.result); }
+        catch(e) { data = { entries: [], deleted: [] }; }
       }
 
       return res.status(200).json({
@@ -45,18 +34,17 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const data = req.body;
-      const value = JSON.stringify(data);
-      await fetch(`${KV_URL}/set/${KEY}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${KV_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(value)
+      // Use Upstash REST API set command correctly
+      const value = JSON.stringify(req.body);
+      const r = await fetch(`${KV_URL}/set/${KEY}/${encodeURIComponent(value)}`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${KV_TOKEN}` }
       });
+      const result = await r.json();
+      console.log('KV set result:', result);
       return res.status(200).json({ success: true });
     }
+
   } catch(e) {
     console.error('Handler error:', e);
     return res.status(500).json({ error: e.message });
