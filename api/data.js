@@ -4,8 +4,8 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const KV_URL   = process.env.UPSTASH_REDIS_REST_URL;
-  const KV_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const KV_URL   = process.env.KV_REST_API_URL;
+  const KV_TOKEN = process.env.KV_REST_API_TOKEN;
   const KEY      = '1403-scouting';
 
   async function kvGet() {
