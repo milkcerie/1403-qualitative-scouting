@@ -282,7 +282,8 @@ applyDark();
 function updateOnline() {
   document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
 }
-window.addEventListener('online', () => { updateOnline(); flushPending(); });
+window.addEventListener('online', () => { updateOnline(); initBin();
+flushPending(); });
 window.addEventListener('offline', updateOnline);
 updateOnline();
 
@@ -475,9 +476,6 @@ function savePending(d){ localStorage.setItem('pendingData', JSON.stringify(d));
 
 // ── JSONBIN ────────────────────────────────────────────────────
 function hasKey() { return JSONBIN_API_KEY && JSONBIN_API_KEY !== 'PASTE_YOUR_KEY_HERE'; }
-
-// Init bin on load
-initBin();
 
 async function cloudGet() {
   if (!activeBinId || !hasKey()) return { entries:[], deleted:[] };
