@@ -795,4 +795,1598 @@ function showToast(msg) {
 flushPending();
 </script>
 </body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1403 Qualitative Data</title>
+<style>
+  :root {
+    --bg: #f4f4f6; --card: #ffffff; --border: #dde1ea; --text: #1a1a2e;
+    --subtext: #555; --accent: #2563eb; --accent-hover: #1d4ed8;
+    --red: #dc2626; --section-header: #1e293b; --input-bg: #f8fafc;
+    --shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .dark {
+    --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #f1f5f9;
+    --subtext: #94a3b8; --accent: #3b82f6; --accent-hover: #2563eb;
+    --section-header: #e2e8f0; --input-bg: #0f172a; --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; transition: background 0.2s, color 0.2s; }
+
+  header { background: var(--card); border-bottom: 2px solid var(--accent); padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  header h1 { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+  .icon-btn { background: none; border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 1rem; transition: background 0.15s; }
+  .icon-btn:hover { background: var(--border); }
+
+  nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); overflow-x: auto; }
+  nav button { flex: 1; min-width: 80px; padding: 0.65rem 0.4rem; font-size: 0.78rem; font-weight: 600; border: none; background: none; color: var(--subtext); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg); }
+  nav button:hover:not(.active) { background: var(--bg); }
+
+  .page { display: none; padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  .meta-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .meta-field { flex: 1; min-width: 140px; }
+  .meta-field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--subtext); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-field input, .meta-field select { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.15s; }
+  .meta-field input:focus, .meta-field select:focus { border-color: var(--accent); }
+  .meta-field select option { background: var(--card); color: var(--text); }
+
+  .section-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; box-shadow: var(--shadow); overflow: hidden; }
+  .section-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: none; border: none; color: var(--section-header); cursor: pointer; font-size: 1rem; font-weight: 700; text-align: left; }
+  .section-toggle:hover { background: var(--bg); }
+  .section-toggle-left { display: flex; align-items: center; gap: 0.6rem; }
+  .chevron { font-size: 0.9rem; color: var(--subtext); transition: transform 0.2s; }
+  .section-card.open .chevron { transform: rotate(180deg); }
+  .section-body { display: none; padding: 0.9rem 1rem; border-top: 1px solid var(--border); }
+  .section-card.open .section-body { display: block; }
+
+  /* Single field + i button per section */
+  .field-row { display: flex; align-items: flex-start; gap: 0.5rem; }
+  .field-wrap { flex: 1; }
+  .field-wrap textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; transition: border-color 0.15s; min-height: 80px; }
+  .field-wrap textarea:focus { border-color: var(--accent); }
+  .i-btn { background: none; border: 1.5px solid var(--border); border-radius: 50%; width: 28px; height: 28px; min-width: 28px; font-size: 0.75rem; font-weight: 700; color: var(--accent); cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 4px; transition: background 0.15s; }
+  .i-btn:hover { background: var(--accent); color: #fff; }
+
+  /* MAP */
+  .map-container { }
+  .map-tools { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; align-items: center; }
+  .tool-btn { padding: 0.4rem 0.75rem; border-radius: 7px; border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .tool-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tool-btn:hover:not(.active) { border-color: var(--accent); }
+  canvas#fieldMap { border: 2px solid var(--border); border-radius: 10px; background: #1a2233; touch-action: none; max-width: 100%; display: block; cursor: crosshair; }
+
+  /* TOOLTIP */
+  .tooltip-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; padding: 1.5rem; }
+  .tooltip-overlay.show { display: flex; }
+  .tooltip-box { background: var(--card); border-radius: 14px; padding: 1.2rem 1.4rem; max-width: 400px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); position: relative; border: 1.5px solid var(--border); }
+  .tooltip-box h4 { font-size: 0.95rem; font-weight: 700; color: var(--accent); margin-bottom: 0.6rem; }
+  .tooltip-box ul { padding-left: 1.1rem; }
+  .tooltip-box li { font-size: 0.87rem; color: var(--text); line-height: 1.6; margin-bottom: 0.2rem; }
+  .tooltip-close { position: absolute; top: 0.75rem; right: 0.9rem; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--subtext); }
+
+  /* DATA VIEW */
+  .data-view { padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .team-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; box-shadow: var(--shadow); overflow: hidden; }
+  .team-header { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; font-weight: 700; font-size: 1rem; cursor: pointer; }
+  .team-header:hover { background: var(--bg); }
+  .team-body { display: none; border-top: 1px solid var(--border); }
+  .team-card.open .team-body { display: block; }
+  .match-entry { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+  .match-entry:last-child { border-bottom: none; }
+  .match-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.4rem; margin-top: 0.5rem; }
+  .match-item { background: var(--bg); border-radius: 7px; padding: 0.4rem 0.6rem; font-size: 0.82rem; }
+  .match-item strong { display: block; color: var(--subtext); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 0.1rem; }
+  .del-btn { background: none; border: 1.5px solid var(--red); color: var(--red); border-radius: 7px; padding: 0.3rem 0.6rem; font-size: 0.78rem; cursor: pointer; font-weight: 600; transition: background 0.15s; }
+  .del-btn:hover { background: var(--red); color: #fff; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--subtext); font-size: 0.95rem; }
+
+  .submit-bar { padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .submit-btn { width: 100%; padding: 0.9rem; background: var(--accent); color: #fff; font-size: 1.05rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: background 0.15s; }
+  .submit-btn:hover { background: var(--accent-hover); }
+
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 0.7rem 1.4rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .offline-badge { background: #f59e0b; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 5px; }
+
+  @media (min-width: 640px) {
+    header h1 { font-size: 1.4rem; }
+    .page, .data-view, .submit-bar { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>1403 Qualitative Data</h1>
+  <div style="display:flex;gap:0.5rem;align-items:center">
+    <span id="offlineBadge" class="offline-badge" style="display:none">OFFLINE</span>
+    <button class="icon-btn" onclick="toggleDark()">🌙</button>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="switchTab('form',this)">📋 Scout</button>
+  <button onclick="switchTab('data',this)">📊 Data</button>
+</nav>
+
+<!-- FORM PAGE -->
+<div id="formPage" class="page active">
+
+  <div class="meta-row">
+    <div class="meta-field">
+      <label>Match #</label>
+      <input type="text" id="matchNum" placeholder="e.g. 42">
+    </div>
+    <div class="meta-field">
+      <label>Team #</label>
+      <input type="text" id="teamNum" placeholder="e.g. 1403">
+    </div>
+    <div class="meta-field">
+      <label>Position</label>
+      <select id="alliancePos">
+        <option value="">Select…</option>
+        <option>Red 1</option><option>Red 2</option><option>Red 3</option>
+        <option>Blue 1</option><option>Blue 2</option><option>Blue 3</option>
+      </select>
+    </div>
+    <div class="meta-field">
+      <label>Scouter</label>
+      <input type="text" id="scouterName" placeholder="Your name">
+    </div>
+  </div>
+
+  <!-- AUTON -->
+  <div class="section-card" id="sec-auton">
+    <button class="section-toggle" onclick="toggleSection('sec-auton')">
+      <span class="section-toggle-left"><span>🤖</span> Autonomous</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row" style="margin-bottom:0.75rem">
+        <div class="field-wrap">
+          <textarea id="autonNotes" placeholder="Notes on autonomous…"></textarea>
+        </div>
+        <button class="i-btn" onclick="showTip('Autonomous','auton')">i</button>
+      </div>
+      <div class="map-container">
+        <div style="font-size:0.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.4rem">
+          Field Map <span style="font-weight:400;text-transform:none">— draw path &amp; stamp X for shooting spots</span>
+        </div>
+        <div class="map-tools">
+          <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">✏️ Draw</button>
+          <button class="tool-btn" id="toolX" onclick="setTool('x')">✕ Mark X</button>
+          <button class="tool-btn" id="toolErase" onclick="setTool('erase')">🧹 Erase</button>
+          <button class="tool-btn" onclick="clearCanvas()">🗑 Clear</button>
+        </div>
+        <canvas id="fieldMap" width="560" height="320"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOPPER & SCORING -->
+  <div class="section-card" id="sec-hopper">
+    <button class="section-toggle" onclick="toggleSection('sec-hopper')">
+      <span class="section-toggle-left"><span>⚙️</span> Hopper &amp; Scoring</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="hopperNotes" placeholder="Notes on hopper &amp; scoring…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Hopper & Scoring','hopper')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTAKE -->
+  <div class="section-card" id="sec-intake">
+    <button class="section-toggle" onclick="toggleSection('sec-intake')">
+      <span class="section-toggle-left"><span>🔄</span> Intake</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="intakeNotes" placeholder="Notes on intake…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Intake','intake')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDING -->
+  <div class="section-card" id="sec-feeding">
+    <button class="section-toggle" onclick="toggleSection('sec-feeding')">
+      <span class="section-toggle-left"><span>🤝</span> Feeding</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="feedingNotes" placeholder="Notes on feeding…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Feeding','feeding')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRIVER -->
+  <div class="section-card" id="sec-driver">
+    <button class="section-toggle" onclick="toggleSection('sec-driver')">
+      <span class="section-toggle-left"><span>🕹️</span> Driver</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="driverNotes" placeholder="Notes on the driver…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Driver','driver')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIMBING -->
+  <div class="section-card" id="sec-climbing">
+    <button class="section-toggle" onclick="toggleSection('sec-climbing')">
+      <span class="section-toggle-left"><span>🧗</span> Climbing</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="climbingNotes" placeholder="Notes on climbing…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Climbing','climbing')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEFENSE -->
+  <div class="section-card" id="sec-defense">
+    <button class="section-toggle" onclick="toggleSection('sec-defense')">
+      <span class="section-toggle-left"><span>🛡️</span> Defense</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="defenseNotes" placeholder="Notes on defense…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Defense','defense')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="section-card" id="sec-comments">
+    <button class="section-toggle" onclick="toggleSection('sec-comments')">
+      <span class="section-toggle-left"><span>💬</span> Comments</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="commentsNotes" placeholder="Anything else notable…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Comments','comments')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-bar">
+    <button class="submit-btn" onclick="submitForm().catch(e=>showToast('Error: '+e.message))">Submit Scouting Data</button>
+  </div>
+</div>
+
+<!-- DATA PAGE -->
+<div id="dataPage" class="page">
+  <div class="data-view" id="dataView"></div>
+</div>
+
+<!-- TOOLTIP OVERLAY -->
+<div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTip(event)">
+  <div class="tooltip-box" onclick="event.stopPropagation()">
+    <button class="tooltip-close" onclick="closeTip()">✕</button>
+    <h4 id="tipTitle"></h4>
+    <ul id="tipList"></ul>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── GUIDED QUESTIONS ──────────────────────────────────────────
+const TIPS = {
+  auton: [
+    'What is their path? (draw on the map)',
+    'Where do they shoot from during auto? (mark an X on the map)',
+    'Do they climb during auto?'
+  ],
+  hopper: [
+    'Did the hopper stay intact the entire match? If no, when did it break?',
+    'Shooting accuracy — low, medium, or high?',
+    'Where do they shoot from? (mark X on the map — multiple spots if needed)',
+    'How much fuel was missed? (educated guess)',
+    'How much fuel was shot total? (educated guess)',
+    'Do they get jammed? Specify if possible.'
+  ],
+  intake: [
+    'Do they get back to their alliance in time to shoot during active shifts?'
+  ],
+  feeding: [
+    'Do they feed? Are they effective? (Feeding = intaking and shooting fuel to their alliance area from the neutral zone)',
+    'Do they herd? How effective? (Herding = pushing fuel with bumper under the trench)',
+    'Do they herd specifically to human players? How effective — low, medium, or high?'
+  ],
+  driver: [
+    'Was the driver smooth and confident, or did they seem unconfident/confused?',
+    'How good was their game sense when a problem occurred? (Note anything significant, e.g. switching to defense when their robot broke)',
+    'How did they adapt/act under pressure? Describe how they handled malfunctions or defensive pressure.'
+  ],
+  climbing: [
+    'Do they climb? If yes, what level?',
+    'Did they attempt to climb (even if unsuccessful)?',
+    'Around what time (match clock) did they start to climb?'
+  ],
+  defense: [
+    'Where did they go to play defense? (zone defense? describe location)',
+    'Did they target one specific robot? If yes, which team number?',
+    'Did they receive any penalties for pinning?'
+  ],
+  comments: [
+    'Anything else notable that you observed during the match?'
+  ]
+};
+
+// ── DARK MODE ─────────────────────────────────────────────────
+let dark = localStorage.getItem('darkMode') === '1';
+function applyDark() { document.body.classList.toggle('dark', dark); }
+function toggleDark() { dark = !dark; localStorage.setItem('darkMode', dark?'1':'0'); applyDark(); }
+applyDark();
+
+// ── OFFLINE ───────────────────────────────────────────────────
+function updateOnline() {
+  document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
+}
+window.addEventListener('online', () => { updateOnline(); flushPending(); });
+window.addEventListener('offline', updateOnline);
+updateOnline();
+
+// ── TABS ──────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(tab + 'Page').classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'data') renderData();
+}
+
+// ── SECTIONS ──────────────────────────────────────────────────
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── TOOLTIP ───────────────────────────────────────────────────
+function showTip(title, key) {
+  document.getElementById('tipTitle').textContent = title + ' — Guided Questions';
+  const ul = document.getElementById('tipList');
+  ul.innerHTML = TIPS[key].map(q => `<li>${q}</li>`).join('');
+  document.getElementById('tooltipOverlay').classList.add('show');
+}
+function closeTip(e) {
+  if (!e || e.target === document.getElementById('tooltipOverlay')) {
+    document.getElementById('tooltipOverlay').classList.remove('show');
+  }
+}
+
+// ── CANVAS MAP ────────────────────────────────────────────────
+const canvas = document.getElementById('fieldMap');
+const ctx = canvas.getContext('2d');
+let tool = 'draw', painting = false, lastX = 0, lastY = 0;
+
+// Off-screen canvas holds only user drawings
+const drawCanvas = document.createElement('canvas');
+drawCanvas.width = canvas.width; drawCanvas.height = canvas.height;
+const dctx = drawCanvas.getContext('2d');
+
+function compositeToMain() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (typeof drawField === 'function') drawField();
+  ctx.drawImage(drawCanvas, 0, 0);
+}
+
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const map = { draw: 'toolDraw', x: 'toolX', erase: 'toolErase' };
+  const el = document.getElementById(map[t]);
+  if (el) el.classList.add('active');
+}
+
+function drawField() {
+  const W = canvas.width, H = canvas.height;
+
+  // ── Field carpet (dark green-grey) ──
+  ctx.fillStyle = '#4a5240'; ctx.fillRect(0, 0, W, H);
+
+  // ── Guardrail border ──
+  ctx.strokeStyle = '#b0b8c8'; ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, W-4, H-4);
+
+  // Field is ~651in long x 317in wide. We map:
+  // X: left=red alliance wall, right=blue alliance wall
+  // Y: top/bottom = guardrails
+  // Scale factors
+  const fw = W - 8, fh = H - 8, ox = 4, oy = 4;
+  const sx = fw / 651, sy = fh / 317;
+
+  function fx(inch) { return ox + inch * sx; }
+  function fy(inch) { return oy + inch * sy; }
+  function fw2(inch) { return inch * sx; }
+  function fh2(inch) { return inch * sy; }
+
+  // ── CENTER LINE (at 325.6in) ──
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(fx(325.6), oy); ctx.lineTo(fx(325.6), oy+fh); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── ALLIANCE WALLS (left=red at x=0, right=blue at x=651) ──
+  ctx.fillStyle = '#cc2222'; ctx.fillRect(ox, oy, fw2(8), fh);
+  ctx.fillStyle = '#2233cc'; ctx.fillRect(fx(643), oy, fw2(8), fh);
+
+  // ── ROBOT STARTING LINES (at 158.6in from each wall) ──
+  ctx.strokeStyle = '#ff4444'; ctx.lineWidth = 1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(fx(158.6), oy); ctx.lineTo(fx(158.6), oy+fh); ctx.stroke();
+  ctx.strokeStyle = '#4466ff';
+  ctx.beginPath(); ctx.moveTo(fx(651-158.6), oy); ctx.lineTo(fx(651-158.6), oy+fh); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── HUBs (47x47in, centered at 158.6in from each wall, centered vertically at 158.5in = 317/2) ──
+  const hubCY = 317/2;
+  // Red HUB: centered at x=158.6, y=158.5
+  drawRect(fx(158.6-23.5), fy(hubCY-23.5), fw2(47), fh2(47), '#cc2222', '#ff6666', 2);
+  label(fx(158.6), fy(hubCY), '#fff', '8', 'HUB');
+
+  // Blue HUB: centered at x=651-158.6=492.4
+  drawRect(fx(492.4-23.5), fy(hubCY-23.5), fw2(47), fh2(47), '#2233cc', '#6699ff', 2);
+  label(fx(492.4), fy(hubCY), '#fff', '8', 'HUB');
+
+  // ── BUMPs (44.4in deep x-axis, 73in wide y-axis) — flank HUB above and below ──
+  // HUB centered at (hubX, hubCY), spans ±23.5in in y
+  // BUMPs sit directly above and below the HUB, touching its top/bottom edges
+  const bumpDepth = fw2(44.4), bumpH = fh2(73);
+  const bumpData = [
+    [158.6, hubCY - 23.5 - 73, 0], // red top
+    [158.6, hubCY + 23.5,       0], // red bottom
+    [492.4, hubCY - 23.5 - 73, 1], // blue top
+    [492.4, hubCY + 23.5,       1], // blue bottom
+  ];
+  bumpData.forEach(([bx, by, side]) => {
+    const col = side === 0 ? '#993311' : '#112299';
+    const stroke = side === 0 ? '#ff8844' : '#4466ff';
+    drawRect(fx(bx - 22.2), fy(by), bumpDepth, bumpH, col, stroke, 1.5);
+    label(fx(bx), fy(by + 36.5), '#ffcc88', '7', 'BUMP');
+  });
+
+  // ── TRENCHes — beside each BUMP, between BUMP and guardrail ──
+  // TRENCH: 65.65in wide (x-axis), 47in deep (y-axis), runs from guardrail to the BUMP
+  // Top trenches: y=0, bottom edge at guardrail top; span from outer edge to BUMP outer edge
+  // Each BUMP top edge is at y = hubCY-23.5-73, outer edge at y=0
+  // So trench fills from y=0 to y=(hubCY-23.5-73), capped at 47in deep from guardrail
+  // Trench is 65.65in wide centered on the HUB x
+  const trenchW = fw2(65.65), trenchH = fh2(47);
+  const trenchData = [
+    [158.6, 0,          0], // red top trench (from top guardrail down)
+    [158.6, 317 - 47,   0], // red bottom trench (from bottom guardrail up)
+    [492.4, 0,          1], // blue top
+    [492.4, 317 - 47,   1], // blue bottom
+  ];
+  trenchData.forEach(([tx, ty, side]) => {
+    const col = '#2a2a3a';
+    const stroke = '#8888aa';
+    drawRect(fx(tx - 32.825), fy(ty), trenchW, trenchH, col, stroke, 1.5);
+    label(fx(tx), fy(ty + 23.5), '#aaaacc', '7', 'TRENCH');
+  });
+
+  // ── DEPOTs (42in wide, 27in deep, along each ALLIANCE WALL) ──
+  // 1 per alliance, along alliance wall
+  drawRect(fx(8), fy(hubCY - 21), fw2(27), fh2(42), '#775500', '#e8a800', 1.5);
+  label(fx(8 + 13.5), fy(hubCY), '#ffe066', '7', 'DEPOT');
+  drawRect(fx(651-35), fy(hubCY - 21), fw2(27), fh2(42), '#775500', '#e8a800', 1.5);
+  label(fx(651-21.5), fy(hubCY), '#ffe066', '7', 'DEPOT');
+
+  // ── OUTPOSTs (connect guardrail to alliance wall, at each end) ──
+  // Outpost areas at corners. Show as small hatched rectangles.
+  [[ox, oy],[ox, oy+fh-fh2(71)],[ox+fw-fw2(71), oy],[ox+fw-fw2(71), oy+fh-fh2(71)]].forEach(([px,py], i) => {
+    ctx.fillStyle = i<2 ? '#661111' : '#111166';
+    ctx.fillRect(px, py, fw2(71), fh2(71));
+    ctx.strokeStyle = i<2 ? '#ff8888' : '#8888ff';
+    ctx.lineWidth = 1; ctx.strokeRect(px, py, fw2(71), fh2(71));
+  });
+  ctx.fillStyle = '#ffaaaa'; ctx.font = 'bold 7px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('OUTPOST', ox + fw2(35.5), oy + fh2(35.5) + 3);
+  ctx.fillText('OUTPOST', ox + fw2(35.5), oy + fh - fh2(35.5) + 3);
+  ctx.fillStyle = '#aaaaff';
+  ctx.fillText('OUTPOST', ox + fw - fw2(35.5), oy + fh2(35.5) + 3);
+  ctx.fillText('OUTPOST', ox + fw - fw2(35.5), oy + fh - fh2(35.5) + 3);
+
+  // ── TOWERs (49.25in wide, 45in deep, integrated into ALLIANCE WALL between DS2 & DS3) ──
+  // Alliance wall is 8in wide, tower extends 45in into field from it
+  // Vertically centered on alliance wall
+  drawRect(fx(8), fy(hubCY - 24.6), fw2(45), fh2(49.25), '#882211', '#ff4422', 2);
+  label(fx(8+22.5), fy(hubCY), '#ffcccc', '7', 'TOWER');
+  drawRect(fx(651-53), fy(hubCY - 24.6), fw2(45), fh2(49.25), '#112288', '#2244ff', 2);
+  label(fx(651-30.5), fy(hubCY), '#ccccff', '7', 'TOWER');
+
+  // ── NEUTRAL ZONE FUEL cluster ──
+  // 72in wide (x-axis), 206in tall (y-axis), centered on center line (x=325.6) and field height
+  const fuelW = fw2(72), fuelH = fh2(206);
+  const fuelX = fx(325.6) - fuelW / 2;
+  const fuelY = fy(hubCY) - fuelH / 2;
+  ctx.fillStyle = 'rgba(232,168,0,0.18)';
+  ctx.fillRect(fuelX, fuelY, fuelW, fuelH);
+  ctx.strokeStyle = '#e8a800'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+  ctx.strokeRect(fuelX, fuelY, fuelW, fuelH);
+  ctx.setLineDash([]);
+  // Dot grid: 6 cols x 14 rows
+  const dotR = 3.5, cols = 6, rows = 14;
+  const cellW = fuelW / cols, cellH = fuelH / rows;
+  ctx.fillStyle = '#e8a800';
+  for (let r=0; r<rows; r++) for (let c=0; c<cols; c++) {
+    ctx.beginPath();
+    ctx.arc(fuelX + (c+0.5)*cellW, fuelY + (r+0.5)*cellH, dotR, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // ── Alliance labels ──
+  ctx.fillStyle = '#ff8888'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('RED', fx(80), oy + 14);
+  ctx.fillStyle = '#8899ff';
+  ctx.fillText('BLUE', fx(571), oy + 14);
+}
+
+function drawRect(x, y, w, h, fill, stroke, lw) {
+  ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.strokeRect(x, y, w, h);
+}
+function label(x, y, col, size, text) {
+  ctx.fillStyle = col; ctx.font = `bold ${size}px Segoe UI`; ctx.textAlign = 'center';
+  ctx.fillText(text, x, y + 3);
+}
+
+drawField();
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  const sx = canvas.width / r.width, sy = canvas.height / r.height;
+  const src = e.touches ? e.touches[0] : e;
+  return [(src.clientX - r.left) * sx, (src.clientY - r.top) * sy];
+}
+
+canvas.addEventListener('mousedown', e => { painting = true; [lastX, lastY] = getPos(e); if (tool==='x') stampX(...getPos(e)); });
+canvas.addEventListener('mousemove', e => { if (!painting) return; const [x,y] = getPos(e); if (tool==='draw') drawLine(x,y); else if (tool==='erase') erasePt(x,y); });
+canvas.addEventListener('mouseup', () => painting = false);
+canvas.addEventListener('mouseleave', () => painting = false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); painting = true; [lastX,lastY] = getPos(e); if (tool==='x') stampX(...getPos(e)); }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!painting) return; const [x,y] = getPos(e); if (tool==='draw') drawLine(x,y); else if (tool==='erase') erasePt(x,y); }, {passive:false});
+canvas.addEventListener('touchend', () => painting = false);
+
+function drawLine(x, y) {
+  dctx.strokeStyle = '#facc15'; dctx.lineWidth = 2.5; dctx.lineCap = 'round';
+  dctx.beginPath(); dctx.moveTo(lastX, lastY); dctx.lineTo(x, y); dctx.stroke();
+  compositeToMain();
+  [lastX, lastY] = [x, y];
+}
+function erasePt(x, y) {
+  dctx.clearRect(x - 14, y - 14, 28, 28);
+  compositeToMain();
+  [lastX, lastY] = [x, y];
+}
+function stampX(x, y) {
+  dctx.strokeStyle = '#f87171'; dctx.lineWidth = 2.5; dctx.lineCap = 'round';
+  const s = 9;
+  dctx.beginPath(); dctx.moveTo(x-s,y-s); dctx.lineTo(x+s,y+s); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(x+s,y-s); dctx.lineTo(x-s,y+s); dctx.stroke();
+  compositeToMain();
+}
+function clearCanvas() { dctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height); compositeToMain(); }
+function clearCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); drawField(); }
+
+// ── STORAGE ───────────────────────────────────────────────────
+const getStored   = () => { try { return JSON.parse(localStorage.getItem('scoutData')||'[]'); } catch { return []; } };
+const saveStored  = d => localStorage.setItem('scoutData', JSON.stringify(d));
+const getPending  = () => { try { return JSON.parse(localStorage.getItem('pendingData')||'[]'); } catch { return []; } };
+const savePending = d => localStorage.setItem('pendingData', JSON.stringify(d));
+const getDeleted  = () => { try { return JSON.parse(localStorage.getItem('deletedData')||'[]'); } catch { return []; } };
+const saveDeleted = d => localStorage.setItem('deletedData', JSON.stringify(d));
+
+function flushPending() {
+  const pending = getPending();
+  if (!pending.length || !navigator.onLine) return;
+  const stored = getStored();
+  pending.forEach(e => stored.push(e));
+  saveStored(stored); savePending([]);
+  showToast('📶 Offline data synced!');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────
+function collectForm() {
+  return {
+    id: Date.now(),
+    match: document.getElementById('matchNum').value.trim(),
+    team: document.getElementById('teamNum').value.trim(),
+    position: document.getElementById('alliancePos').value,
+    scouter: document.getElementById('scouterName').value.trim(),
+    auton: document.getElementById('autonNotes').value.trim(),
+    hopper: document.getElementById('hopperNotes').value.trim(),
+    intake: document.getElementById('intakeNotes').value.trim(),
+    feeding: document.getElementById('feedingNotes').value.trim(),
+    driver: document.getElementById('driverNotes').value.trim(),
+    climbing: document.getElementById('climbingNotes').value.trim(),
+    defense: document.getElementById('defenseNotes').value.trim(),
+    comments: document.getElementById('commentsNotes').value.trim(),
+    mapImg: canvas.toDataURL(),
+    timestamp: new Date().toLocaleString()
+  };
+}
+
+async function submitForm() {
+  const entry = collectForm();
+  if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
+
+  try {
+    if (navigator.onLine) {
+      const cloud = await cloudGet();
+      cloud.push(entry);
+      await cloudSave(cloud);
+      // Mirror locally
+      const stored = getStored(); stored.push(entry); saveStored(stored);
+      showToast('✅ Data submitted!');
+    } else {
+      const pending = getPending(); pending.push(entry); savePending(pending);
+      showToast('📥 Saved locally — will sync when online.');
+    }
+  } catch(err) {
+    // Fallback: save locally if cloud fails
+    const stored = getStored(); stored.push(entry); saveStored(stored);
+    showToast('✅ Saved locally.');
+  }
+  resetForm();
+}
+
+function resetForm() {
+  ['matchNum','teamNum','scouterName'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('alliancePos').value = '';
+  ['autonNotes','hopperNotes','intakeNotes','feedingNotes','driverNotes','climbingNotes','defenseNotes','commentsNotes'].forEach(id => document.getElementById(id).value = '');
+  clearCanvas();
+}
+
+// ── DATA VIEW ─────────────────────────────────────────────────
+const SEC_LABELS = {
+  position:'Position', scouter:'Scouter', auton:'Autonomous',
+  hopper:'Hopper & Scoring', intake:'Intake', feeding:'Feeding',
+  driver:'Driver', climbing:'Climbing', defense:'Defense', comments:'Comments'
+};
+
+async function renderData() {
+  const view = document.getElementById('dataView');
+  view.innerHTML = '<div class="empty-state">Loading data…</div>';
+
+  let cloud = [], deleted = [];
+  try {
+    [cloud, deleted] = await Promise.all([cloudGet(), cloudGetDeleted()]);
+  } catch {
+    cloud = getStored();
+    deleted = getDeleted();
+  }
+  const pending = getPending();
+  // Deduplicate by id
+  const seen = new Set();
+  const all = [...cloud, ...pending].filter(e => seen.has(e.id) ? false : seen.add(e.id));
+
+  let html = '';
+  if (!all.length) {
+    html += '<div class="empty-state">No data submitted yet.</div>';
+  } else {
+    const teams = {};
+    all.forEach(e => { const t = e.team||'Unknown'; if (!teams[t]) teams[t]=[]; teams[t].push(e); });
+    Object.keys(teams).sort().forEach(team => {
+      const entries = teams[team];
+      html += `<div class="team-card" id="teamcard-${team}">
+        <div class="team-header" onclick="toggleTeam('teamcard-${team}')">
+          <span>Team ${team} <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${entries.length} match${entries.length>1?'es':''})</span></span>
+          <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
+        </div><div class="team-body">`;
+      entries.forEach(e => {
+        const isPending = pending.find(p => p.id === e.id);
+        html += `<div class="match-entry">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong style="font-size:0.9rem;color:var(--accent)">Match ${e.match||'?'} ${isPending?'<span class="offline-badge" style="font-size:0.65rem">PENDING</span>':''}</strong>
+            <button class="del-btn" onclick="deleteEntry(${e.id})">Delete</button>
+          </div>
+          <div class="match-grid">`;
+        Object.keys(SEC_LABELS).forEach(k => {
+          if (e[k]) html += `<div class="match-item"><strong>${SEC_LABELS[k]}</strong>${e[k]}</div>`;
+        });
+        if (e.mapImg) html += `<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="${e.mapImg}" style="width:100%;border-radius:6px;margin-top:0.3rem"></div>`;
+        html += `</div></div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
+  // ── Recently Deleted ──
+  html += `<div class="team-card" id="teamcard-deleted" style="margin-top:1rem;border-color:var(--red)">
+    <div class="team-header" onclick="toggleTeam('teamcard-deleted')" style="color:var(--red)">
+      <span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${deleted.length} item${deleted.length!==1?'s':''})</span></span>
+      <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
+    </div>
+    <div class="team-body">`;
+  if (!deleted.length) {
+    html += '<div style="padding:0.75rem 1rem;color:var(--subtext);font-size:0.85rem">No recently deleted entries.</div>';
+  } else {
+    deleted.forEach(e => {
+      html += `<div class="match-entry">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
+          <strong style="font-size:0.9rem;color:var(--subtext)">Team ${e.team||'?'} — Match ${e.match||'?'}</strong>
+          <span style="font-size:0.75rem;color:var(--subtext)">${e.deletedAt||''}</span>
+          <div style="display:flex;gap:0.4rem">
+            <button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry(${e.id})">Restore</button>
+            <button class="del-btn" onclick="permDeleteEntry(${e.id})">Delete Forever</button>
+          </div>
+        </div>
+        <div class="match-grid" style="margin-top:0.4rem">`;
+      Object.keys(SEC_LABELS).forEach(k => {
+        if (e[k]) html += `<div class="match-item"><strong>${SEC_LABELS[k]}</strong>${e[k]}</div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+  html += `</div></div>`;
+  view.innerHTML = html;
+}
+
+function toggleTeam(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+async function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  const cloud = await cloudGet();
+  const entry = cloud.find(e => e.id === id) || getPending().find(e => e.id === id);
+  if (entry) {
+    const deleted = await cloudGetDeleted();
+    deleted.unshift({ ...entry, deletedAt: new Date().toLocaleString() });
+    await cloudSaveDeleted(deleted.slice(0, 20));
+  }
+  await cloudSave(cloud.filter(e => e.id !== id));
+  saveStored(getStored().filter(e => e.id !== id));
+  savePending(getPending().filter(e => e.id !== id));
+  renderData();
+  showToast('🗑 Entry deleted. See Recently Deleted to restore.');
+}
+
+async function restoreEntry(id) {
+  const deleted = await cloudGetDeleted();
+  const entry = deleted.find(e => e.id === id);
+  if (!entry) return;
+  const { deletedAt, ...restored } = entry;
+  const cloud = await cloudGet();
+  cloud.push(restored);
+  await cloudSave(cloud);
+  await cloudSaveDeleted(deleted.filter(e => e.id !== id));
+  renderData();
+  showToast('♻️ Entry restored!');
+}
+
+async function permDeleteEntry(id) {
+  if (!confirm('Permanently delete this entry? This cannot be undone.')) return;
+  const deleted = await cloudGetDeleted();
+  await cloudSaveDeleted(deleted.filter(e => e.id !== id));
+  renderData();
+  showToast('🗑 Permanently deleted.');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+flushPending();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1403 Qualitative Data</title>
+<style>
+  :root {
+    --bg: #f4f4f6; --card: #ffffff; --border: #dde1ea; --text: #1a1a2e;
+    --subtext: #555; --accent: #2563eb; --accent-hover: #1d4ed8;
+    --red: #dc2626; --section-header: #1e293b; --input-bg: #f8fafc;
+    --shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .dark {
+    --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #f1f5f9;
+    --subtext: #94a3b8; --accent: #3b82f6; --accent-hover: #2563eb;
+    --section-header: #e2e8f0; --input-bg: #0f172a; --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; transition: background 0.2s, color 0.2s; }
+
+  header { background: var(--card); border-bottom: 2px solid var(--accent); padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  header h1 { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+  .icon-btn { background: none; border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 1rem; transition: background 0.15s; }
+  .icon-btn:hover { background: var(--border); }
+
+  nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); overflow-x: auto; }
+  nav button { flex: 1; min-width: 80px; padding: 0.65rem 0.4rem; font-size: 0.78rem; font-weight: 600; border: none; background: none; color: var(--subtext); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.15s; }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg); }
+  nav button:hover:not(.active) { background: var(--bg); }
+
+  .page { display: none; padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  .meta-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .meta-field { flex: 1; min-width: 140px; }
+  .meta-field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--subtext); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-field input, .meta-field select { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.15s; }
+  .meta-field input:focus, .meta-field select:focus { border-color: var(--accent); }
+  .meta-field select option { background: var(--card); color: var(--text); }
+
+  .section-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; box-shadow: var(--shadow); overflow: hidden; }
+  .section-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: none; border: none; color: var(--section-header); cursor: pointer; font-size: 1rem; font-weight: 700; text-align: left; }
+  .section-toggle:hover { background: var(--bg); }
+  .section-toggle-left { display: flex; align-items: center; gap: 0.6rem; }
+  .chevron { font-size: 0.9rem; color: var(--subtext); transition: transform 0.2s; }
+  .section-card.open .chevron { transform: rotate(180deg); }
+  .section-body { display: none; padding: 0.9rem 1rem; border-top: 1px solid var(--border); }
+  .section-card.open .section-body { display: block; }
+
+  /* Single field + i button per section */
+  .field-row { display: flex; align-items: flex-start; gap: 0.5rem; }
+  .field-wrap { flex: 1; }
+  .field-wrap textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; transition: border-color 0.15s; min-height: 80px; }
+  .field-wrap textarea:focus { border-color: var(--accent); }
+  .i-btn { background: none; border: 1.5px solid var(--border); border-radius: 50%; width: 28px; height: 28px; min-width: 28px; font-size: 0.75rem; font-weight: 700; color: var(--accent); cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 4px; transition: background 0.15s; }
+  .i-btn:hover { background: var(--accent); color: #fff; }
+
+  /* MAP */
+  .map-container { }
+  .map-tools { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; align-items: center; }
+  .tool-btn { padding: 0.4rem 0.75rem; border-radius: 7px; border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .tool-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tool-btn:hover:not(.active) { border-color: var(--accent); }
+  canvas#fieldMap { border: 2px solid var(--border); border-radius: 10px; background: #1a2233; touch-action: none; max-width: 100%; display: block; cursor: crosshair; }
+
+  /* TOOLTIP */
+  .tooltip-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; padding: 1.5rem; }
+  .tooltip-overlay.show { display: flex; }
+  .tooltip-box { background: var(--card); border-radius: 14px; padding: 1.2rem 1.4rem; max-width: 400px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); position: relative; border: 1.5px solid var(--border); }
+  .tooltip-box h4 { font-size: 0.95rem; font-weight: 700; color: var(--accent); margin-bottom: 0.6rem; }
+  .tooltip-box ul { padding-left: 1.1rem; }
+  .tooltip-box li { font-size: 0.87rem; color: var(--text); line-height: 1.6; margin-bottom: 0.2rem; }
+  .tooltip-close { position: absolute; top: 0.75rem; right: 0.9rem; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--subtext); }
+
+  /* DATA VIEW */
+  .data-view { padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .team-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; box-shadow: var(--shadow); overflow: hidden; }
+  .team-header { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; font-weight: 700; font-size: 1rem; cursor: pointer; }
+  .team-header:hover { background: var(--bg); }
+  .team-body { display: none; border-top: 1px solid var(--border); }
+  .team-card.open .team-body { display: block; }
+  .match-entry { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+  .match-entry:last-child { border-bottom: none; }
+  .match-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.4rem; margin-top: 0.5rem; }
+  .match-item { background: var(--bg); border-radius: 7px; padding: 0.4rem 0.6rem; font-size: 0.82rem; }
+  .match-item strong { display: block; color: var(--subtext); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 0.1rem; }
+  .del-btn { background: none; border: 1.5px solid var(--red); color: var(--red); border-radius: 7px; padding: 0.3rem 0.6rem; font-size: 0.78rem; cursor: pointer; font-weight: 600; transition: background 0.15s; }
+  .del-btn:hover { background: var(--red); color: #fff; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--subtext); font-size: 0.95rem; }
+
+  .submit-bar { padding: 1rem; max-width: 900px; margin: 0 auto; }
+  .submit-btn { width: 100%; padding: 0.9rem; background: var(--accent); color: #fff; font-size: 1.05rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: background 0.15s; }
+  .submit-btn:hover { background: var(--accent-hover); }
+
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 0.7rem 1.4rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .offline-badge { background: #f59e0b; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 5px; }
+
+  @media (min-width: 640px) {
+    header h1 { font-size: 1.4rem; }
+    .page, .data-view, .submit-bar { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>1403 Qualitative Data</h1>
+  <div style="display:flex;gap:0.5rem;align-items:center">
+    <span id="offlineBadge" class="offline-badge" style="display:none">OFFLINE</span>
+    <button class="icon-btn" onclick="toggleDark()">🌙</button>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="switchTab('form',this)">📋 Scout</button>
+  <button onclick="switchTab('data',this)">📊 Data</button>
+</nav>
+
+<!-- FORM PAGE -->
+<div id="formPage" class="page active">
+
+  <div class="meta-row">
+    <div class="meta-field">
+      <label>Match #</label>
+      <input type="text" id="matchNum" placeholder="e.g. 42">
+    </div>
+    <div class="meta-field">
+      <label>Team #</label>
+      <input type="text" id="teamNum" placeholder="e.g. 1403">
+    </div>
+    <div class="meta-field">
+      <label>Position</label>
+      <select id="alliancePos">
+        <option value="">Select…</option>
+        <option>Red 1</option><option>Red 2</option><option>Red 3</option>
+        <option>Blue 1</option><option>Blue 2</option><option>Blue 3</option>
+      </select>
+    </div>
+    <div class="meta-field">
+      <label>Scouter</label>
+      <input type="text" id="scouterName" placeholder="Your name">
+    </div>
+  </div>
+
+  <!-- AUTON -->
+  <div class="section-card" id="sec-auton">
+    <button class="section-toggle" onclick="toggleSection('sec-auton')">
+      <span class="section-toggle-left"><span>🤖</span> Autonomous</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row" style="margin-bottom:0.75rem">
+        <div class="field-wrap">
+          <textarea id="autonNotes" placeholder="Notes on autonomous…"></textarea>
+        </div>
+        <button class="i-btn" onclick="showTip('Autonomous','auton')">i</button>
+      </div>
+      <div class="map-container">
+        <div style="font-size:0.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.4rem">
+          Field Map <span style="font-weight:400;text-transform:none">— draw path &amp; stamp X for shooting spots</span>
+        </div>
+        <div class="map-tools">
+          <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">✏️ Draw</button>
+          <button class="tool-btn" id="toolX" onclick="setTool('x')">✕ Mark X</button>
+          <button class="tool-btn" id="toolErase" onclick="setTool('erase')">🧹 Erase</button>
+          <button class="tool-btn" onclick="clearCanvas()">🗑 Clear</button>
+        </div>
+        <canvas id="fieldMap" width="560" height="320"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOPPER & SCORING -->
+  <div class="section-card" id="sec-hopper">
+    <button class="section-toggle" onclick="toggleSection('sec-hopper')">
+      <span class="section-toggle-left"><span>⚙️</span> Hopper &amp; Scoring</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="hopperNotes" placeholder="Notes on hopper &amp; scoring…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Hopper & Scoring','hopper')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTAKE -->
+  <div class="section-card" id="sec-intake">
+    <button class="section-toggle" onclick="toggleSection('sec-intake')">
+      <span class="section-toggle-left"><span>🔄</span> Intake</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="intakeNotes" placeholder="Notes on intake…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Intake','intake')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDING -->
+  <div class="section-card" id="sec-feeding">
+    <button class="section-toggle" onclick="toggleSection('sec-feeding')">
+      <span class="section-toggle-left"><span>🤝</span> Feeding</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="feedingNotes" placeholder="Notes on feeding…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Feeding','feeding')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRIVER -->
+  <div class="section-card" id="sec-driver">
+    <button class="section-toggle" onclick="toggleSection('sec-driver')">
+      <span class="section-toggle-left"><span>🕹️</span> Driver</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="driverNotes" placeholder="Notes on the driver…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Driver','driver')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIMBING -->
+  <div class="section-card" id="sec-climbing">
+    <button class="section-toggle" onclick="toggleSection('sec-climbing')">
+      <span class="section-toggle-left"><span>🧗</span> Climbing</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="climbingNotes" placeholder="Notes on climbing…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Climbing','climbing')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEFENSE -->
+  <div class="section-card" id="sec-defense">
+    <button class="section-toggle" onclick="toggleSection('sec-defense')">
+      <span class="section-toggle-left"><span>🛡️</span> Defense</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="defenseNotes" placeholder="Notes on defense…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Defense','defense')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="section-card" id="sec-comments">
+    <button class="section-toggle" onclick="toggleSection('sec-comments')">
+      <span class="section-toggle-left"><span>💬</span> Comments</span>
+      <span class="chevron">▼</span>
+    </button>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-wrap"><textarea id="commentsNotes" placeholder="Anything else notable…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Comments','comments')">i</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-bar">
+    <button class="submit-btn" onclick="submitForm().catch(e=>showToast('Error: '+e.message))">Submit Scouting Data</button>
+  </div>
+</div>
+
+<!-- DATA PAGE -->
+<div id="dataPage" class="page">
+  <div class="data-view" id="dataView"></div>
+</div>
+
+<!-- TOOLTIP OVERLAY -->
+<div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTip(event)">
+  <div class="tooltip-box" onclick="event.stopPropagation()">
+    <button class="tooltip-close" onclick="closeTip()">✕</button>
+    <h4 id="tipTitle"></h4>
+    <ul id="tipList"></ul>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── GUIDED QUESTIONS ──────────────────────────────────────────
+const TIPS = {
+  auton: [
+    'What is their path? (draw on the map)',
+    'Where do they shoot from during auto? (mark an X on the map)',
+    'Do they climb during auto?'
+  ],
+  hopper: [
+    'Did the hopper stay intact the entire match? If no, when did it break?',
+    'Shooting accuracy — low, medium, or high?',
+    'Where do they shoot from? (mark X on the map — multiple spots if needed)',
+    'How much fuel was missed? (educated guess)',
+    'How much fuel was shot total? (educated guess)',
+    'Do they get jammed? Specify if possible.'
+  ],
+  intake: [
+    'Do they get back to their alliance in time to shoot during active shifts?'
+  ],
+  feeding: [
+    'Do they feed? Are they effective? (Feeding = intaking and shooting fuel to their alliance area from the neutral zone)',
+    'Do they herd? How effective? (Herding = pushing fuel with bumper under the trench)',
+    'Do they herd specifically to human players? How effective — low, medium, or high?'
+  ],
+  driver: [
+    'Was the driver smooth and confident, or did they seem unconfident/confused?',
+    'How good was their game sense when a problem occurred? (Note anything significant, e.g. switching to defense when their robot broke)',
+    'How did they adapt/act under pressure? Describe how they handled malfunctions or defensive pressure.'
+  ],
+  climbing: [
+    'Do they climb? If yes, what level?',
+    'Did they attempt to climb (even if unsuccessful)?',
+    'Around what time (match clock) did they start to climb?'
+  ],
+  defense: [
+    'Where did they go to play defense? (zone defense? describe location)',
+    'Did they target one specific robot? If yes, which team number?',
+    'Did they receive any penalties for pinning?'
+  ],
+  comments: [
+    'Anything else notable that you observed during the match?'
+  ]
+};
+
+// ── DARK MODE ─────────────────────────────────────────────────
+let dark = localStorage.getItem('darkMode') === '1';
+function applyDark() { document.body.classList.toggle('dark', dark); }
+function toggleDark() { dark = !dark; localStorage.setItem('darkMode', dark?'1':'0'); applyDark(); }
+applyDark();
+
+// ── OFFLINE ───────────────────────────────────────────────────
+function updateOnline() {
+  document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
+}
+window.addEventListener('online', () => { updateOnline(); flushPending(); });
+window.addEventListener('offline', updateOnline);
+updateOnline();
+
+// ── TABS ──────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(tab + 'Page').classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'data') renderData();
+}
+
+// ── SECTIONS ──────────────────────────────────────────────────
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── TOOLTIP ───────────────────────────────────────────────────
+function showTip(title, key) {
+  document.getElementById('tipTitle').textContent = title + ' — Guided Questions';
+  const ul = document.getElementById('tipList');
+  ul.innerHTML = TIPS[key].map(q => `<li>${q}</li>`).join('');
+  document.getElementById('tooltipOverlay').classList.add('show');
+}
+function closeTip(e) {
+  if (!e || e.target === document.getElementById('tooltipOverlay')) {
+    document.getElementById('tooltipOverlay').classList.remove('show');
+  }
+}
+
+// ── CANVAS MAP ────────────────────────────────────────────────
+const canvas = document.getElementById('fieldMap');
+const ctx = canvas.getContext('2d');
+let tool = 'draw', painting = false, lastX = 0, lastY = 0;
+
+// Off-screen canvas holds only user drawings
+const drawCanvas = document.createElement('canvas');
+drawCanvas.width = canvas.width; drawCanvas.height = canvas.height;
+const dctx = drawCanvas.getContext('2d');
+
+function compositeToMain() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (typeof drawField === 'function') drawField();
+  ctx.drawImage(drawCanvas, 0, 0);
+}
+
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const map = { draw: 'toolDraw', x: 'toolX', erase: 'toolErase' };
+  const el = document.getElementById(map[t]);
+  if (el) el.classList.add('active');
+}
+
+function drawField() {
+  const W = canvas.width, H = canvas.height;
+
+  // ── Field carpet (dark green-grey) ──
+  ctx.fillStyle = '#4a5240'; ctx.fillRect(0, 0, W, H);
+
+  // ── Guardrail border ──
+  ctx.strokeStyle = '#b0b8c8'; ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, W-4, H-4);
+
+  // Field is ~651in long x 317in wide. We map:
+  // X: left=red alliance wall, right=blue alliance wall
+  // Y: top/bottom = guardrails
+  // Scale factors
+  const fw = W - 8, fh = H - 8, ox = 4, oy = 4;
+  const sx = fw / 651, sy = fh / 317;
+
+  function fx(inch) { return ox + inch * sx; }
+  function fy(inch) { return oy + inch * sy; }
+  function fw2(inch) { return inch * sx; }
+  function fh2(inch) { return inch * sy; }
+
+  // ── CENTER LINE (at 325.6in) ──
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(fx(325.6), oy); ctx.lineTo(fx(325.6), oy+fh); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── ALLIANCE WALLS (left=red at x=0, right=blue at x=651) ──
+  ctx.fillStyle = '#cc2222'; ctx.fillRect(ox, oy, fw2(8), fh);
+  ctx.fillStyle = '#2233cc'; ctx.fillRect(fx(643), oy, fw2(8), fh);
+
+  // ── ROBOT STARTING LINES (at 158.6in from each wall) ──
+  ctx.strokeStyle = '#ff4444'; ctx.lineWidth = 1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(fx(158.6), oy); ctx.lineTo(fx(158.6), oy+fh); ctx.stroke();
+  ctx.strokeStyle = '#4466ff';
+  ctx.beginPath(); ctx.moveTo(fx(651-158.6), oy); ctx.lineTo(fx(651-158.6), oy+fh); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── HUBs (47x47in, centered at 158.6in from each wall, centered vertically at 158.5in = 317/2) ──
+  const hubCY = 317/2;
+  // Red HUB: centered at x=158.6, y=158.5
+  drawRect(fx(158.6-23.5), fy(hubCY-23.5), fw2(47), fh2(47), '#cc2222', '#ff6666', 2);
+  label(fx(158.6), fy(hubCY), '#fff', '8', 'HUB');
+
+  // Blue HUB: centered at x=651-158.6=492.4
+  drawRect(fx(492.4-23.5), fy(hubCY-23.5), fw2(47), fh2(47), '#2233cc', '#6699ff', 2);
+  label(fx(492.4), fy(hubCY), '#fff', '8', 'HUB');
+
+  // ── BUMPs (44.4in deep x-axis, 73in wide y-axis) — flank HUB above and below ──
+  // HUB centered at (hubX, hubCY), spans ±23.5in in y
+  // BUMPs sit directly above and below the HUB, touching its top/bottom edges
+  const bumpDepth = fw2(44.4), bumpH = fh2(73);
+  const bumpData = [
+    [158.6, hubCY - 23.5 - 73, 0], // red top
+    [158.6, hubCY + 23.5,       0], // red bottom
+    [492.4, hubCY - 23.5 - 73, 1], // blue top
+    [492.4, hubCY + 23.5,       1], // blue bottom
+  ];
+  bumpData.forEach(([bx, by, side]) => {
+    const col = side === 0 ? '#993311' : '#112299';
+    const stroke = side === 0 ? '#ff8844' : '#4466ff';
+    drawRect(fx(bx - 22.2), fy(by), bumpDepth, bumpH, col, stroke, 1.5);
+    label(fx(bx), fy(by + 36.5), '#ffcc88', '7', 'BUMP');
+  });
+
+  // ── TRENCHes — beside each BUMP, between BUMP and guardrail ──
+  // TRENCH: 65.65in wide (x-axis), 47in deep (y-axis), runs from guardrail to the BUMP
+  // Top trenches: y=0, bottom edge at guardrail top; span from outer edge to BUMP outer edge
+  // Each BUMP top edge is at y = hubCY-23.5-73, outer edge at y=0
+  // So trench fills from y=0 to y=(hubCY-23.5-73), capped at 47in deep from guardrail
+  // Trench is 65.65in wide centered on the HUB x
+  const trenchW = fw2(65.65), trenchH = fh2(47);
+  const trenchData = [
+    [158.6, 0,          0], // red top trench (from top guardrail down)
+    [158.6, 317 - 47,   0], // red bottom trench (from bottom guardrail up)
+    [492.4, 0,          1], // blue top
+    [492.4, 317 - 47,   1], // blue bottom
+  ];
+  trenchData.forEach(([tx, ty, side]) => {
+    const col = '#2a2a3a';
+    const stroke = '#8888aa';
+    drawRect(fx(tx - 32.825), fy(ty), trenchW, trenchH, col, stroke, 1.5);
+    label(fx(tx), fy(ty + 23.5), '#aaaacc', '7', 'TRENCH');
+  });
+
+  // ── DEPOTs (42in wide, 27in deep, along each ALLIANCE WALL) ──
+  // 1 per alliance, along alliance wall
+  drawRect(fx(8), fy(hubCY - 21), fw2(27), fh2(42), '#775500', '#e8a800', 1.5);
+  label(fx(8 + 13.5), fy(hubCY), '#ffe066', '7', 'DEPOT');
+  drawRect(fx(651-35), fy(hubCY - 21), fw2(27), fh2(42), '#775500', '#e8a800', 1.5);
+  label(fx(651-21.5), fy(hubCY), '#ffe066', '7', 'DEPOT');
+
+  // ── OUTPOSTs (connect guardrail to alliance wall, at each end) ──
+  // Outpost areas at corners. Show as small hatched rectangles.
+  [[ox, oy],[ox, oy+fh-fh2(71)],[ox+fw-fw2(71), oy],[ox+fw-fw2(71), oy+fh-fh2(71)]].forEach(([px,py], i) => {
+    ctx.fillStyle = i<2 ? '#661111' : '#111166';
+    ctx.fillRect(px, py, fw2(71), fh2(71));
+    ctx.strokeStyle = i<2 ? '#ff8888' : '#8888ff';
+    ctx.lineWidth = 1; ctx.strokeRect(px, py, fw2(71), fh2(71));
+  });
+  ctx.fillStyle = '#ffaaaa'; ctx.font = 'bold 7px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('OUTPOST', ox + fw2(35.5), oy + fh2(35.5) + 3);
+  ctx.fillText('OUTPOST', ox + fw2(35.5), oy + fh - fh2(35.5) + 3);
+  ctx.fillStyle = '#aaaaff';
+  ctx.fillText('OUTPOST', ox + fw - fw2(35.5), oy + fh2(35.5) + 3);
+  ctx.fillText('OUTPOST', ox + fw - fw2(35.5), oy + fh - fh2(35.5) + 3);
+
+  // ── TOWERs (49.25in wide, 45in deep, integrated into ALLIANCE WALL between DS2 & DS3) ──
+  // Alliance wall is 8in wide, tower extends 45in into field from it
+  // Vertically centered on alliance wall
+  drawRect(fx(8), fy(hubCY - 24.6), fw2(45), fh2(49.25), '#882211', '#ff4422', 2);
+  label(fx(8+22.5), fy(hubCY), '#ffcccc', '7', 'TOWER');
+  drawRect(fx(651-53), fy(hubCY - 24.6), fw2(45), fh2(49.25), '#112288', '#2244ff', 2);
+  label(fx(651-30.5), fy(hubCY), '#ccccff', '7', 'TOWER');
+
+  // ── NEUTRAL ZONE FUEL cluster ──
+  // 72in wide (x-axis), 206in tall (y-axis), centered on center line (x=325.6) and field height
+  const fuelW = fw2(72), fuelH = fh2(206);
+  const fuelX = fx(325.6) - fuelW / 2;
+  const fuelY = fy(hubCY) - fuelH / 2;
+  ctx.fillStyle = 'rgba(232,168,0,0.18)';
+  ctx.fillRect(fuelX, fuelY, fuelW, fuelH);
+  ctx.strokeStyle = '#e8a800'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+  ctx.strokeRect(fuelX, fuelY, fuelW, fuelH);
+  ctx.setLineDash([]);
+  // Dot grid: 6 cols x 14 rows
+  const dotR = 3.5, cols = 6, rows = 14;
+  const cellW = fuelW / cols, cellH = fuelH / rows;
+  ctx.fillStyle = '#e8a800';
+  for (let r=0; r<rows; r++) for (let c=0; c<cols; c++) {
+    ctx.beginPath();
+    ctx.arc(fuelX + (c+0.5)*cellW, fuelY + (r+0.5)*cellH, dotR, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // ── Alliance labels ──
+  ctx.fillStyle = '#ff8888'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText('RED', fx(80), oy + 14);
+  ctx.fillStyle = '#8899ff';
+  ctx.fillText('BLUE', fx(571), oy + 14);
+}
+
+function drawRect(x, y, w, h, fill, stroke, lw) {
+  ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.strokeRect(x, y, w, h);
+}
+function label(x, y, col, size, text) {
+  ctx.fillStyle = col; ctx.font = `bold ${size}px Segoe UI`; ctx.textAlign = 'center';
+  ctx.fillText(text, x, y + 3);
+}
+
+drawField();
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  const sx = canvas.width / r.width, sy = canvas.height / r.height;
+  const src = e.touches ? e.touches[0] : e;
+  return [(src.clientX - r.left) * sx, (src.clientY - r.top) * sy];
+}
+
+canvas.addEventListener('mousedown', e => { painting = true; [lastX, lastY] = getPos(e); if (tool==='x') stampX(...getPos(e)); });
+canvas.addEventListener('mousemove', e => { if (!painting) return; const [x,y] = getPos(e); if (tool==='draw') drawLine(x,y); else if (tool==='erase') erasePt(x,y); });
+canvas.addEventListener('mouseup', () => painting = false);
+canvas.addEventListener('mouseleave', () => painting = false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); painting = true; [lastX,lastY] = getPos(e); if (tool==='x') stampX(...getPos(e)); }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!painting) return; const [x,y] = getPos(e); if (tool==='draw') drawLine(x,y); else if (tool==='erase') erasePt(x,y); }, {passive:false});
+canvas.addEventListener('touchend', () => painting = false);
+
+function drawLine(x, y) {
+  dctx.strokeStyle = '#facc15'; dctx.lineWidth = 2.5; dctx.lineCap = 'round';
+  dctx.beginPath(); dctx.moveTo(lastX, lastY); dctx.lineTo(x, y); dctx.stroke();
+  compositeToMain();
+  [lastX, lastY] = [x, y];
+}
+function erasePt(x, y) {
+  dctx.clearRect(x - 14, y - 14, 28, 28);
+  compositeToMain();
+  [lastX, lastY] = [x, y];
+}
+function stampX(x, y) {
+  dctx.strokeStyle = '#f87171'; dctx.lineWidth = 2.5; dctx.lineCap = 'round';
+  const s = 9;
+  dctx.beginPath(); dctx.moveTo(x-s,y-s); dctx.lineTo(x+s,y+s); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(x+s,y-s); dctx.lineTo(x-s,y+s); dctx.stroke();
+  compositeToMain();
+}
+function clearCanvas() { dctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height); compositeToMain(); }
+function clearCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); drawField(); }
+
+// ── STORAGE ───────────────────────────────────────────────────
+const getStored   = () => { try { return JSON.parse(localStorage.getItem('scoutData')||'[]'); } catch { return []; } };
+const saveStored  = d => localStorage.setItem('scoutData', JSON.stringify(d));
+const getPending  = () => { try { return JSON.parse(localStorage.getItem('pendingData')||'[]'); } catch { return []; } };
+const savePending = d => localStorage.setItem('pendingData', JSON.stringify(d));
+const getDeleted  = () => { try { return JSON.parse(localStorage.getItem('deletedData')||'[]'); } catch { return []; } };
+const saveDeleted = d => localStorage.setItem('deletedData', JSON.stringify(d));
+
+function flushPending() {
+  const pending = getPending();
+  if (!pending.length || !navigator.onLine) return;
+  const stored = getStored();
+  pending.forEach(e => stored.push(e));
+  saveStored(stored); savePending([]);
+  showToast('📶 Offline data synced!');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────
+function collectForm() {
+  return {
+    id: Date.now(),
+    match: document.getElementById('matchNum').value.trim(),
+    team: document.getElementById('teamNum').value.trim(),
+    position: document.getElementById('alliancePos').value,
+    scouter: document.getElementById('scouterName').value.trim(),
+    auton: document.getElementById('autonNotes').value.trim(),
+    hopper: document.getElementById('hopperNotes').value.trim(),
+    intake: document.getElementById('intakeNotes').value.trim(),
+    feeding: document.getElementById('feedingNotes').value.trim(),
+    driver: document.getElementById('driverNotes').value.trim(),
+    climbing: document.getElementById('climbingNotes').value.trim(),
+    defense: document.getElementById('defenseNotes').value.trim(),
+    comments: document.getElementById('commentsNotes').value.trim(),
+    mapImg: canvas.toDataURL(),
+    timestamp: new Date().toLocaleString()
+  };
+}
+
+async function submitForm() {
+  const entry = collectForm();
+  if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
+
+  try {
+    if (navigator.onLine) {
+      const cloud = await cloudGet();
+      cloud.push(entry);
+      await cloudSave(cloud);
+      // Mirror locally
+      const stored = getStored(); stored.push(entry); saveStored(stored);
+      showToast('✅ Data submitted!');
+    } else {
+      const pending = getPending(); pending.push(entry); savePending(pending);
+      showToast('📥 Saved locally — will sync when online.');
+    }
+  } catch(err) {
+    // Fallback: save locally if cloud fails
+    const stored = getStored(); stored.push(entry); saveStored(stored);
+    showToast('✅ Saved locally.');
+  }
+  resetForm();
+}
+
+function resetForm() {
+  ['matchNum','teamNum','scouterName'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('alliancePos').value = '';
+  ['autonNotes','hopperNotes','intakeNotes','feedingNotes','driverNotes','climbingNotes','defenseNotes','commentsNotes'].forEach(id => document.getElementById(id).value = '');
+  clearCanvas();
+}
+
+// ── DATA VIEW ─────────────────────────────────────────────────
+const SEC_LABELS = {
+  position:'Position', scouter:'Scouter', auton:'Autonomous',
+  hopper:'Hopper & Scoring', intake:'Intake', feeding:'Feeding',
+  driver:'Driver', climbing:'Climbing', defense:'Defense', comments:'Comments'
+};
+
+async function renderData() {
+  const view = document.getElementById('dataView');
+  view.innerHTML = '<div class="empty-state">Loading data…</div>';
+
+  let cloud = [], deleted = [];
+  try {
+    [cloud, deleted] = await Promise.all([cloudGet(), cloudGetDeleted()]);
+  } catch {
+    cloud = getStored();
+    deleted = getDeleted();
+  }
+  const pending = getPending();
+  // Deduplicate by id
+  const seen = new Set();
+  const all = [...cloud, ...pending].filter(e => seen.has(e.id) ? false : seen.add(e.id));
+
+  let html = '';
+  if (!all.length) {
+    html += '<div class="empty-state">No data submitted yet.</div>';
+  } else {
+    const teams = {};
+    all.forEach(e => { const t = e.team||'Unknown'; if (!teams[t]) teams[t]=[]; teams[t].push(e); });
+    Object.keys(teams).sort().forEach(team => {
+      const entries = teams[team];
+      html += `<div class="team-card" id="teamcard-${team}">
+        <div class="team-header" onclick="toggleTeam('teamcard-${team}')">
+          <span>Team ${team} <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${entries.length} match${entries.length>1?'es':''})</span></span>
+          <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
+        </div><div class="team-body">`;
+      entries.forEach(e => {
+        const isPending = pending.find(p => p.id === e.id);
+        html += `<div class="match-entry">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong style="font-size:0.9rem;color:var(--accent)">Match ${e.match||'?'} ${isPending?'<span class="offline-badge" style="font-size:0.65rem">PENDING</span>':''}</strong>
+            <button class="del-btn" onclick="deleteEntry(${e.id})">Delete</button>
+          </div>
+          <div class="match-grid">`;
+        Object.keys(SEC_LABELS).forEach(k => {
+          if (e[k]) html += `<div class="match-item"><strong>${SEC_LABELS[k]}</strong>${e[k]}</div>`;
+        });
+        if (e.mapImg) html += `<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="${e.mapImg}" style="width:100%;border-radius:6px;margin-top:0.3rem"></div>`;
+        html += `</div></div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+
+  // ── Recently Deleted ──
+  html += `<div class="team-card" id="teamcard-deleted" style="margin-top:1rem;border-color:var(--red)">
+    <div class="team-header" onclick="toggleTeam('teamcard-deleted')" style="color:var(--red)">
+      <span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${deleted.length} item${deleted.length!==1?'s':''})</span></span>
+      <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
+    </div>
+    <div class="team-body">`;
+  if (!deleted.length) {
+    html += '<div style="padding:0.75rem 1rem;color:var(--subtext);font-size:0.85rem">No recently deleted entries.</div>';
+  } else {
+    deleted.forEach(e => {
+      html += `<div class="match-entry">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
+          <strong style="font-size:0.9rem;color:var(--subtext)">Team ${e.team||'?'} — Match ${e.match||'?'}</strong>
+          <span style="font-size:0.75rem;color:var(--subtext)">${e.deletedAt||''}</span>
+          <div style="display:flex;gap:0.4rem">
+            <button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry(${e.id})">Restore</button>
+            <button class="del-btn" onclick="permDeleteEntry(${e.id})">Delete Forever</button>
+          </div>
+        </div>
+        <div class="match-grid" style="margin-top:0.4rem">`;
+      Object.keys(SEC_LABELS).forEach(k => {
+        if (e[k]) html += `<div class="match-item"><strong>${SEC_LABELS[k]}</strong>${e[k]}</div>`;
+      });
+      html += `</div></div>`;
+    });
+  }
+  html += `</div></div>`;
+  view.innerHTML = html;
+}
+
+function toggleTeam(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+async function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  const cloud = await cloudGet();
+  const entry = cloud.find(e => e.id === id) || getPending().find(e => e.id === id);
+  if (entry) {
+    const deleted = await cloudGetDeleted();
+    deleted.unshift({ ...entry, deletedAt: new Date().toLocaleString() });
+    await cloudSaveDeleted(deleted.slice(0, 20));
+  }
+  await cloudSave(cloud.filter(e => e.id !== id));
+  saveStored(getStored().filter(e => e.id !== id));
+  savePending(getPending().filter(e => e.id !== id));
+  renderData();
+  showToast('🗑 Entry deleted. See Recently Deleted to restore.');
+}
+
+async function restoreEntry(id) {
+  const deleted = await cloudGetDeleted();
+  const entry = deleted.find(e => e.id === id);
+  if (!entry) return;
+  const { deletedAt, ...restored } = entry;
+  const cloud = await cloudGet();
+  cloud.push(restored);
+  await cloudSave(cloud);
+  await cloudSaveDeleted(deleted.filter(e => e.id !== id));
+  renderData();
+  showToast('♻️ Entry restored!');
+}
+
+async function permDeleteEntry(id) {
+  if (!confirm('Permanently delete this entry? This cannot be undone.')) return;
+  const deleted = await cloudGetDeleted();
+  await cloudSaveDeleted(deleted.filter(e => e.id !== id));
+  renderData();
+  showToast('🗑 Permanently deleted.');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+flushPending();
+</script>
+</body>
 </html>
