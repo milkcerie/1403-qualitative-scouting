@@ -483,6 +483,8 @@ async function cloudGet() {
       headers: { 'X-Master-Key': JSONBIN_API_KEY }
     });
     var json = await res.json();
+    console.log('cloudGet raw response:', JSON.stringify(json));
+    if (!json.record) return { entries:[], deleted:[] };
     return { entries: json.record.entries||[], deleted: json.record.deleted||[] };
   } catch(e) { console.warn('cloudGet failed', e); return { entries:[], deleted:[] }; }
 }
