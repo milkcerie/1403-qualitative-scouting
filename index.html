@@ -627,12 +627,18 @@ function collectForm() {
   };
 }
 
-function submitForm() {
+async function submitForm() {
   const entry = collectForm();
   if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
+
   if (navigator.onLine) {
+    // Save to cloud
+    const cloud = await cloudGet();
+    cloud.push(entry);
+    await cloudSave(cloud);
+    // Mirror locally
     const stored = getStored(); stored.push(entry); saveStored(stored);
-    showToast('✅ Data submitted!');
+    showToast('✅ Data submitted to cloud!');
   } else {
     const pending = getPending(); pending.push(entry); savePending(pending);
     showToast('📥 Saved locally — will sync when online.');
@@ -654,11 +660,18 @@ const SEC_LABELS = {
   driver:'Driver', climbing:'Climbing', defense:'Defense', comments:'Comments'
 };
 
-function renderData() {
-  const all = [...getStored(), ...getPending()];
+async function renderData() {
   const view = document.getElementById('dataView');
-  let html = '';
+  view.innerHTML = '<div class="empty-state">Loading cloud data…</div>';
 
+  // Merge cloud + local pending
+  const cloud = await cloudGet();
+  const pending = getPending();
+  // Deduplicate by id
+  const seen = new Set();
+  const all = [...cloud, ...pending].filter(e => seen.has(e.id) ? false : seen.add(e.id));
+
+  let html = '';
   if (!all.length) {
     html += '<div class="empty-state">No data submitted yet.</div>';
   } else {
@@ -672,10 +685,10 @@ function renderData() {
           <span style="font-size:0.85rem;color:var(--subtext)">▼</span>
         </div><div class="team-body">`;
       entries.forEach(e => {
-        const pending = getPending().find(p => p.id === e.id);
+        const isPending = pending.find(p => p.id === e.id);
         html += `<div class="match-entry">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <strong style="font-size:0.9rem;color:var(--accent)">Match ${e.match||'?'} ${pending?'<span class="offline-badge" style="font-size:0.65rem">PENDING</span>':''}</strong>
+            <strong style="font-size:0.9rem;color:var(--accent)">Match ${e.match||'?'} ${isPending?'<span class="offline-badge" style="font-size:0.65rem">PENDING</span>':''}</strong>
             <button class="del-btn" onclick="deleteEntry(${e.id})">Delete</button>
           </div>
           <div class="match-grid">`;
@@ -690,7 +703,7 @@ function renderData() {
   }
 
   // ── Recently Deleted ──
-  const deleted = getDeleted();
+  const deleted = await cloudGetDeleted();
   html += `<div class="team-card" id="teamcard-deleted" style="margin-top:1rem;border-color:var(--red)">
     <div class="team-header" onclick="toggleTeam('teamcard-deleted')" style="color:var(--red)">
       <span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${deleted.length} item${deleted.length!==1?'s':''})</span></span>
@@ -726,37 +739,39 @@ function toggleTeam(id) {
   if (el) el.classList.toggle('open');
 }
 
-function deleteEntry(id) {
+async function deleteEntry(id) {
   if (!confirm('Delete this entry?')) return;
-  // Move to recently deleted (keep last 20)
-  const entry = [...getStored(), ...getPending()].find(e => e.id === id);
+  const cloud = await cloudGet();
+  const entry = cloud.find(e => e.id === id) || getPending().find(e => e.id === id);
   if (entry) {
-    const deleted = getDeleted();
+    const deleted = await cloudGetDeleted();
     deleted.unshift({ ...entry, deletedAt: new Date().toLocaleString() });
-    saveDeleted(deleted.slice(0, 20));
+    await cloudSaveDeleted(deleted.slice(0, 20));
   }
+  await cloudSave(cloud.filter(e => e.id !== id));
   saveStored(getStored().filter(e => e.id !== id));
   savePending(getPending().filter(e => e.id !== id));
   renderData();
   showToast('🗑 Entry deleted. See Recently Deleted to restore.');
 }
 
-function restoreEntry(id) {
-  const deleted = getDeleted();
+async function restoreEntry(id) {
+  const deleted = await cloudGetDeleted();
   const entry = deleted.find(e => e.id === id);
   if (!entry) return;
   const { deletedAt, ...restored } = entry;
-  const stored = getStored();
-  stored.push(restored);
-  saveStored(stored);
-  saveDeleted(deleted.filter(e => e.id !== id));
+  const cloud = await cloudGet();
+  cloud.push(restored);
+  await cloudSave(cloud);
+  await cloudSaveDeleted(deleted.filter(e => e.id !== id));
   renderData();
   showToast('♻️ Entry restored!');
 }
 
-function permDeleteEntry(id) {
+async function permDeleteEntry(id) {
   if (!confirm('Permanently delete this entry? This cannot be undone.')) return;
-  saveDeleted(getDeleted().filter(e => e.id !== id));
+  const deleted = await cloudGetDeleted();
+  await cloudSaveDeleted(deleted.filter(e => e.id !== id));
   renderData();
   showToast('🗑 Permanently deleted.');
 }
