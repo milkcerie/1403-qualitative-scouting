@@ -662,10 +662,15 @@ const SEC_LABELS = {
 
 async function renderData() {
   const view = document.getElementById('dataView');
-  view.innerHTML = '<div class="empty-state">Loading cloud data…</div>';
+  view.innerHTML = '<div class="empty-state">Loading data…</div>';
 
-  // Merge cloud + local pending
-  const cloud = await cloudGet();
+  let cloud = [], deleted = [];
+  try {
+    [cloud, deleted] = await Promise.all([cloudGet(), cloudGetDeleted()]);
+  } catch {
+    cloud = getStored();
+    deleted = getDeleted();
+  }
   const pending = getPending();
   // Deduplicate by id
   const seen = new Set();
@@ -703,7 +708,6 @@ async function renderData() {
   }
 
   // ── Recently Deleted ──
-  const deleted = await cloudGetDeleted();
   html += `<div class="team-card" id="teamcard-deleted" style="margin-top:1rem;border-color:var(--red)">
     <div class="team-header" onclick="toggleTeam('teamcard-deleted')" style="color:var(--red)">
       <span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:0.85rem">(${deleted.length} item${deleted.length!==1?'s':''})</span></span>
