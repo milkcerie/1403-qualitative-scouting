@@ -467,12 +467,34 @@ function uploadAllLocal() {
   var local = getStored().concat(getPending());
   if (!local.length) { showToast('No local data to upload.'); return; }
   showToast('⬆️ Uploading…');
-  var promises = local.map(function(e) { return cloudAdd(e); });
-  Promise.all(promises).then(function() {
-    savePending([]);
-    showToast('✅ All local data uploaded to cloud!');
-    renderData();
-  }).catch(function(e) { showToast('❌ Upload failed.'); console.warn(e); });
+
+  // Strip map images to reduce payload size
+  var stripped = local.map(function(e) {
+    var copy = Object.assign({}, e);
+    delete copy.mapImg;
+    return copy;
+  });
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'setAll', data: { entries: stripped, deleted: [] } })
+  }).then(function(res) {
+    console.log('Upload status:', res.status);
+    return res.json();
+  }).then(function(json) {
+    console.log('Upload response:', JSON.stringify(json));
+    if (json.success) {
+      savePending([]);
+      showToast('✅ All local data uploaded!');
+      renderData();
+    } else {
+      showToast('❌ Upload failed: ' + (json.error || 'unknown error'));
+    }
+  }).catch(function(e) {
+    console.error('Upload error:', e);
+    showToast('❌ Upload failed: ' + e.message);
+  });
 }
 
 function uploadSingleEntry(id) {
