@@ -578,29 +578,30 @@ function collectForm() {
   };
 }
 
-async function submitForm() {
+function submitForm() {
   var entry = collectForm();
-  if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
-
-  // Always save locally first
-  var stored = getStored(); stored.push(entry); saveStored(stored);
-
-  if (!navigator.onLine) {
-    var pend = getPending(); pend.push(entry); savePending(pend);
-    showToast('📥 Saved locally — will sync when online.');
-    resetForm(); return;
+  if (!entry.match || !entry.team) {
+    showToast('⚠️ Match # and Team # are required.');
+    return;
   }
-  if (!hasKey()) { showToast('✅ Saved locally (no API key set).'); resetForm(); return; }
 
-  try {
-    var cloud = await cloudGet();
-    cloud.entries.push(entry);
-    var ok = await cloudSet(cloud);
-    showToast(ok ? '✅ Submitted & synced to cloud!' : '✅ Saved locally (cloud unavailable).');
-  } catch(e) {
-    showToast('✅ Saved locally (cloud error).');
-  }
+  // Save locally always
+  var stored = getStored();
+  stored.push(entry);
+  saveStored(stored);
+  showToast('✅ Saved locally!');
   resetForm();
+
+  // Try cloud in background — won't block or break submission
+  if (!navigator.onLine || !hasKey()) return;
+  cloudGet().then(function(cloud) {
+    cloud.entries.push(entry);
+    return cloudSet(cloud);
+  }).then(function(ok) {
+    if (ok) showToast('✅ Synced to cloud!');
+  }).catch(function(e) {
+    console.warn('Cloud sync failed:', e);
+  });
 }
 
 function resetForm() {
