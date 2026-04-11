@@ -44,8 +44,14 @@ export default async function handler(req, res) {
 
       // action: 'add' | 'delete' | 'restore' | 'permDelete' | 'setAll'
       if (action === 'setAll') {
-        // Full replace (for upload all local)
-        await kvSet(data);
+        // Merge with existing cloud data instead of replacing
+        const existing = await kvGet();
+        const seen = {};
+        existing.entries.forEach(function(e) { seen[e.id] = true; });
+        data.entries.forEach(function(e) {
+          if (!seen[e.id]) { existing.entries.push(e); seen[e.id] = true; }
+        });
+        await kvSet(existing);
         return res.status(200).json({ success: true });
       }
 
