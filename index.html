@@ -439,8 +439,13 @@ function submitForm() {
   var stored = getStored(); stored.push(entry); saveStored(stored);
   showToast('✅ Saved locally!');
   resetForm();
-  cloudAdd(entry).then(function(ok) {
-    if (ok) showToast('✅ Synced to cloud!');
+  var stripped = Object.assign({}, entry); delete stripped.mapImg;
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'add', entry: stripped })
+  }).then(function() {
+    showToast('✅ Synced to cloud!');
   }).catch(function(e) { console.warn('Cloud sync failed:', e); });
 }
 
@@ -456,8 +461,14 @@ function resetForm() {
 function flushPending() {
   var pending = getPending();
   if (!pending.length || !navigator.onLine) return;
-  var promises = pending.map(function(e) { return cloudAdd(e); });
-  Promise.all(promises).then(function() {
+  var stripped = pending.map(function(e) {
+    var copy = Object.assign({}, e); delete copy.mapImg; return copy;
+  });
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'setAll', data: { entries: stripped, deleted: [] } })
+  }).then(function() {
     savePending([]);
     showToast('📶 Offline data synced!');
   }).catch(function(e) { console.warn('flushPending failed', e); });
@@ -467,14 +478,9 @@ function uploadAllLocal() {
   var local = getStored().concat(getPending());
   if (!local.length) { showToast('No local data to upload.'); return; }
   showToast('⬆️ Uploading…');
-
-  // Strip map images to reduce payload size
   var stripped = local.map(function(e) {
-    var copy = Object.assign({}, e);
-    delete copy.mapImg;
-    return copy;
+    var copy = Object.assign({}, e); delete copy.mapImg; return copy;
   });
-
   fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -502,8 +508,14 @@ function uploadSingleEntry(id) {
   var entry = null;
   for (var i=0;i<all.length;i++) { if (all[i].id===id) { entry=all[i]; break; } }
   if (!entry) { showToast('Entry not found.'); return; }
-  cloudAdd(entry).then(function(ok) {
-    if (ok) {
+  var stripped = Object.assign({}, entry); delete stripped.mapImg;
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'add', entry: stripped })
+  }).then(function(res) { return res.json(); })
+  .then(function(json) {
+    if (json.success) {
       savePending(getPending().filter(function(e){return e.id!==id;}));
       showToast('✅ Uploaded to cloud!');
       renderData();
@@ -593,34 +605,45 @@ function deleteEntry(id) {
   saveStored(getStored().filter(function(e){return e.id!==id;}));
   savePending(getPending().filter(function(e){return e.id!==id;}));
   if (entry) {
-    cloudDelete(entry).then(function() { renderData(); showToast('🗑 Entry deleted.'); })
-      .catch(function(e) { console.warn('deleteEntry failed',e); renderData(); });
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', entry: { id: entry.id } })
+    }).then(function() { renderData(); showToast('🗑 Entry deleted.'); })
+    .catch(function(e) { console.warn('deleteEntry failed',e); renderData(); });
   } else {
     renderData(); showToast('🗑 Entry deleted.');
   }
 }
 
 function restoreEntry(id) {
-  cloudGet().then(function(cloud) {
-    var entry = null;
-    for (var i=0;i<cloud.deleted.length;i++) { if(cloud.deleted[i].id===id){entry=cloud.deleted[i];break;} }
-    if (!entry) { showToast('Entry not found.'); return; }
-    return cloudRestore(entry).then(function() {
-      var restored = Object.assign({}, entry); delete restored.deletedAt;
-      var s = getStored(); s.push(restored); saveStored(s);
-      renderData(); showToast('♻️ Entry restored!');
-    });
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'restore', entry: { id: id } })
+  }).then(function(res) { return res.json(); })
+  .then(function(json) {
+    if (json.success && json.data) {
+      var restored = null;
+      for (var i=0;i<json.data.deleted.length;i++) { } // already removed
+      // find in entries
+      for (var j=0;j<json.data.entries.length;j++) {
+        if (json.data.entries[j].id===id) { restored=json.data.entries[j]; break; }
+      }
+      if (restored) { var s=getStored(); s.push(restored); saveStored(s); }
+    }
+    renderData(); showToast('♻️ Entry restored!');
   }).catch(function(e) { console.warn('restoreEntry failed',e); });
 }
 
 function permDeleteEntry(id) {
   if (!confirm('Permanently delete? Cannot be undone.')) return;
-  cloudGet().then(function(cloud) {
-    var entry = null;
-    for (var i=0;i<cloud.deleted.length;i++) { if(cloud.deleted[i].id===id){entry=cloud.deleted[i];break;} }
-    if (!entry) return;
-    return cloudPermDelete(entry).then(function() { renderData(); showToast('🗑 Permanently deleted.'); });
-  }).catch(function(e) { console.warn('permDelete failed',e); });
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'permDelete', entry: { id: id } })
+  }).then(function() { renderData(); showToast('🗑 Permanently deleted.'); })
+  .catch(function(e) { console.warn('permDelete failed',e); });
 }
 
 // ── TOAST ──────────────────────────────────────────────────────
