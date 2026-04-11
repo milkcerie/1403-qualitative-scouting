@@ -5,13 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>1403 Qualitative Data</title>
 <style>
-  :root {
-    --bg:#f4f4f6;--card:#fff;--border:#dde1ea;--text:#1a1a2e;--subtext:#555;
-    --accent:#2563eb;--accent-hover:#1d4ed8;--red:#dc2626;--sh:#1e293b;
-    --ibg:#f8fafc;--shadow:0 2px 8px rgba(0,0,0,0.07);
-  }
-  .dark{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#f1f5f9;--subtext:#94a3b8;
-    --accent:#3b82f6;--accent-hover:#2563eb;--sh:#e2e8f0;--ibg:#0f172a;--shadow:0 2px 8px rgba(0,0,0,0.3);}
+  :root{--bg:#f4f4f6;--card:#fff;--border:#dde1ea;--text:#1a1a2e;--subtext:#555;--accent:#2563eb;--accent-hover:#1d4ed8;--red:#dc2626;--sh:#1e293b;--ibg:#f8fafc;--shadow:0 2px 8px rgba(0,0,0,0.07);}
+  .dark{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#f1f5f9;--subtext:#94a3b8;--accent:#3b82f6;--accent-hover:#2563eb;--sh:#e2e8f0;--ibg:#0f172a;--shadow:0 2px 8px rgba(0,0,0,0.3);}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;transition:background .2s,color .2s;}
   header{background:var(--card);border-bottom:2px solid var(--accent);padding:.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
@@ -56,7 +51,7 @@
   .tooltip-box li{font-size:.87rem;line-height:1.6;margin-bottom:.2rem;}
   .tooltip-close{position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--subtext);}
   .data-view{max-width:900px;margin:0 auto;padding:0 1rem 1rem;}
-  .bin-bar{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;margin-bottom:.75rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+  .action-bar{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;margin-bottom:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;}
   .team-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:.75rem;box-shadow:var(--shadow);overflow:hidden;}
   .team-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;font-weight:700;font-size:1rem;cursor:pointer;}
   .team-header:hover{background:var(--bg);}
@@ -96,7 +91,6 @@
   <button onclick="switchTab('data',this)">📊 Data</button>
 </nav>
 
-<!-- FORM PAGE -->
 <div id="formPage" class="page active">
   <div class="meta-row">
     <div class="meta-field"><label>Match #</label><input type="text" id="matchNum" placeholder="e.g. 42"></div>
@@ -114,29 +108,27 @@
 
   <div class="section-card" id="sec-auton">
     <button class="section-toggle" onclick="toggleSection('sec-auton')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>🤖</span> Autonomous</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🤖 Autonomous</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row" style="margin-bottom:.75rem">
         <div class="field-wrap"><textarea id="autonNotes" placeholder="Notes on autonomous…"></textarea></div>
         <button class="i-btn" onclick="showTip('Autonomous','auton')">i</button>
       </div>
-      <div>
-        <div style="font-size:.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem">Field Map <span style="font-weight:400;text-transform:none">— draw path &amp; stamp X for shooting spots</span></div>
-        <div class="map-tools">
-          <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">✏️ Draw</button>
-          <button class="tool-btn" id="toolX" onclick="setTool('x')">✕ Mark X</button>
-          <button class="tool-btn" id="toolErase" onclick="setTool('erase')">🧹 Erase</button>
-          <button class="tool-btn" onclick="clearCanvas()">🗑 Clear</button>
-        </div>
-        <canvas id="fieldMap" width="560" height="320"></canvas>
+      <div style="font-size:.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem">Field Map <span style="font-weight:400;text-transform:none">— draw path &amp; stamp X for shooting spots</span></div>
+      <div class="map-tools">
+        <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">✏️ Draw</button>
+        <button class="tool-btn" id="toolX" onclick="setTool('x')">✕ Mark X</button>
+        <button class="tool-btn" id="toolErase" onclick="setTool('erase')">🧹 Erase</button>
+        <button class="tool-btn" onclick="clearCanvas()">🗑 Clear</button>
       </div>
+      <canvas id="fieldMap" width="560" height="320"></canvas>
     </div>
   </div>
 
   <div class="section-card" id="sec-hopper">
     <button class="section-toggle" onclick="toggleSection('sec-hopper')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>⚙️</span> Hopper &amp; Scoring</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">⚙️ Hopper &amp; Scoring</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
@@ -148,7 +140,7 @@
 
   <div class="section-card" id="sec-intake">
     <button class="section-toggle" onclick="toggleSection('sec-intake')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>🔄</span> Intake</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🔄 Intake</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
@@ -160,7 +152,7 @@
 
   <div class="section-card" id="sec-feeding">
     <button class="section-toggle" onclick="toggleSection('sec-feeding')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>🤝</span> Feeding</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🤝 Feeding</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
@@ -172,7 +164,7 @@
 
   <div class="section-card" id="sec-driver">
     <button class="section-toggle" onclick="toggleSection('sec-driver')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>🕹️</span> Driver</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🕹️ Driver</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
@@ -184,7 +176,7 @@
 
   <div class="section-card" id="sec-climbing">
     <button class="section-toggle" onclick="toggleSection('sec-climbing')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>🧗</span> Climbing</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🧗 Climbing</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
@@ -196,7 +188,7 @@
 
   <div class="section-card" id="sec-defense">
     <button class="section-toggle" onclick="toggleSection('sec-defense')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>🛡️</span> Defense</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🛡️ Defense</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
@@ -208,7 +200,7 @@
 
   <div class="section-card" id="sec-comments">
     <button class="section-toggle" onclick="toggleSection('sec-comments')">
-      <span style="display:flex;align-items:center;gap:.6rem"><span>💬</span> Comments</span><span class="chevron">▼</span>
+      <span style="display:flex;align-items:center;gap:.6rem">💬 Comments</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
@@ -223,17 +215,16 @@
   </div>
 </div>
 
-<!-- DATA PAGE -->
 <div id="dataPage" class="page">
   <div class="data-view">
-    <div class="bin-bar">
+    <div class="action-bar">
       <button onclick="uploadAllLocal()" style="padding:.45rem 1rem;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">⬆️ Upload All Local</button>
+      <button onclick="renderData()" style="padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">🔄 Refresh</button>
     </div>
     <div id="dataView"></div>
   </div>
 </div>
 
-<!-- TOOLTIP -->
 <div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTip(event)">
   <div class="tooltip-box" onclick="event.stopPropagation()">
     <button class="tooltip-close" onclick="closeTip()">✕</button>
@@ -245,31 +236,54 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── CONFIG ─────────────────────────────────────────────────────
-// Replace PASTE_YOUR_KEY_HERE with your JSONBin Master Key from jsonbin.io
-const JSONBIN_API_KEY = '$2a$10$8bjemt0SrryO7VQbUNqNIutgS/BS/DNXubyCzw024H2TvrnFBtBXm';
-let activeBinId = localStorage.getItem('1403_binId') || '';
+// ── API ────────────────────────────────────────────────────────
+var API_URL = '/api/data';
+
+async function cloudGet() {
+  try {
+    var res = await fetch(API_URL);
+    var json = await res.json();
+    return { entries: json.entries||[], deleted: json.deleted||[] };
+  } catch(e) {
+    console.warn('cloudGet failed', e);
+    return { entries:[], deleted:[] };
+  }
+}
+
+async function cloudSet(data) {
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return true;
+  } catch(e) {
+    console.warn('cloudSet failed', e);
+    return false;
+  }
+}
 
 // ── TIPS ───────────────────────────────────────────────────────
-const TIPS = {
-  auton:    ['What is their path? (draw on the map)', 'Where do they shoot from during auto? (mark an X on the map)', 'Do they climb during auto?'],
-  hopper:   ['Did the hopper stay intact the entire match? If no, when did it break?', 'Shooting accuracy — low, medium, or high?', 'Where do they shoot from? (mark X on the map)', 'How much fuel was missed? (educated guess)', 'How much fuel was shot total? (educated guess)', 'Do they get jammed? Specify if possible.'],
+var TIPS = {
+  auton:    ['What is their path? (draw on the map)','Where do they shoot from during auto? (mark an X on the map)','Do they climb during auto?'],
+  hopper:   ['Did the hopper stay intact the entire match? If no, when did it break?','Shooting accuracy — low, medium, or high?','Where do they shoot from? (mark X on the map)','How much fuel was missed? (educated guess)','How much fuel was shot total? (educated guess)','Do they get jammed? Specify if possible.'],
   intake:   ['Do they get back to their alliance in time to shoot during active shifts?'],
-  feeding:  ['Do they feed? Are they effective? (Feeding = intaking and shooting fuel to alliance area from neutral zone)', 'Do they herd? How effective? (Herding = pushing fuel with bumper under the trench)', 'Do they herd specifically to human players? How effective — low, medium, or high?'],
-  driver:   ['Was the driver smooth and confident, or unconfident/confused?', 'How good was their game sense when a problem occurred?', 'How did they adapt/act under pressure?'],
-  climbing: ['Do they climb? If yes, what level?', 'Did they attempt to climb (even if unsuccessful)?', 'Around what time (match clock) did they start to climb?'],
-  defense:  ['Where did they go to play defense? (zone? describe location)', 'Did they target one specific robot? If yes, which team number?', 'Did they receive any penalties for pinning?'],
+  feeding:  ['Do they feed? Are they effective? (Feeding = intaking and shooting fuel to alliance area from neutral zone)','Do they herd? How effective? (Herding = pushing fuel with bumper under the trench)','Do they herd specifically to human players? How effective — low, medium, or high?'],
+  driver:   ['Was the driver smooth and confident, or unconfident/confused?','How good was their game sense when a problem occurred?','How did they adapt/act under pressure?'],
+  climbing: ['Do they climb? If yes, what level?','Did they attempt to climb (even if unsuccessful)?','Around what time (match clock) did they start to climb?'],
+  defense:  ['Where did they go to play defense? (zone? describe location)','Did they target one specific robot? If yes, which team number?','Did they receive any penalties for pinning?'],
   comments: ['Anything else notable that you observed during the match?']
 };
 
-const SEC_LABELS = {
+var SEC_LABELS = {
   position:'Position', scouter:'Scouter', auton:'Autonomous',
   hopper:'Hopper & Scoring', intake:'Intake', feeding:'Feeding',
   driver:'Driver', climbing:'Climbing', defense:'Defense', comments:'Comments'
 };
 
 // ── DARK MODE ──────────────────────────────────────────────────
-let dark = localStorage.getItem('darkMode') === '1';
+var dark = localStorage.getItem('darkMode') === '1';
 function applyDark() { document.body.classList.toggle('dark', dark); }
 function toggleDark() { dark = !dark; localStorage.setItem('darkMode', dark?'1':'0'); applyDark(); }
 applyDark();
@@ -278,22 +292,17 @@ applyDark();
 function updateOnline() {
   document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
 }
-window.addEventListener('online', () => { updateOnline(); initBin();
-flushPending(); });
+window.addEventListener('online', function() { updateOnline(); flushPending(); });
 window.addEventListener('offline', updateOnline);
 updateOnline();
 
 // ── TABS ───────────────────────────────────────────────────────
 function switchTab(tab, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById(tab + 'Page').classList.add('active');
   btn.classList.add('active');
-  if (tab === 'data') {
-    const el = document.getElementById('binIdInput');
-    if (el && activeBinId) el.value = activeBinId;
-    renderData();
-  }
+  if (tab === 'data') renderData();
 }
 
 function toggleSection(id) { document.getElementById(id).classList.toggle('open'); }
@@ -301,7 +310,7 @@ function toggleSection(id) { document.getElementById(id).classList.toggle('open'
 // ── TOOLTIP ────────────────────────────────────────────────────
 function showTip(title, key) {
   document.getElementById('tipTitle').textContent = title + ' — Guided Questions';
-  document.getElementById('tipList').innerHTML = TIPS[key].map(q => '<li>' + q + '</li>').join('');
+  document.getElementById('tipList').innerHTML = TIPS[key].map(function(q) { return '<li>' + q + '</li>'; }).join('');
   document.getElementById('tooltipOverlay').classList.add('show');
 }
 function closeTip(e) {
@@ -311,22 +320,18 @@ function closeTip(e) {
 }
 
 // ── CANVAS ─────────────────────────────────────────────────────
-const canvas = document.getElementById('fieldMap');
-const ctx = canvas.getContext('2d');
-let tool = 'draw', painting = false, lastX = 0, lastY = 0;
-const drawCanvas = document.createElement('canvas');
+var canvas = document.getElementById('fieldMap');
+var ctx = canvas.getContext('2d');
+var tool = 'draw', painting = false, lastX = 0, lastY = 0;
+var drawCanvas = document.createElement('canvas');
 drawCanvas.width = canvas.width; drawCanvas.height = canvas.height;
-const dctx = drawCanvas.getContext('2d');
+var dctx = drawCanvas.getContext('2d');
 
-function compositeToMain() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawField();
-  ctx.drawImage(drawCanvas, 0, 0);
-}
+function compositeToMain() { ctx.clearRect(0,0,canvas.width,canvas.height); drawField(); ctx.drawImage(drawCanvas,0,0); }
 
 function setTool(t) {
   tool = t;
-  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tool-btn').forEach(function(b) { b.classList.remove('active'); });
   var map = { draw:'toolDraw', x:'toolX', erase:'toolErase' };
   var el = document.getElementById(map[t]);
   if (el) el.classList.add('active');
@@ -334,112 +339,61 @@ function setTool(t) {
 
 function drawField() {
   var W = canvas.width, H = canvas.height;
-  ctx.fillStyle = '#4a5240'; ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = '#b0b8c8'; ctx.lineWidth = 4; ctx.strokeRect(2, 2, W-4, H-4);
+  ctx.fillStyle = '#4a5240'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle = '#b0b8c8'; ctx.lineWidth = 4; ctx.strokeRect(2,2,W-4,H-4);
   var fw = W-8, fh = H-8, ox = 4, oy = 4;
   var sx = fw/651, sy = fh/317;
-  function fx(i) { return ox + i*sx; }
-  function fy(i) { return oy + i*sy; }
-  function fw2(i) { return i*sx; }
-  function fh2(i) { return i*sy; }
-
-  // Center line
+  function fx(i){return ox+i*sx;} function fy(i){return oy+i*sy;}
+  function fw2(i){return i*sx;} function fh2(i){return i*sy;}
   ctx.strokeStyle='#ffffff'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
   ctx.beginPath(); ctx.moveTo(fx(325.6),oy); ctx.lineTo(fx(325.6),oy+fh); ctx.stroke();
   ctx.setLineDash([]);
-
-  // Alliance walls
   ctx.fillStyle='#cc2222'; ctx.fillRect(ox,oy,fw2(8),fh);
   ctx.fillStyle='#2233cc'; ctx.fillRect(fx(643),oy,fw2(8),fh);
-
-  // Starting lines
   ctx.strokeStyle='#ff4444'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
   ctx.beginPath(); ctx.moveTo(fx(158.6),oy); ctx.lineTo(fx(158.6),oy+fh); ctx.stroke();
   ctx.strokeStyle='#4466ff';
   ctx.beginPath(); ctx.moveTo(fx(492.4),oy); ctx.lineTo(fx(492.4),oy+fh); ctx.stroke();
   ctx.setLineDash([]);
-
   var hubCY = 317/2;
-
-  // HUBs
-  rct(fx(158.6-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#cc2222','#ff6666',2);
-  lbl(fx(158.6),fy(hubCY),'#fff','8','HUB');
-  rct(fx(492.4-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#2233cc','#6699ff',2);
-  lbl(fx(492.4),fy(hubCY),'#fff','8','HUB');
-
-  // BUMPs
-  var bd=fw2(44.4), bh=fh2(73);
-  [[158.6,hubCY-23.5-73,0],[158.6,hubCY+23.5,0],[492.4,hubCY-23.5-73,1],[492.4,hubCY+23.5,1]].forEach(function(a) {
+  rct(fx(158.6-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#cc2222','#ff6666',2); lbl(fx(158.6),fy(hubCY),'#fff','8','HUB');
+  rct(fx(492.4-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#2233cc','#6699ff',2); lbl(fx(492.4),fy(hubCY),'#fff','8','HUB');
+  var bd=fw2(44.4),bh=fh2(73);
+  [[158.6,hubCY-23.5-73,0],[158.6,hubCY+23.5,0],[492.4,hubCY-23.5-73,1],[492.4,hubCY+23.5,1]].forEach(function(a){
     rct(fx(a[0]-22.2),fy(a[1]),bd,bh,a[2]?'#112299':'#993311',a[2]?'#4466ff':'#ff8844',1.5);
     lbl(fx(a[0]),fy(a[1]+36.5),'#ffcc88','7','BUMP');
   });
-
-  // TRENCHes
-  var tw=fw2(65.65), th=fh2(47);
-  [[158.6,0],[158.6,317-47],[492.4,0],[492.4,317-47]].forEach(function(a) {
+  var tw=fw2(65.65),th=fh2(47);
+  [[158.6,0],[158.6,317-47],[492.4,0],[492.4,317-47]].forEach(function(a){
     rct(fx(a[0]-32.825),fy(a[1]),tw,th,'#2a2a3a','#8888aa',1.5);
     lbl(fx(a[0]),fy(a[1]+23.5),'#aaaacc','7','TRENCH');
   });
-
-  // DEPOTs
-  rct(fx(8),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5);
-  lbl(fx(8+13.5),fy(hubCY),'#ffe066','7','DEPOT');
-  rct(fx(651-35),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5);
-  lbl(fx(651-21.5),fy(hubCY),'#ffe066','7','DEPOT');
-
-  // OUTPOSTs
-  [[ox,oy],[ox,oy+fh-fh2(71)],[ox+fw-fw2(71),oy],[ox+fw-fw2(71),oy+fh-fh2(71)]].forEach(function(a,i) {
+  rct(fx(8),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5); lbl(fx(8+13.5),fy(hubCY),'#ffe066','7','DEPOT');
+  rct(fx(651-35),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5); lbl(fx(651-21.5),fy(hubCY),'#ffe066','7','DEPOT');
+  [[ox,oy],[ox,oy+fh-fh2(71)],[ox+fw-fw2(71),oy],[ox+fw-fw2(71),oy+fh-fh2(71)]].forEach(function(a,i){
     ctx.fillStyle=i<2?'#661111':'#111166'; ctx.fillRect(a[0],a[1],fw2(71),fh2(71));
     ctx.strokeStyle=i<2?'#ff8888':'#8888ff'; ctx.lineWidth=1; ctx.strokeRect(a[0],a[1],fw2(71),fh2(71));
   });
   ctx.fillStyle='#ffaaaa'; ctx.font='bold 7px Segoe UI'; ctx.textAlign='center';
-  ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh2(35.5)+3);
-  ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh-fh2(35.5)+3);
+  ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh2(35.5)+3); ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh-fh2(35.5)+3);
   ctx.fillStyle='#aaaaff';
-  ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh2(35.5)+3);
-  ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh-fh2(35.5)+3);
-
-  // TOWERs
-  rct(fx(8),fy(hubCY-24.6),fw2(45),fh2(49.25),'#882211','#ff4422',2);
-  lbl(fx(8+22.5),fy(hubCY),'#ffcccc','7','TOWER');
-  rct(fx(651-53),fy(hubCY-24.6),fw2(45),fh2(49.25),'#112288','#2244ff',2);
-  lbl(fx(651-30.5),fy(hubCY),'#ccccff','7','TOWER');
-
-  // Fuel
-  var fuelW=fw2(72), fuelH=fh2(206);
-  var fuelX=fx(325.6)-fuelW/2, fuelY=fy(hubCY)-fuelH/2;
+  ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh2(35.5)+3); ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh-fh2(35.5)+3);
+  rct(fx(8),fy(hubCY-24.6),fw2(45),fh2(49.25),'#882211','#ff4422',2); lbl(fx(8+22.5),fy(hubCY),'#ffcccc','7','TOWER');
+  rct(fx(651-53),fy(hubCY-24.6),fw2(45),fh2(49.25),'#112288','#2244ff',2); lbl(fx(651-30.5),fy(hubCY),'#ccccff','7','TOWER');
+  var fuelW=fw2(72),fuelH=fh2(206),fuelX=fx(325.6)-fw2(72)/2,fuelY=fy(hubCY)-fh2(206)/2;
   ctx.fillStyle='rgba(232,168,0,0.18)'; ctx.fillRect(fuelX,fuelY,fuelW,fuelH);
-  ctx.strokeStyle='#e8a800'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
-  ctx.strokeRect(fuelX,fuelY,fuelW,fuelH); ctx.setLineDash([]);
+  ctx.strokeStyle='#e8a800'; ctx.lineWidth=1; ctx.setLineDash([3,3]); ctx.strokeRect(fuelX,fuelY,fuelW,fuelH); ctx.setLineDash([]);
   ctx.fillStyle='#e8a800';
-  var cols=6,rows=14,cW=fuelW/cols,cH=fuelH/rows;
-  for (var r=0;r<rows;r++) {
-    for (var c=0;c<cols;c++) {
-      ctx.beginPath(); ctx.arc(fuelX+(c+0.5)*cW,fuelY+(r+0.5)*cH,3.5,0,Math.PI*2); ctx.fill();
-    }
-  }
-
-  // Labels
+  for(var r=0;r<14;r++) for(var c=0;c<6;c++){ctx.beginPath();ctx.arc(fuelX+(c+0.5)*(fuelW/6),fuelY+(r+0.5)*(fuelH/14),3.5,0,Math.PI*2);ctx.fill();}
   ctx.fillStyle='#ff8888'; ctx.font='bold 10px Segoe UI'; ctx.textAlign='center';
-  ctx.fillText('RED',fx(80),oy+14);
-  ctx.fillStyle='#8899ff'; ctx.fillText('BLUE',fx(571),oy+14);
+  ctx.fillText('RED',fx(80),oy+14); ctx.fillStyle='#8899ff'; ctx.fillText('BLUE',fx(571),oy+14);
 }
 
-function rct(x,y,w,h,fill,stroke,lw) {
-  ctx.fillStyle=fill; ctx.fillRect(x,y,w,h);
-  ctx.strokeStyle=stroke; ctx.lineWidth=lw; ctx.strokeRect(x,y,w,h);
-}
-function lbl(x,y,col,size,text) {
-  ctx.fillStyle=col; ctx.font='bold '+size+'px Segoe UI'; ctx.textAlign='center'; ctx.fillText(text,x,y+3);
-}
-
+function rct(x,y,w,h,f,s,lw){ctx.fillStyle=f;ctx.fillRect(x,y,w,h);ctx.strokeStyle=s;ctx.lineWidth=lw;ctx.strokeRect(x,y,w,h);}
+function lbl(x,y,c,sz,t){ctx.fillStyle=c;ctx.font='bold '+sz+'px Segoe UI';ctx.textAlign='center';ctx.fillText(t,x,y+3);}
 drawField();
 
-function getPos(e) {
-  var r=canvas.getBoundingClientRect(), sx=canvas.width/r.width, sy=canvas.height/r.height;
-  var s=e.touches?e.touches[0]:e;
-  return [(s.clientX-r.left)*sx,(s.clientY-r.top)*sy];
-}
+function getPos(e){var r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height,s=e.touches?e.touches[0]:e;return[(s.clientX-r.left)*sx,(s.clientY-r.top)*sy];}
 canvas.addEventListener('mousedown',function(e){painting=true;var p=getPos(e);lastX=p[0];lastY=p[1];if(tool==='x')stampX(p[0],p[1]);});
 canvas.addEventListener('mousemove',function(e){if(!painting)return;var p=getPos(e);if(tool==='draw')drawLine(p[0],p[1]);else if(tool==='erase')erasePt(p[0],p[1]);});
 canvas.addEventListener('mouseup',function(){painting=false;});
@@ -447,114 +401,16 @@ canvas.addEventListener('mouseleave',function(){painting=false;});
 canvas.addEventListener('touchstart',function(e){e.preventDefault();painting=true;var p=getPos(e);lastX=p[0];lastY=p[1];if(tool==='x')stampX(p[0],p[1]);},{passive:false});
 canvas.addEventListener('touchmove',function(e){e.preventDefault();if(!painting)return;var p=getPos(e);if(tool==='draw')drawLine(p[0],p[1]);else if(tool==='erase')erasePt(p[0],p[1]);},{passive:false});
 canvas.addEventListener('touchend',function(){painting=false;});
-
-function drawLine(x,y) {
-  dctx.strokeStyle='#facc15';dctx.lineWidth=2.5;dctx.lineCap='round';
-  dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(x,y);dctx.stroke();
-  compositeToMain(); lastX=x; lastY=y;
-}
-function erasePt(x,y) {
-  dctx.clearRect(x-14,y-14,28,28); compositeToMain(); lastX=x; lastY=y;
-}
-function stampX(x,y) {
-  dctx.strokeStyle='#f87171';dctx.lineWidth=2.5;dctx.lineCap='round';
-  dctx.beginPath();dctx.moveTo(x-9,y-9);dctx.lineTo(x+9,y+9);dctx.stroke();
-  dctx.beginPath();dctx.moveTo(x+9,y-9);dctx.lineTo(x-9,y+9);dctx.stroke();
-  compositeToMain();
-}
-function clearCanvas() { dctx.clearRect(0,0,drawCanvas.width,drawCanvas.height); compositeToMain(); }
+function drawLine(x,y){dctx.strokeStyle='#facc15';dctx.lineWidth=2.5;dctx.lineCap='round';dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(x,y);dctx.stroke();compositeToMain();lastX=x;lastY=y;}
+function erasePt(x,y){dctx.clearRect(x-14,y-14,28,28);compositeToMain();lastX=x;lastY=y;}
+function stampX(x,y){dctx.strokeStyle='#f87171';dctx.lineWidth=2.5;dctx.lineCap='round';dctx.beginPath();dctx.moveTo(x-9,y-9);dctx.lineTo(x+9,y+9);dctx.stroke();dctx.beginPath();dctx.moveTo(x+9,y-9);dctx.lineTo(x-9,y+9);dctx.stroke();compositeToMain();}
+function clearCanvas(){dctx.clearRect(0,0,drawCanvas.width,drawCanvas.height);compositeToMain();}
 
 // ── LOCAL STORAGE ──────────────────────────────────────────────
-function getStored()   { try { return JSON.parse(localStorage.getItem('scoutData')||'[]'); } catch(e) { return []; } }
-function saveStored(d) { localStorage.setItem('scoutData', JSON.stringify(d)); }
-function getPending()  { try { return JSON.parse(localStorage.getItem('pendingData')||'[]'); } catch(e) { return []; } }
-function savePending(d){ localStorage.setItem('pendingData', JSON.stringify(d)); }
-
-// ── JSONBIN ────────────────────────────────────────────────────
-function hasKey() { return JSONBIN_API_KEY && JSONBIN_API_KEY !== 'PASTE_YOUR_KEY_HERE'; }
-
-async function cloudGet() {
-  if (!activeBinId || !hasKey()) return { entries:[], deleted:[] };
-  try {
-    var res = await fetch('https://api.jsonbin.io/v3/b/' + activeBinId + '/latest', {
-      headers: { 'X-Master-Key': JSONBIN_API_KEY }
-    });
-    var json = await res.json();
-    console.log('cloudGet raw response:', JSON.stringify(json));
-    if (!json.record) return { entries:[], deleted:[] };
-    return { entries: json.record.entries||[], deleted: json.record.deleted||[] };
-  } catch(e) { console.warn('cloudGet failed', e); return { entries:[], deleted:[] }; }
-}
-
-async function cloudSet(data) {
-  if (!hasKey()) return false;
-  try {
-    if (!activeBinId) {
-      var res = await fetch('https://api.jsonbin.io/v3/b', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY,'X-Bin-Name':'1403-scouting','X-Bin-Private':'false' },
-        body: JSON.stringify(data)
-      });
-      var json = await res.json();
-      activeBinId = (json.metadata && json.metadata.id) || '';
-      if (activeBinId) localStorage.setItem('1403_binId', activeBinId);
-    } else {
-      await fetch('https://api.jsonbin.io/v3/b/' + activeBinId, {
-        method: 'PUT',
-        headers: { 'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY },
-        body: JSON.stringify(data)
-      });
-    }
-    return true;
-  } catch(e) { console.warn('cloudSet failed', e); return false; }
-}
-
-// ── BIN ID ─────────────────────────────────────────────────────
-function saveBinId() {
-  var input = document.getElementById('binIdInput').value.trim();
-  if (!input) { showToast('⚠️ Please paste a bin ID first.'); return; }
-  activeBinId = input;
-  localStorage.setItem('1403_binId', input);
-  showToast('✅ Connected to shared bin!');
-  renderData();
-}
-
-// ── UPLOAD ALL LOCAL ───────────────────────────────────────────
-async function uploadAllLocal() {
-  if (!activeBinId) { showToast('⚠️ Connect to a bin ID first.'); return; }
-  if (!hasKey()) { showToast('⚠️ No API key set.'); return; }
-  var local = getStored().concat(getPending());
-  if (!local.length) { showToast('No local data to upload.'); return; }
-  showToast('⬆️ Uploading…');
-  try {
-    var cloud = await cloudGet();
-    var seen = {};
-    cloud.entries.forEach(function(e) { seen[e.id] = true; });
-    var added = 0;
-    local.forEach(function(e) { if (!seen[e.id]) { cloud.entries.push(e); seen[e.id]=true; added++; } });
-    await cloudSet(cloud);
-    savePending([]);
-    showToast('✅ Uploaded ' + added + ' new entr' + (added!==1?'ies':'y') + ' to cloud!');
-    renderData();
-  } catch(e) { showToast('❌ Upload failed. Check your connection.'); console.warn(e); }
-}
-
-async function uploadSingleEntry(id) {
-  if (!activeBinId) { showToast('⚠️ Connect to a bin ID first.'); return; }
-  var all = getStored().concat(getPending());
-  var entry = null;
-  for (var i=0;i<all.length;i++) { if (all[i].id===id) { entry=all[i]; break; } }
-  if (!entry) { showToast('Entry not found.'); return; }
-  try {
-    var cloud = await cloudGet();
-    for (var j=0;j<cloud.entries.length;j++) { if (cloud.entries[j].id===id) { showToast('Already in cloud.'); return; } }
-    cloud.entries.push(entry);
-    await cloudSet(cloud);
-    savePending(getPending().filter(function(e){return e.id!==id;}));
-    showToast('✅ Entry uploaded to cloud!');
-    renderData();
-  } catch(e) { showToast('❌ Upload failed.'); console.warn(e); }
-}
+function getStored(){try{return JSON.parse(localStorage.getItem('scoutData')||'[]');}catch(e){return[];}}
+function saveStored(d){localStorage.setItem('scoutData',JSON.stringify(d));}
+function getPending(){try{return JSON.parse(localStorage.getItem('pendingData')||'[]');}catch(e){return[];}}
+function savePending(d){localStorage.setItem('pendingData',JSON.stringify(d));}
 
 // ── SUBMIT ─────────────────────────────────────────────────────
 function collectForm() {
@@ -579,188 +435,194 @@ function collectForm() {
 
 function submitForm() {
   var entry = collectForm();
-  if (!entry.match || !entry.team) {
-    showToast('⚠️ Match # and Team # are required.');
-    return;
-  }
-
-  // Save locally always
-  var stored = getStored();
-  stored.push(entry);
-  saveStored(stored);
+  if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
+  var stored = getStored(); stored.push(entry); saveStored(stored);
   showToast('✅ Saved locally!');
   resetForm();
-
-  // Try cloud in background — won't block or break submission
-  if (!navigator.onLine || !hasKey()) return;
   cloudGet().then(function(cloud) {
     cloud.entries.push(entry);
     return cloudSet(cloud);
   }).then(function(ok) {
     if (ok) showToast('✅ Synced to cloud!');
-  }).catch(function(e) {
-    console.warn('Cloud sync failed:', e);
-  });
+  }).catch(function(e) { console.warn('Cloud sync failed:', e); });
 }
 
 function resetForm() {
   ['matchNum','teamNum','scouterName','autonNotes','hopperNotes','intakeNotes',
-   'feedingNotes','driverNotes','climbingNotes','defenseNotes','commentsNotes'].forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.value = '';
+   'feedingNotes','driverNotes','climbingNotes','defenseNotes','commentsNotes'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
   });
-  document.getElementById('alliancePos').value = '';
+  document.getElementById('alliancePos').value='';
   clearCanvas();
 }
 
-async function flushPending() {
+function flushPending() {
   var pending = getPending();
-  if (!pending.length || !navigator.onLine || !hasKey()) return;
-  try {
-    var cloud = await cloudGet();
-    var seen = {}; cloud.entries.forEach(function(e){seen[e.id]=true;});
-    pending.forEach(function(e){ if(!seen[e.id]) cloud.entries.push(e); });
-    await cloudSet(cloud);
+  if (!pending.length || !navigator.onLine) return;
+  cloudGet().then(function(cloud) {
+    var seen = {};
+    cloud.entries.forEach(function(e){seen[e.id]=true;});
+    pending.forEach(function(e){if(!seen[e.id])cloud.entries.push(e);});
+    return cloudSet(cloud);
+  }).then(function() {
     savePending([]);
-    showToast('📶 Offline data synced to cloud!');
-  } catch(e) { console.warn('flushPending failed', e); }
+    showToast('📶 Offline data synced!');
+  }).catch(function(e){console.warn('flushPending failed',e);});
+}
+
+// ── UPLOAD ALL LOCAL ───────────────────────────────────────────
+function uploadAllLocal() {
+  var local = getStored().concat(getPending());
+  if (!local.length) { showToast('No local data to upload.'); return; }
+  showToast('⬆️ Uploading…');
+  cloudGet().then(function(cloud) {
+    var seen = {};
+    cloud.entries.forEach(function(e){seen[e.id]=true;});
+    var added = 0;
+    local.forEach(function(e){if(!seen[e.id]){cloud.entries.push(e);seen[e.id]=true;added++;}});
+    return cloudSet(cloud).then(function(){return added;});
+  }).then(function(added) {
+    savePending([]);
+    showToast('✅ Uploaded ' + added + ' entr' + (added!==1?'ies':'y') + ' to cloud!');
+    renderData();
+  }).catch(function(e){showToast('❌ Upload failed.');console.warn(e);});
+}
+
+function uploadSingleEntry(id) {
+  var all = getStored().concat(getPending());
+  var entry = null;
+  for(var i=0;i<all.length;i++){if(all[i].id===id){entry=all[i];break;}}
+  if(!entry){showToast('Entry not found.');return;}
+  cloudGet().then(function(cloud){
+    for(var j=0;j<cloud.entries.length;j++){if(cloud.entries[j].id===id){showToast('Already in cloud.');return Promise.resolve(false);}}
+    cloud.entries.push(entry);
+    return cloudSet(cloud).then(function(){return true;});
+  }).then(function(added){
+    if(added){savePending(getPending().filter(function(e){return e.id!==id;}));showToast('✅ Uploaded!');renderData();}
+  }).catch(function(e){showToast('❌ Upload failed.');console.warn(e);});
 }
 
 // ── DATA VIEW ──────────────────────────────────────────────────
-async function renderData() {
+function renderData() {
   var view = document.getElementById('dataView');
   view.innerHTML = '<div class="empty-state">Loading data…</div>';
-
-  var entries = [], deleted = [], cloudIds = {};
-  try {
-    if (hasKey() && activeBinId) {
-      var cloud = await cloudGet();
-      entries = cloud.entries || [];
-      deleted = cloud.deleted || [];
-      entries.forEach(function(e){ cloudIds[e.id]=true; });
-    }
-  } catch(e) { console.warn('renderData cloud fetch failed', e); }
-
-  // Merge local, deduplicate
-  var seen = {};
-  entries.forEach(function(e){ seen[e.id]=true; });
-  getStored().concat(getPending()).forEach(function(e){ if(!seen[e.id]){ entries.push(e); seen[e.id]=true; } });
-
-  var html = '';
-  if (!entries.length) {
-    html = '<div class="empty-state">No data submitted yet.</div>';
-  } else {
-    var teams = {};
-    entries.forEach(function(e){ var t=e.team||'Unknown'; if(!teams[t]) teams[t]=[]; teams[t].push(e); });
-    Object.keys(teams).sort().forEach(function(team) {
-      var list = teams[team];
-      html += '<div class="team-card" id="teamcard-'+team+'">'
-        + '<div class="team-header" onclick="toggleTeam(\'teamcard-'+team+'\')">'
-        + '<span>Team '+team+' <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+list.length+' match'+(list.length!==1?'es':'')+')</span></span>'
-        + '<span style="font-size:.85rem;color:var(--subtext)">▼</span></div>'
-        + '<div class="team-body">';
-      list.forEach(function(e) {
-        var inCloud = !!cloudIds[e.id];
-        var isPending = getPending().filter(function(p){return p.id===e.id;}).length > 0;
-        html += '<div class="match-entry">'
-          + '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
-          + '<strong style="font-size:.9rem;color:var(--accent)">Match '+(e.match||'?')
-          + (isPending?' <span class="badge badge-yellow">PENDING</span>':'')
-          + (!inCloud?' <span class="badge badge-purple">LOCAL</span>':'')
-          + '</strong>'
-          + '<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
-          + (!inCloud?'<button class="del-btn" style="border-color:#6366f1;color:#6366f1" onclick="uploadSingleEntry('+e.id+')">⬆️ Upload</button>':'')
-          + '<button class="del-btn" onclick="deleteEntry('+e.id+')">Delete</button>'
-          + '</div></div>'
-          + '<div class="match-grid">';
-        Object.keys(SEC_LABELS).forEach(function(k){ if(e[k]) html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>'; });
-        if(e.mapImg) html+='<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="'+e.mapImg+'" style="width:100%;border-radius:6px;margin-top:.3rem"></div>';
+  cloudGet().then(function(cloud) {
+    var entries = cloud.entries || [];
+    var deleted = cloud.deleted || [];
+    var cloudIds = {};
+    entries.forEach(function(e){cloudIds[e.id]=true;});
+    var seen = {};
+    entries.forEach(function(e){seen[e.id]=true;});
+    getStored().concat(getPending()).forEach(function(e){if(!seen[e.id]){entries.push(e);seen[e.id]=true;}});
+    var html = '';
+    if (!entries.length) {
+      html = '<div class="empty-state">No data submitted yet.</div>';
+    } else {
+      var teams = {};
+      entries.forEach(function(e){var t=e.team||'Unknown';if(!teams[t])teams[t]=[];teams[t].push(e);});
+      Object.keys(teams).sort().forEach(function(team){
+        var list = teams[team];
+        html += '<div class="team-card" id="tc-'+team+'">'
+          +'<div class="team-header" onclick="toggleTeam(\'tc-'+team+'\')">'
+          +'<span>Team '+team+' <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+list.length+' match'+(list.length!==1?'es':'')+')</span></span>'
+          +'<span style="font-size:.85rem;color:var(--subtext)">▼</span></div>'
+          +'<div class="team-body">';
+        list.forEach(function(e){
+          var inCloud = !!cloudIds[e.id];
+          var isPending = getPending().some(function(p){return p.id===e.id;});
+          html += '<div class="match-entry">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
+            +'<strong style="font-size:.9rem;color:var(--accent)">Match '+(e.match||'?')
+            +(isPending?' <span class="badge badge-yellow">PENDING</span>':'')
+            +(!inCloud?' <span class="badge badge-purple">LOCAL</span>':'')
+            +'</strong>'
+            +'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
+            +(!inCloud?'<button class="del-btn" style="border-color:#6366f1;color:#6366f1" onclick="uploadSingleEntry('+e.id+')">⬆️ Upload</button>':'')
+            +'<button class="del-btn" onclick="deleteEntry('+e.id+')">Delete</button>'
+            +'</div></div><div class="match-grid">';
+          Object.keys(SEC_LABELS).forEach(function(k){if(e[k])html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>';});
+          if(e.mapImg)html+='<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="'+e.mapImg+'" style="width:100%;border-radius:6px;margin-top:.3rem"></div>';
+          html += '</div></div>';
+        });
         html += '</div></div>';
       });
-      html += '</div></div>';
-    });
-  }
-
-  // Recently Deleted
-  html += '<div class="team-card" id="teamcard-deleted" style="margin-top:1rem;border-color:var(--red)">'
-    + '<div class="team-header" onclick="toggleTeam(\'teamcard-deleted\')" style="color:var(--red)">'
-    + '<span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+deleted.length+' item'+(deleted.length!==1?'s':'')+')</span></span>'
-    + '<span style="font-size:.85rem;color:var(--subtext)">▼</span></div>'
-    + '<div class="team-body">';
-  if (!deleted.length) {
-    html += '<div style="padding:.75rem 1rem;color:var(--subtext);font-size:.85rem">No recently deleted entries.</div>';
-  } else {
-    deleted.forEach(function(e) {
-      html += '<div class="match-entry">'
-        + '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
-        + '<strong style="font-size:.9rem;color:var(--subtext)">Team '+(e.team||'?')+' — Match '+(e.match||'?')+'</strong>'
-        + '<span style="font-size:.75rem;color:var(--subtext)">'+(e.deletedAt||'')+'</span>'
-        + '<div style="display:flex;gap:.4rem">'
-        + '<button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry('+e.id+')">Restore</button>'
-        + '<button class="del-btn" onclick="permDeleteEntry('+e.id+')">Delete Forever</button>'
-        + '</div></div>'
-        + '<div class="match-grid" style="margin-top:.4rem">';
-      Object.keys(SEC_LABELS).forEach(function(k){ if(e[k]) html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>'; });
-      html += '</div></div>';
-    });
-  }
-  html += '</div></div>';
-  view.innerHTML = html;
+    }
+    // Recently Deleted
+    html += '<div class="team-card" id="tc-deleted" style="margin-top:1rem;border-color:var(--red)">'
+      +'<div class="team-header" onclick="toggleTeam(\'tc-deleted\')" style="color:var(--red)">'
+      +'<span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+deleted.length+' item'+(deleted.length!==1?'s':'')+')</span></span>'
+      +'<span style="font-size:.85rem;color:var(--subtext)">▼</span></div><div class="team-body">';
+    if(!deleted.length){
+      html+='<div style="padding:.75rem 1rem;color:var(--subtext);font-size:.85rem">No recently deleted entries.</div>';
+    } else {
+      deleted.forEach(function(e){
+        html+='<div class="match-entry">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
+          +'<strong style="font-size:.9rem;color:var(--subtext)">Team '+(e.team||'?')+' — Match '+(e.match||'?')+'</strong>'
+          +'<span style="font-size:.75rem;color:var(--subtext)">'+(e.deletedAt||'')+'</span>'
+          +'<div style="display:flex;gap:.4rem">'
+          +'<button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry('+e.id+')">Restore</button>'
+          +'<button class="del-btn" onclick="permDeleteEntry('+e.id+')">Delete Forever</button>'
+          +'</div></div></div>';
+      });
+    }
+    html += '</div></div>';
+    view.innerHTML = html;
+  }).catch(function(e){
+    console.warn('renderData failed',e);
+    view.innerHTML = '<div class="empty-state">Failed to load data. Check your connection.</div>';
+  });
 }
 
-function toggleTeam(id) { var el=document.getElementById(id); if(el) el.classList.toggle('open'); }
+function toggleTeam(id){var el=document.getElementById(id);if(el)el.classList.toggle('open');}
 
-async function deleteEntry(id) {
-  if (!confirm('Delete this entry?')) return;
+function deleteEntry(id) {
+  if(!confirm('Delete this entry?'))return;
   var all = getStored().concat(getPending());
   var entry = null;
-  for (var i=0;i<all.length;i++){if(all[i].id===id){entry=all[i];break;}}
+  for(var i=0;i<all.length;i++){if(all[i].id===id){entry=all[i];break;}}
   saveStored(getStored().filter(function(e){return e.id!==id;}));
   savePending(getPending().filter(function(e){return e.id!==id;}));
-  try {
-    var cloud = await cloudGet();
+  cloudGet().then(function(cloud){
     var cloudEntry = null;
     for(var j=0;j<cloud.entries.length;j++){if(cloud.entries[j].id===id){cloudEntry=cloud.entries[j];break;}}
     cloud.entries = cloud.entries.filter(function(e){return e.id!==id;});
     var del = cloudEntry || entry;
-    if (del) { cloud.deleted = cloud.deleted||[]; cloud.deleted.unshift(Object.assign({},del,{deletedAt:new Date().toLocaleString()})); cloud.deleted=cloud.deleted.slice(0,20); }
-    await cloudSet(cloud);
-  } catch(e) { console.warn('deleteEntry cloud error', e); }
-  renderData();
-  showToast('🗑 Entry deleted.');
+    if(del){cloud.deleted=cloud.deleted||[];cloud.deleted.unshift(Object.assign({},del,{deletedAt:new Date().toLocaleString()}));cloud.deleted=cloud.deleted.slice(0,20);}
+    return cloudSet(cloud);
+  }).then(function(){renderData();showToast('🗑 Entry deleted.');})
+  .catch(function(e){console.warn('deleteEntry failed',e);renderData();});
 }
 
-async function restoreEntry(id) {
-  try {
-    var cloud = await cloudGet();
-    var entry = null;
+function restoreEntry(id) {
+  cloudGet().then(function(cloud){
+    var entry=null;
     for(var i=0;i<cloud.deleted.length;i++){if(cloud.deleted[i].id===id){entry=cloud.deleted[i];break;}}
-    if (!entry) { showToast('Entry not found.'); return; }
-    var restored = Object.assign({},entry); delete restored.deletedAt;
+    if(!entry){showToast('Entry not found.');return;}
+    var restored=Object.assign({},entry);delete restored.deletedAt;
     cloud.entries.push(restored);
-    cloud.deleted = cloud.deleted.filter(function(e){return e.id!==id;});
-    await cloudSet(cloud);
-    var stored = getStored(); stored.push(restored); saveStored(stored);
-  } catch(e) { console.warn('restoreEntry error', e); }
-  renderData();
-  showToast('♻️ Entry restored!');
+    cloud.deleted=cloud.deleted.filter(function(e){return e.id!==id;});
+    return cloudSet(cloud).then(function(){
+      var s=getStored();s.push(restored);saveStored(s);
+    });
+  }).then(function(){renderData();showToast('♻️ Entry restored!');})
+  .catch(function(e){console.warn('restoreEntry failed',e);});
 }
 
-async function permDeleteEntry(id) {
-  if (!confirm('Permanently delete? This cannot be undone.')) return;
-  try {
-    var cloud = await cloudGet();
-    cloud.deleted = cloud.deleted.filter(function(e){return e.id!==id;});
-    await cloudSet(cloud);
-  } catch(e) { console.warn('permDelete error', e); }
-  renderData();
-  showToast('🗑 Permanently deleted.');
+function permDeleteEntry(id) {
+  if(!confirm('Permanently delete? Cannot be undone.'))return;
+  cloudGet().then(function(cloud){
+    cloud.deleted=cloud.deleted.filter(function(e){return e.id!==id;});
+    return cloudSet(cloud);
+  }).then(function(){renderData();showToast('🗑 Permanently deleted.');})
+  .catch(function(e){console.warn('permDelete failed',e);});
 }
 
 // ── TOAST ──────────────────────────────────────────────────────
 function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');}, 3000);
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
 }
 
 flushPending();
