@@ -439,10 +439,7 @@ function submitForm() {
   var stored = getStored(); stored.push(entry); saveStored(stored);
   showToast('✅ Saved locally!');
   resetForm();
-  cloudGet().then(function(cloud) {
-    cloud.entries.push(entry);
-    return cloudSet(cloud);
-  }).then(function(ok) {
+  cloudAdd(entry).then(function(ok) {
     if (ok) showToast('✅ Synced to cloud!');
   }).catch(function(e) { console.warn('Cloud sync failed:', e); });
 }
@@ -459,47 +456,37 @@ function resetForm() {
 function flushPending() {
   var pending = getPending();
   if (!pending.length || !navigator.onLine) return;
-  cloudGet().then(function(cloud) {
-    var seen = {};
-    cloud.entries.forEach(function(e){seen[e.id]=true;});
-    pending.forEach(function(e){if(!seen[e.id])cloud.entries.push(e);});
-    return cloudSet(cloud);
-  }).then(function() {
+  var promises = pending.map(function(e) { return cloudAdd(e); });
+  Promise.all(promises).then(function() {
     savePending([]);
     showToast('📶 Offline data synced!');
-  }).catch(function(e){console.warn('flushPending failed',e);});
+  }).catch(function(e) { console.warn('flushPending failed', e); });
 }
 
-// ── UPLOAD ALL LOCAL ───────────────────────────────────────────
 function uploadAllLocal() {
   var local = getStored().concat(getPending());
   if (!local.length) { showToast('No local data to upload.'); return; }
   showToast('⬆️ Uploading…');
-  cloudGet().then(function(cloud) {
-    var seen = {};
-    cloud.entries.forEach(function(e){seen[e.id]=true;});
-    var added = 0;
-    local.forEach(function(e){if(!seen[e.id]){cloud.entries.push(e);seen[e.id]=true;added++;}});
-    return cloudSet(cloud).then(function(){return added;});
-  }).then(function(added) {
+  var promises = local.map(function(e) { return cloudAdd(e); });
+  Promise.all(promises).then(function() {
     savePending([]);
-    showToast('✅ Uploaded ' + added + ' entr' + (added!==1?'ies':'y') + ' to cloud!');
+    showToast('✅ All local data uploaded to cloud!');
     renderData();
-  }).catch(function(e){showToast('❌ Upload failed.');console.warn(e);});
+  }).catch(function(e) { showToast('❌ Upload failed.'); console.warn(e); });
 }
 
 function uploadSingleEntry(id) {
   var all = getStored().concat(getPending());
   var entry = null;
-  for(var i=0;i<all.length;i++){if(all[i].id===id){entry=all[i];break;}}
-  if(!entry){showToast('Entry not found.');return;}
-  cloudGet().then(function(cloud){
-    for(var j=0;j<cloud.entries.length;j++){if(cloud.entries[j].id===id){showToast('Already in cloud.');return Promise.resolve(false);}}
-    cloud.entries.push(entry);
-    return cloudSet(cloud).then(function(){return true;});
-  }).then(function(added){
-    if(added){savePending(getPending().filter(function(e){return e.id!==id;}));showToast('✅ Uploaded!');renderData();}
-  }).catch(function(e){showToast('❌ Upload failed.');console.warn(e);});
+  for (var i=0;i<all.length;i++) { if (all[i].id===id) { entry=all[i]; break; } }
+  if (!entry) { showToast('Entry not found.'); return; }
+  cloudAdd(entry).then(function(ok) {
+    if (ok) {
+      savePending(getPending().filter(function(e){return e.id!==id;}));
+      showToast('✅ Uploaded to cloud!');
+      renderData();
+    }
+  }).catch(function(e) { showToast('❌ Upload failed.'); console.warn(e); });
 }
 
 // ── DATA VIEW ──────────────────────────────────────────────────
@@ -577,45 +564,41 @@ function renderData() {
 function toggleTeam(id){var el=document.getElementById(id);if(el)el.classList.toggle('open');}
 
 function deleteEntry(id) {
-  if(!confirm('Delete this entry?'))return;
+  if (!confirm('Delete this entry?')) return;
   var all = getStored().concat(getPending());
   var entry = null;
-  for(var i=0;i<all.length;i++){if(all[i].id===id){entry=all[i];break;}}
+  for (var i=0;i<all.length;i++) { if(all[i].id===id){entry=all[i];break;} }
   saveStored(getStored().filter(function(e){return e.id!==id;}));
   savePending(getPending().filter(function(e){return e.id!==id;}));
-  cloudGet().then(function(cloud){
-    var cloudEntry = null;
-    for(var j=0;j<cloud.entries.length;j++){if(cloud.entries[j].id===id){cloudEntry=cloud.entries[j];break;}}
-    cloud.entries = cloud.entries.filter(function(e){return e.id!==id;});
-    var del = cloudEntry || entry;
-    if(del){cloud.deleted=cloud.deleted||[];cloud.deleted.unshift(Object.assign({},del,{deletedAt:new Date().toLocaleString()}));cloud.deleted=cloud.deleted.slice(0,20);}
-    return cloudSet(cloud);
-  }).then(function(){renderData();showToast('🗑 Entry deleted.');})
-  .catch(function(e){console.warn('deleteEntry failed',e);renderData();});
+  if (entry) {
+    cloudDelete(entry).then(function() { renderData(); showToast('🗑 Entry deleted.'); })
+      .catch(function(e) { console.warn('deleteEntry failed',e); renderData(); });
+  } else {
+    renderData(); showToast('🗑 Entry deleted.');
+  }
 }
 
 function restoreEntry(id) {
-  cloudGet().then(function(cloud){
-    var entry=null;
-    for(var i=0;i<cloud.deleted.length;i++){if(cloud.deleted[i].id===id){entry=cloud.deleted[i];break;}}
-    if(!entry){showToast('Entry not found.');return;}
-    var restored=Object.assign({},entry);delete restored.deletedAt;
-    cloud.entries.push(restored);
-    cloud.deleted=cloud.deleted.filter(function(e){return e.id!==id;});
-    return cloudSet(cloud).then(function(){
-      var s=getStored();s.push(restored);saveStored(s);
+  cloudGet().then(function(cloud) {
+    var entry = null;
+    for (var i=0;i<cloud.deleted.length;i++) { if(cloud.deleted[i].id===id){entry=cloud.deleted[i];break;} }
+    if (!entry) { showToast('Entry not found.'); return; }
+    return cloudRestore(entry).then(function() {
+      var restored = Object.assign({}, entry); delete restored.deletedAt;
+      var s = getStored(); s.push(restored); saveStored(s);
+      renderData(); showToast('♻️ Entry restored!');
     });
-  }).then(function(){renderData();showToast('♻️ Entry restored!');})
-  .catch(function(e){console.warn('restoreEntry failed',e);});
+  }).catch(function(e) { console.warn('restoreEntry failed',e); });
 }
 
 function permDeleteEntry(id) {
-  if(!confirm('Permanently delete? Cannot be undone.'))return;
-  cloudGet().then(function(cloud){
-    cloud.deleted=cloud.deleted.filter(function(e){return e.id!==id;});
-    return cloudSet(cloud);
-  }).then(function(){renderData();showToast('🗑 Permanently deleted.');})
-  .catch(function(e){console.warn('permDelete failed',e);});
+  if (!confirm('Permanently delete? Cannot be undone.')) return;
+  cloudGet().then(function(cloud) {
+    var entry = null;
+    for (var i=0;i<cloud.deleted.length;i++) { if(cloud.deleted[i].id===id){entry=cloud.deleted[i];break;} }
+    if (!entry) return;
+    return cloudPermDelete(entry).then(function() { renderData(); showToast('🗑 Permanently deleted.'); });
+  }).catch(function(e) { console.warn('permDelete failed',e); });
 }
 
 // ── TOAST ──────────────────────────────────────────────────────
