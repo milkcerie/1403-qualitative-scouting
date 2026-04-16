@@ -85,6 +85,8 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 </head>
 <body>
 
+<div id="errBox" style="display:none;background:#fee;color:#c00;padding:.75rem 1rem;font-size:.85rem;font-family:monospace;white-space:pre-wrap;border-bottom:2px solid #c00;"></div>
+
 <header>
   <h1>1403 Qualitative Data</h1>
   <div style="display:flex;gap:.5rem;align-items:center">
@@ -284,6 +286,12 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 <div class="toast" id="toast"></div>
 
 <script>
+window.onerror = function(msg, src, line, col, err) {
+  var box = document.getElementById('errBox');
+  box.style.display = 'block';
+  box.textContent = 'JS ERROR:\n' + msg + '\nLine: ' + line + '\n' + (err ? err.stack : '');
+};
+
 var API_URL = '/api/data';
 
 var TIPS = {
