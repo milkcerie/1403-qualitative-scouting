@@ -285,6 +285,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
+window.addEventListener('load', function() {
 var API_URL = '/api/data';
 
 // ── TIPS ───────────────────────────────────────────────────────
@@ -809,6 +810,7 @@ setTimeout(function(){t.classList.remove(‘show’);},3000);
 
 populateEventDropdowns();
 flushPending();
+}); // end window.load
 </script>
 
 </body>
