@@ -680,10 +680,8 @@ function exportPDF() {
       + '.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}'
       + '@media print{body{padding:10px;}}'
       + '</style></head><body>'
-
-
-  + '<h1>1403 Qualitative Scouting Data</h1>'
-  + '<p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' — ' + entries.length + ' total entries</p>';
+      + '<h1>1403 Qualitative Scouting Data</h1>'
+      + '<p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' — ' + entries.length + ' total entries</p>';
 
 Object.keys(teams).sort().forEach(function(team) {
   var list = teams[team];
