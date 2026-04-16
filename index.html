@@ -238,7 +238,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── API ────────────────────────────────────────────────────────
 var API_URL = '/api/data';
 
 async function cloudGet() {
@@ -252,21 +251,6 @@ async function cloudGet() {
   }
 }
 
-async function cloudSet(data) {
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    return true;
-  } catch(e) {
-    console.warn('cloudSet failed', e);
-    return false;
-  }
-}
-
-// ── TIPS ───────────────────────────────────────────────────────
 var TIPS = {
   auton:    ['What is their path? (draw on the map)','Where do they shoot from during auto? (mark an X on the map)','Do they climb during auto?'],
   hopper:   ['Did the hopper stay intact the entire match? If no, when did it break?','Shooting accuracy — low, medium, or high?','Where do they shoot from? (mark X on the map)','How much fuel was missed? (educated guess)','How much fuel was shot total? (educated guess)','Do they get jammed? Specify if possible.'],
@@ -284,13 +268,11 @@ var SEC_LABELS = {
   driver:'Driver', climbing:'Climbing', defense:'Defense', comments:'Comments'
 };
 
-// ── DARK MODE ──────────────────────────────────────────────────
 var dark = localStorage.getItem('darkMode') === '1';
 function applyDark() { document.body.classList.toggle('dark', dark); }
 function toggleDark() { dark = !dark; localStorage.setItem('darkMode', dark?'1':'0'); applyDark(); }
 applyDark();
 
-// ── OFFLINE ────────────────────────────────────────────────────
 function updateOnline() {
   document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
 }
@@ -298,7 +280,6 @@ window.addEventListener('online', function() { updateOnline(); flushPending(); }
 window.addEventListener('offline', updateOnline);
 updateOnline();
 
-// ── TABS ───────────────────────────────────────────────────────
 function switchTab(tab, btn) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('active'); });
@@ -309,7 +290,6 @@ function switchTab(tab, btn) {
 
 function toggleSection(id) { document.getElementById(id).classList.toggle('open'); }
 
-// ── TOOLTIP ────────────────────────────────────────────────────
 function showTip(title, key) {
   document.getElementById('tipTitle').textContent = title + ' — Guided Questions';
   document.getElementById('tipList').innerHTML = TIPS[key].map(function(q) { return '<li>' + q + '</li>'; }).join('');
@@ -321,7 +301,6 @@ function closeTip(e) {
   }
 }
 
-// ── CANVAS ─────────────────────────────────────────────────────
 var canvas = document.getElementById('fieldMap');
 var ctx = canvas.getContext('2d');
 var tool = 'draw', painting = false, lastX = 0, lastY = 0;
@@ -408,13 +387,11 @@ function erasePt(x,y){dctx.clearRect(x-14,y-14,28,28);compositeToMain();lastX=x;
 function stampX(x,y){dctx.strokeStyle='#f87171';dctx.lineWidth=2.5;dctx.lineCap='round';dctx.beginPath();dctx.moveTo(x-9,y-9);dctx.lineTo(x+9,y+9);dctx.stroke();dctx.beginPath();dctx.moveTo(x+9,y-9);dctx.lineTo(x-9,y+9);dctx.stroke();compositeToMain();}
 function clearCanvas(){dctx.clearRect(0,0,drawCanvas.width,drawCanvas.height);compositeToMain();}
 
-// ── LOCAL STORAGE ──────────────────────────────────────────────
 function getStored(){try{return JSON.parse(localStorage.getItem('scoutData')||'[]');}catch(e){return[];}}
 function saveStored(d){localStorage.setItem('scoutData',JSON.stringify(d));}
 function getPending(){try{return JSON.parse(localStorage.getItem('pendingData')||'[]');}catch(e){return[];}}
 function savePending(d){localStorage.setItem('pendingData',JSON.stringify(d));}
 
-// ── SUBMIT ─────────────────────────────────────────────────────
 function collectForm() {
   return {
     id: Date.now(),
@@ -488,10 +465,8 @@ function uploadAllLocal() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'setAll', data: { entries: stripped, deleted: [] } })
   }).then(function(res) {
-    console.log('Upload status:', res.status);
     return res.json();
   }).then(function(json) {
-    console.log('Upload response:', JSON.stringify(json));
     if (json.success) {
       savePending([]);
       showToast('✅ All local data uploaded!');
@@ -500,7 +475,6 @@ function uploadAllLocal() {
       showToast('❌ Upload failed: ' + (json.error || 'unknown error'));
     }
   }).catch(function(e) {
-    console.error('Upload error:', e);
     showToast('❌ Upload failed: ' + e.message);
   });
 }
@@ -525,7 +499,6 @@ function uploadSingleEntry(id) {
   }).catch(function(e) { showToast('❌ Upload failed.'); console.warn(e); });
 }
 
-// ── DATA VIEW ──────────────────────────────────────────────────
 function renderData() {
   var view = document.getElementById('dataView');
   view.innerHTML = '<div class="empty-state">Loading data…</div>';
@@ -570,7 +543,6 @@ function renderData() {
         html += '</div></div>';
       });
     }
-    // Recently Deleted
     html += '<div class="team-card" id="tc-deleted" style="margin-top:1rem;border-color:var(--red)">'
       +'<div class="team-header" onclick="toggleTeam(\'tc-deleted\')" style="color:var(--red)">'
       +'<span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+deleted.length+' item'+(deleted.length!==1?'s':'')+')</span></span>'
@@ -627,8 +599,6 @@ function restoreEntry(id) {
   .then(function(json) {
     if (json.success && json.data) {
       var restored = null;
-      for (var i=0;i<json.data.deleted.length;i++) { } // already removed
-      // find in entries
       for (var j=0;j<json.data.entries.length;j++) {
         if (json.data.entries[j].id===id) { restored=json.data.entries[j]; break; }
       }
@@ -656,72 +626,34 @@ function exportPDF() {
     var seen = {};
     entries.forEach(function(e){seen[e.id]=true;});
     local.forEach(function(e){if(!seen[e.id]){entries.push(e);seen[e.id]=true;}});
-
     if (!entries.length) { showToast('No data to export.'); return; }
-
-    // Group by team
     var teams = {};
     entries.forEach(function(e){ var t=e.team||'Unknown'; if(!teams[t])teams[t]=[]; teams[t].push(e); });
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>1403 Scouting Data</title><style>body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}h1{font-size:20px;margin-bottom:4px;}h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #2563eb;padding-bottom:4px;color:#2563eb;}h3{font-size:12px;margin:12px 0 4px;color:#555;}.entry{border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:10px;page-break-inside:avoid;}.entry-header{display:flex;justify-content:space-between;margin-bottom:8px;}.entry-title{font-weight:700;font-size:13px;}.entry-meta{color:#777;font-size:11px;}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}.field{background:#f5f5f5;border-radius:4px;padding:5px 7px;}.field strong{display:block;font-size:10px;text-transform:uppercase;color:#888;margin-bottom:2px;}.field span{font-size:11px;}.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}@media print{body{padding:10px;}}</style></head><body><h1>1403 Qualitative Scouting Data</h1><p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' — ' + entries.length + ' total entries</p>';
 
-    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
-      + '<title>1403 Scouting Data</title>'
-      + '<style>'
-      + 'body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}'
-      + 'h1{font-size:20px;margin-bottom:4px;}h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #2563eb;padding-bottom:4px;color:#2563eb;}'
-      + 'h3{font-size:12px;margin:12px 0 4px;color:#555;}'
-      + '.entry{border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:10px;page-break-inside:avoid;}'
-      + '.entry-header{display:flex;justify-content:space-between;margin-bottom:8px;}'
-      + '.entry-title{font-weight:700;font-size:13px;}'
-      + '.entry-meta{color:#777;font-size:11px;}'
-      + '.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}'
-      + '.field{background:#f5f5f5;border-radius:4px;padding:5px 7px;}'
-      + '.field strong{display:block;font-size:10px;text-transform:uppercase;color:#888;margin-bottom:2px;}'
-      + '.field span{font-size:11px;}'
-      + '.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}'
-      + '@media print{body{padding:10px;}}'
-      + '</style></head><body>'
-      + '<h1>1403 Qualitative Scouting Data</h1>'
-      + '<p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' — ' + entries.length + ' total entries</p>';
 
 Object.keys(teams).sort().forEach(function(team) {
   var list = teams[team];
   list.sort(function(a,b){ return (parseInt(a.match)||0)-(parseInt(b.match)||0); });
   html += '<h2>Team ' + team + ' (' + list.length + ' match' + (list.length!==1?'es':'') + ')</h2>';
   list.forEach(function(e) {
-    html += '<div class="entry">'
-      + '<div class="entry-header">'
-      + '<span class="entry-title">Match ' + (e.match||'?') + ' — ' + (e.position||'') + '</span>'
-      + '<span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' &nbsp;|&nbsp; ' + (e.timestamp||'') + '</span>'
-      + '</div><div class="grid">';
-    var fields = [
-      ['Autonomous', e.auton], ['Hopper & Scoring', e.hopper],
-      ['Intake', e.intake], ['Feeding', e.feeding],
-      ['Driver', e.driver], ['Climbing', e.climbing],
-      ['Defense', e.defense], ['Comments', e.comments]
-    ];
+    html += '<div class="entry"><div class="entry-header"><span class="entry-title">Match ' + (e.match||'?') + ' — ' + (e.position||'') + '</span><span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' &nbsp;|&nbsp; ' + (e.timestamp||'') + '</span></div><div class="grid">';
+    var fields = [['Autonomous',e.auton],['Hopper & Scoring',e.hopper],['Intake',e.intake],['Feeding',e.feeding],['Driver',e.driver],['Climbing',e.climbing],['Defense',e.defense],['Comments',e.comments]];
     fields.forEach(function(f) {
-      if (f[1]) {
-        html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
-      }
+      if (f[1]) html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
     });
     html += '</div>';
-    if (e.mapImg) {
-      html += '<div style="margin-top:8px"><strong style="font-size:10px;text-transform:uppercase;color:#888;">Auto Map</strong><br>'
-        + '<img src="' + e.mapImg + '" style="width:100%;max-width:500px;border-radius:4px;margin-top:4px;border:1px solid #ddd;"></div>';
-    }
+    if (e.mapImg) html += '<div style="margin-top:8px"><strong style="font-size:10px;text-transform:uppercase;color:#888;">Auto Map</strong><br><img src="' + e.mapImg + '" style="width:100%;max-width:500px;border-radius:4px;margin-top:4px;border:1px solid #ddd;"></div>';
     html += '</div>';
   });
 });
-
 html += '<div class="footer">1403 Qualitative Scouting App</div></body></html>';
-
 var win = window.open('', '_blank');
 if (!win) { showToast('⚠️ Allow popups to export PDF.'); return; }
 win.document.write(html);
 win.document.close();
 win.focus();
 setTimeout(function() { win.print(); }, 500);
-
 
 }).catch(function(e) {
 console.warn(‘exportPDF failed’, e);
