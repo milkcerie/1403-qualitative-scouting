@@ -6,81 +6,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>1403 Qualitative Data</title>
 <style>
-:root{--bg:#f4f4f6;--card:#fff;--border:#dde1ea;--text:#1a1a2e;--subtext:#555;--accent:#2563eb;--accent-hover:#1d4ed8;--red:#dc2626;--sh:#1e293b;--ibg:#f8fafc;--shadow:0 2px 8px rgba(0,0,0,0.07);}
-.dark{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#f1f5f9;--subtext:#94a3b8;--accent:#3b82f6;--accent-hover:#2563eb;--sh:#e2e8f0;--ibg:#0f172a;--shadow:0 2px 8px rgba(0,0,0,0.3);}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;transition:background .2s,color .2s;}
-header{background:var(--card);border-bottom:2px solid var(--accent);padding:.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
-header h1{font-size:1.2rem;font-weight:700;color:var(--accent);}
-.icon-btn{background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;padding:.35rem .6rem;font-size:1rem;transition:background .15s;}
-.icon-btn:hover{background:var(--border);}
-nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;}
-nav button{flex:1;min-width:80px;padding:.65rem .4rem;font-size:.78rem;font-weight:600;border:none;background:none;color:var(--subtext);cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;}
-nav button.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--bg);}
-nav button:hover:not(.active){background:var(--bg);}
-.page{display:none;padding:1rem;max-width:900px;margin:0 auto;}
-.page.active{display:block;}
-.meta-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;}
-.meta-field{flex:1;min-width:140px;}
-.meta-field label{display:block;font-size:.78rem;font-weight:600;color:var(--subtext);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em;}
-.meta-field input,.meta-field select{width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s;}
-.meta-field input:focus,.meta-field select:focus{border-color:var(--accent);}
-.meta-field select option{background:var(--card);color:var(--text);}
-.section-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:.75rem;box-shadow:var(--shadow);overflow:hidden;}
-.section-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;background:none;border:none;color:var(--sh);cursor:pointer;font-size:1rem;font-weight:700;text-align:left;}
-.section-toggle:hover{background:var(--bg);}
-.chevron{font-size:.9rem;color:var(--subtext);transition:transform .2s;}
-.section-card.open .chevron{transform:rotate(180deg);}
-.section-body{display:none;padding:.9rem 1rem;border-top:1px solid var(--border);}
-.section-card.open .section-body{display:block;}
-.field-row{display:flex;align-items:flex-start;gap:.5rem;}
-.field-wrap{flex:1;}
-.field-wrap textarea{width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;resize:vertical;font-family:inherit;transition:border-color .15s;min-height:80px;}
-.field-wrap textarea:focus{border-color:var(--accent);}
-.i-btn{background:none;border:1.5px solid var(--border);border-radius:50%;width:28px;height:28px;min-width:28px;font-size:.75rem;font-weight:700;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:4px;transition:background .15s;}
-.i-btn:hover{background:var(--accent);color:#fff;}
-.map-tools{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem;}
-.tool-btn{padding:.4rem .75rem;border-radius:7px;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;}
-.tool-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.tool-btn:hover:not(.active){border-color:var(--accent);}
-canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:none;max-width:100%;display:block;cursor:crosshair;}
-.tooltip-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:1.5rem;}
-.tooltip-overlay.show{display:flex;}
-.tooltip-box{background:var(--card);border-radius:14px;padding:1.2rem 1.4rem;max-width:400px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);position:relative;border:1.5px solid var(--border);}
-.tooltip-box h4{font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:.6rem;}
-.tooltip-box ul{padding-left:1.1rem;}
-.tooltip-box li{font-size:.87rem;line-height:1.6;margin-bottom:.2rem;}
-.tooltip-close{position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--subtext);}
-.data-view{max-width:900px;margin:0 auto;padding:0 1rem 1rem;}
-.action-bar{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;margin-bottom:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;}
-.team-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:.75rem;box-shadow:var(--shadow);overflow:hidden;}
-.team-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;font-weight:700;font-size:1rem;cursor:pointer;}
-.team-header:hover{background:var(--bg);}
-.team-body{display:none;border-top:1px solid var(--border);}
-.team-card.open .team-body{display:block;}
-.match-entry{padding:.75rem 1rem;border-bottom:1px solid var(--border);}
-.match-entry:last-child{border-bottom:none;}
-.match-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.4rem;margin-top:.5rem;}
-.match-item{background:var(--bg);border-radius:7px;padding:.4rem .6rem;font-size:.82rem;}
-.match-item strong{display:block;color:var(--subtext);font-size:.7rem;text-transform:uppercase;margin-bottom:.1rem;}
-.del-btn{background:none;border:1.5px solid var(--red);color:var(--red);border-radius:7px;padding:.3rem .6rem;font-size:.78rem;cursor:pointer;font-weight:600;transition:background .15s;}
-.del-btn:hover{background:var(--red);color:#fff;}
-.empty-state{text-align:center;padding:3rem 1rem;color:var(--subtext);font-size:.95rem;}
-.submit-bar{padding:1rem;max-width:900px;margin:0 auto;}
-.submit-btn{width:100%;padding:.9rem;background:var(--accent);color:#fff;font-size:1.05rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:background .15s;}
-.submit-btn:hover{background:var(--accent-hover);}
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:.7rem 1.4rem;border-radius:10px;font-size:.9rem;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
-.toast.show{opacity:1;}
-.badge{font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:5px;color:#fff;vertical-align:middle;}
-.badge-yellow{background:#f59e0b;}
-.badge-purple{background:#6366f1;}
-.ev-header{padding:.5rem .75rem;background:var(--accent);color:#fff;border-radius:8px;font-weight:700;font-size:.9rem;margin-bottom:.5rem;}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:1.5rem;}
-.modal-overlay.show{display:flex;}
-.modal-box{background:var(--card);border-radius:14px;padding:1.4rem;max-width:380px;width:100%;border:1.5px solid var(--border);position:relative;}
-.modal-box h4{font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:.9rem;}
-.modal-close{position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--subtext);}
-@media(min-width:640px){header h1{font-size:1.4rem;}.page,.data-view,.submit-bar{padding:1.5rem;}}
+  :root{--bg:#f4f4f6;--card:#fff;--border:#dde1ea;--text:#1a1a2e;--subtext:#555;--accent:#2563eb;--accent-hover:#1d4ed8;--red:#dc2626;--sh:#1e293b;--ibg:#f8fafc;--shadow:0 2px 8px rgba(0,0,0,0.07);}
+  .dark{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#f1f5f9;--subtext:#94a3b8;--accent:#3b82f6;--accent-hover:#2563eb;--sh:#e2e8f0;--ibg:#0f172a;--shadow:0 2px 8px rgba(0,0,0,0.3);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;transition:background .2s,color .2s;}
+  header{background:var(--card);border-bottom:2px solid var(--accent);padding:.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+  header h1{font-size:1.2rem;font-weight:700;color:var(--accent);}
+  .icon-btn{background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;padding:.35rem .6rem;font-size:1rem;transition:background .15s;}
+  .icon-btn:hover{background:var(--border);}
+  nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;}
+  nav button{flex:1;min-width:80px;padding:.65rem .4rem;font-size:.78rem;font-weight:600;border:none;background:none;color:var(--subtext);cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;}
+  nav button.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--bg);}
+  nav button:hover:not(.active){background:var(--bg);}
+  .page{display:none;padding:1rem;max-width:900px;margin:0 auto;}
+  .page.active{display:block;}
+  .meta-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;}
+  .meta-field{flex:1;min-width:140px;}
+  .meta-field label{display:block;font-size:.78rem;font-weight:600;color:var(--subtext);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em;}
+  .meta-field input,.meta-field select{width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s;}
+  .meta-field input:focus,.meta-field select:focus{border-color:var(--accent);}
+  .meta-field select option{background:var(--card);color:var(--text);}
+  .section-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:.75rem;box-shadow:var(--shadow);overflow:hidden;}
+  .section-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;background:none;border:none;color:var(--sh);cursor:pointer;font-size:1rem;font-weight:700;text-align:left;}
+  .section-toggle:hover{background:var(--bg);}
+  .chevron{font-size:.9rem;color:var(--subtext);transition:transform .2s;}
+  .section-card.open .chevron{transform:rotate(180deg);}
+  .section-body{display:none;padding:.9rem 1rem;border-top:1px solid var(--border);}
+  .section-card.open .section-body{display:block;}
+  .field-row{display:flex;align-items:flex-start;gap:.5rem;}
+  .field-wrap{flex:1;}
+  .field-wrap textarea{width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;resize:vertical;font-family:inherit;transition:border-color .15s;min-height:80px;}
+  .field-wrap textarea:focus{border-color:var(--accent);}
+  .i-btn{background:none;border:1.5px solid var(--border);border-radius:50%;width:28px;height:28px;min-width:28px;font-size:.75rem;font-weight:700;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:4px;transition:background .15s;}
+  .i-btn:hover{background:var(--accent);color:#fff;}
+  .map-tools{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem;}
+  .tool-btn{padding:.4rem .75rem;border-radius:7px;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;}
+  .tool-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .tool-btn:hover:not(.active){border-color:var(--accent);}
+  canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:none;max-width:100%;display:block;cursor:crosshair;}
+  .tooltip-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:1.5rem;}
+  .tooltip-overlay.show{display:flex;}
+  .tooltip-box{background:var(--card);border-radius:14px;padding:1.2rem 1.4rem;max-width:400px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);position:relative;border:1.5px solid var(--border);}
+  .tooltip-box h4{font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:.6rem;}
+  .tooltip-box ul{padding-left:1.1rem;}
+  .tooltip-box li{font-size:.87rem;line-height:1.6;margin-bottom:.2rem;}
+  .tooltip-close{position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--subtext);}
+  .data-view{max-width:900px;margin:0 auto;padding:0 1rem 1rem;}
+  .action-bar{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;margin-bottom:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;}
+  .team-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:.75rem;box-shadow:var(--shadow);overflow:hidden;}
+  .team-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;font-weight:700;font-size:1rem;cursor:pointer;}
+  .team-header:hover{background:var(--bg);}
+  .team-body{display:none;border-top:1px solid var(--border);}
+  .team-card.open .team-body{display:block;}
+  .match-entry{padding:.75rem 1rem;border-bottom:1px solid var(--border);}
+  .match-entry:last-child{border-bottom:none;}
+  .match-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.4rem;margin-top:.5rem;}
+  .match-item{background:var(--bg);border-radius:7px;padding:.4rem .6rem;font-size:.82rem;}
+  .match-item strong{display:block;color:var(--subtext);font-size:.7rem;text-transform:uppercase;margin-bottom:.1rem;}
+  .del-btn{background:none;border:1.5px solid var(--red);color:var(--red);border-radius:7px;padding:.3rem .6rem;font-size:.78rem;cursor:pointer;font-weight:600;transition:background .15s;}
+  .del-btn:hover{background:var(--red);color:#fff;}
+  .empty-state{text-align:center;padding:3rem 1rem;color:var(--subtext);font-size:.95rem;}
+  .submit-bar{padding:1rem;max-width:900px;margin:0 auto;}
+  .submit-btn{width:100%;padding:.9rem;background:var(--accent);color:#fff;font-size:1.05rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:background .15s;}
+  .submit-btn:hover{background:var(--accent-hover);}
+  .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:.7rem 1.4rem;border-radius:10px;font-size:.9rem;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+  .toast.show{opacity:1;}
+  .badge{font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:5px;color:#fff;vertical-align:middle;}
+  .badge-yellow{background:#f59e0b;}
+  .badge-purple{background:#6366f1;}
+  @media(min-width:640px){header h1{font-size:1.4rem;}.page,.data-view,.submit-bar{padding:1.5rem;}}
 </style>
 </head>
 <body>
@@ -89,13 +83,13 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
   <h1>1403 Qualitative Data</h1>
   <div style="display:flex;gap:.5rem;align-items:center">
     <span id="offlineBadge" class="badge badge-yellow" style="display:none">OFFLINE</span>
-    <button class="icon-btn" onclick="toggleDark()">&#127769;</button>
+    <button class="icon-btn" onclick="toggleDark()">🌙</button>
   </div>
 </header>
 
 <nav>
-  <button class="active" onclick="switchTab('form',this)">Scout</button>
-  <button onclick="switchTab('data',this)">Data</button>
+  <button class="active" onclick="switchTab('form',this)">📋 Scout</button>
+  <button onclick="switchTab('data',this)">📊 Data</button>
 </nav>
 
 <div id="formPage" class="page active">
@@ -105,37 +99,29 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
     <div class="meta-field">
       <label>Position</label>
       <select id="alliancePos">
-        <option value="">Select...</option>
-        <option>Red 1</option>
-        <option>Red 2</option>
-        <option>Red 3</option>
-        <option>Blue 1</option>
-        <option>Blue 2</option>
-        <option>Blue 3</option>
+        <option value="">Select…</option>
+        <option>Red 1</option><option>Red 2</option><option>Red 3</option>
+        <option>Blue 1</option><option>Blue 2</option><option>Blue 3</option>
       </select>
     </div>
     <div class="meta-field"><label>Scouter</label><input type="text" id="scouterName" placeholder="Your name"></div>
-    <div class="meta-field">
-      <label>Event</label>
-      <select id="eventSelect"><option value="">No event</option></select>
-    </div>
   </div>
 
   <div class="section-card" id="sec-auton">
     <button class="section-toggle" onclick="toggleSection('sec-auton')">
-      <span>Autonomous</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🤖 Autonomous</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row" style="margin-bottom:.75rem">
-        <div class="field-wrap"><textarea id="autonNotes" placeholder="Notes on autonomous..."></textarea></div>
+        <div class="field-wrap"><textarea id="autonNotes" placeholder="Notes on autonomous…"></textarea></div>
         <button class="i-btn" onclick="showTip('Autonomous','auton')">i</button>
       </div>
-      <div style="font-size:.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem">Field Map</div>
+      <div style="font-size:.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem">Field Map <span style="font-weight:400;text-transform:none">— draw path &amp; stamp X for shooting spots</span></div>
       <div class="map-tools">
-        <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">Draw</button>
-        <button class="tool-btn" id="toolX" onclick="setTool('x')">Mark X</button>
-        <button class="tool-btn" id="toolErase" onclick="setTool('erase')">Erase</button>
-        <button class="tool-btn" onclick="clearCanvas()">Clear</button>
+        <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">✏️ Draw</button>
+        <button class="tool-btn" id="toolX" onclick="setTool('x')">✕ Mark X</button>
+        <button class="tool-btn" id="toolErase" onclick="setTool('erase')">🧹 Erase</button>
+        <button class="tool-btn" onclick="clearCanvas()">🗑 Clear</button>
       </div>
       <canvas id="fieldMap" width="560" height="320"></canvas>
     </div>
@@ -143,23 +129,23 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 
   <div class="section-card" id="sec-hopper">
     <button class="section-toggle" onclick="toggleSection('sec-hopper')">
-      <span>Hopper and Scoring</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">⚙️ Hopper &amp; Scoring</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="hopperNotes" placeholder="Notes on hopper and scoring..."></textarea></div>
-        <button class="i-btn" onclick="showTip('Hopper and Scoring','hopper')">i</button>
+        <div class="field-wrap"><textarea id="hopperNotes" placeholder="Notes on hopper &amp; scoring…"></textarea></div>
+        <button class="i-btn" onclick="showTip('Hopper & Scoring','hopper')">i</button>
       </div>
     </div>
   </div>
 
   <div class="section-card" id="sec-intake">
     <button class="section-toggle" onclick="toggleSection('sec-intake')">
-      <span>Intake</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🔄 Intake</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="intakeNotes" placeholder="Notes on intake..."></textarea></div>
+        <div class="field-wrap"><textarea id="intakeNotes" placeholder="Notes on intake…"></textarea></div>
         <button class="i-btn" onclick="showTip('Intake','intake')">i</button>
       </div>
     </div>
@@ -167,11 +153,11 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 
   <div class="section-card" id="sec-feeding">
     <button class="section-toggle" onclick="toggleSection('sec-feeding')">
-      <span>Feeding</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🤝 Feeding</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="feedingNotes" placeholder="Notes on feeding..."></textarea></div>
+        <div class="field-wrap"><textarea id="feedingNotes" placeholder="Notes on feeding…"></textarea></div>
         <button class="i-btn" onclick="showTip('Feeding','feeding')">i</button>
       </div>
     </div>
@@ -179,11 +165,11 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 
   <div class="section-card" id="sec-driver">
     <button class="section-toggle" onclick="toggleSection('sec-driver')">
-      <span>Driver</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🕹️ Driver</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="driverNotes" placeholder="Notes on the driver..."></textarea></div>
+        <div class="field-wrap"><textarea id="driverNotes" placeholder="Notes on the driver…"></textarea></div>
         <button class="i-btn" onclick="showTip('Driver','driver')">i</button>
       </div>
     </div>
@@ -191,11 +177,11 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 
   <div class="section-card" id="sec-climbing">
     <button class="section-toggle" onclick="toggleSection('sec-climbing')">
-      <span>Climbing</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🧗 Climbing</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="climbingNotes" placeholder="Notes on climbing..."></textarea></div>
+        <div class="field-wrap"><textarea id="climbingNotes" placeholder="Notes on climbing…"></textarea></div>
         <button class="i-btn" onclick="showTip('Climbing','climbing')">i</button>
       </div>
     </div>
@@ -203,11 +189,11 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 
   <div class="section-card" id="sec-defense">
     <button class="section-toggle" onclick="toggleSection('sec-defense')">
-      <span>Defense</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">🛡️ Defense</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="defenseNotes" placeholder="Notes on defense..."></textarea></div>
+        <div class="field-wrap"><textarea id="defenseNotes" placeholder="Notes on defense…"></textarea></div>
         <button class="i-btn" onclick="showTip('Defense','defense')">i</button>
       </div>
     </div>
@@ -215,11 +201,11 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 
   <div class="section-card" id="sec-comments">
     <button class="section-toggle" onclick="toggleSection('sec-comments')">
-      <span>Comments</span><span class="chevron">&#9660;</span>
+      <span style="display:flex;align-items:center;gap:.6rem">💬 Comments</span><span class="chevron">▼</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="commentsNotes" placeholder="Anything else notable..."></textarea></div>
+        <div class="field-wrap"><textarea id="commentsNotes" placeholder="Anything else notable…"></textarea></div>
         <button class="i-btn" onclick="showTip('Comments','comments')">i</button>
       </div>
     </div>
@@ -233,9 +219,9 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 <div id="dataPage" class="page">
   <div class="data-view">
     <div class="action-bar">
-      <button onclick="uploadAllLocal()" style="padding:.45rem 1rem;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">Upload All Local</button>
-      <button onclick="renderData()" style="padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">Refresh</button>
-      <button onclick="showEventModal()" style="padding:.45rem 1rem;background:#b45309;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">Manage Events</button>
+      <button onclick="uploadAllLocal()" style="padding:.45rem 1rem;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">⬆️ Upload All Local</button>
+      <button onclick="renderData()" style="padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">🔄 Refresh</button>
+      <button onclick="exportPDF()" style="padding:.45rem 1rem;background:#059669;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">📄 Export PDF</button>
     </div>
     <div id="dataView"></div>
   </div>
@@ -243,200 +229,168 @@ canvas#fieldMap{border:2px solid var(--border);border-radius:10px;touch-action:n
 
 <div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTip(event)">
   <div class="tooltip-box" onclick="event.stopPropagation()">
-    <button class="tooltip-close" onclick="closeTip()">X</button>
+    <button class="tooltip-close" onclick="closeTip()">✕</button>
     <h4 id="tipTitle"></h4>
     <ul id="tipList"></ul>
-  </div>
-</div>
-
-<div class="modal-overlay" id="eventModal" onclick="closeEventModal(event)">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeEventModal()">X</button>
-    <h4>Manage Events</h4>
-    <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
-      <input id="newEventInput" type="text" placeholder="New event name..." style="flex:1;padding:.5rem .7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.9rem;outline:none;">
-      <button onclick="addEvent()" style="padding:.5rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">Add</button>
-    </div>
-    <div id="eventListEl" style="max-height:220px;overflow-y:auto;"></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="relabelModal" onclick="closeRelabelModal(event)">
-  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:320px">
-    <button class="modal-close" onclick="closeRelabelModal()">X</button>
-    <h4>Assign Event</h4>
-    <p style="font-size:.85rem;color:var(--subtext);margin-bottom:.75rem">Choose an event for this entry.</p>
-    <select id="relabelSelect" style="width:100%;padding:.55rem .7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.9rem;outline:none;margin-bottom:.75rem;"><option value="">No event</option></select>
-    <button onclick="confirmRelabel()" style="width:100%;padding:.6rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;">Save</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+// ── API ────────────────────────────────────────────────────────
 var API_URL = '/api/data';
 
+async function cloudGet() {
+  try {
+    var res = await fetch(API_URL);
+    var json = await res.json();
+    return { entries: json.entries||[], deleted: json.deleted||[] };
+  } catch(e) {
+    console.warn('cloudGet failed', e);
+    return { entries:[], deleted:[] };
+  }
+}
+
+async function cloudSet(data) {
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return true;
+  } catch(e) {
+    console.warn('cloudSet failed', e);
+    return false;
+  }
+}
+
+// ── TIPS ───────────────────────────────────────────────────────
 var TIPS = {
-  auton:['What is their path? Draw on the map.','Where do they shoot from during auto? Mark an X.','Do they climb during auto?'],
-  hopper:['Did the hopper stay intact? If no, when did it break?','Shooting accuracy: low, medium, or high?','Where do they shoot from?','How much fuel was missed?','How much fuel was shot total?','Do they get jammed?'],
-  intake:['Do they get back to their alliance in time to shoot during active shifts?'],
-  feeding:['Do they feed? Are they effective?','Do they herd? How effective?','Do they herd to human players? How effective?'],
-  driver:['Was the driver smooth and confident, or unconfident?','How was their game sense when a problem occurred?','How did they adapt under pressure?'],
-  climbing:['Do they climb? If yes, what level?','Did they attempt to climb?','Around what time did they start climbing?'],
-  defense:['Where did they play defense?','Did they target one robot? Which team?','Any penalties for pinning?'],
-  comments:['Anything else notable?']
+  auton:    ['What is their path? (draw on the map)','Where do they shoot from during auto? (mark an X on the map)','Do they climb during auto?'],
+  hopper:   ['Did the hopper stay intact the entire match? If no, when did it break?','Shooting accuracy — low, medium, or high?','Where do they shoot from? (mark X on the map)','How much fuel was missed? (educated guess)','How much fuel was shot total? (educated guess)','Do they get jammed? Specify if possible.'],
+  intake:   ['Do they get back to their alliance in time to shoot during active shifts?'],
+  feeding:  ['Do they feed? Are they effective? (Feeding = intaking and shooting fuel to alliance area from neutral zone)','Do they herd? How effective? (Herding = pushing fuel with bumper under the trench)','Do they herd specifically to human players? How effective — low, medium, or high?'],
+  driver:   ['Was the driver smooth and confident, or unconfident/confused?','How good was their game sense when a problem occurred?','How did they adapt/act under pressure?'],
+  climbing: ['Do they climb? If yes, what level?','Did they attempt to climb (even if unsuccessful)?','Around what time (match clock) did they start to climb?'],
+  defense:  ['Where did they go to play defense? (zone? describe location)','Did they target one specific robot? If yes, which team number?','Did they receive any penalties for pinning?'],
+  comments: ['Anything else notable that you observed during the match?']
 };
 
-var SEC_LABELS = {position:'Position',scouter:'Scouter',event:'Event',auton:'Autonomous',hopper:'Hopper and Scoring',intake:'Intake',feeding:'Feeding',driver:'Driver',climbing:'Climbing',defense:'Defense',comments:'Comments'};
+var SEC_LABELS = {
+  position:'Position', scouter:'Scouter', auton:'Autonomous',
+  hopper:'Hopper & Scoring', intake:'Intake', feeding:'Feeding',
+  driver:'Driver', climbing:'Climbing', defense:'Defense', comments:'Comments'
+};
 
-// DARK MODE
+// ── DARK MODE ──────────────────────────────────────────────────
 var dark = localStorage.getItem('darkMode') === '1';
 function applyDark() { document.body.classList.toggle('dark', dark); }
-function toggleDark() { dark=!dark; localStorage.setItem('darkMode',dark?'1':'0'); applyDark(); }
+function toggleDark() { dark = !dark; localStorage.setItem('darkMode', dark?'1':'0'); applyDark(); }
 applyDark();
 
-// OFFLINE
-function updateOnline() { document.getElementById('offlineBadge').style.display = navigator.onLine?'none':'inline-block'; }
-window.addEventListener('online', function(){ updateOnline(); flushPending(); });
+// ── OFFLINE ────────────────────────────────────────────────────
+function updateOnline() {
+  document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
+}
+window.addEventListener('online', function() { updateOnline(); flushPending(); });
 window.addEventListener('offline', updateOnline);
 updateOnline();
 
-// TABS
+// ── TABS ───────────────────────────────────────────────────────
 function switchTab(tab, btn) {
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('active');});
-  document.getElementById(tab+'Page').classList.add('active');
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById(tab + 'Page').classList.add('active');
   btn.classList.add('active');
-  if (tab==='data') renderData();
+  if (tab === 'data') renderData();
 }
 
-// SECTIONS
 function toggleSection(id) { document.getElementById(id).classList.toggle('open'); }
 
-// TOOLTIP
+// ── TOOLTIP ────────────────────────────────────────────────────
 function showTip(title, key) {
-  document.getElementById('tipTitle').textContent = title + ' - Guided Questions';
-  document.getElementById('tipList').innerHTML = TIPS[key].map(function(q){return '<li>'+q+'</li>';}).join('');
+  document.getElementById('tipTitle').textContent = title + ' — Guided Questions';
+  document.getElementById('tipList').innerHTML = TIPS[key].map(function(q) { return '<li>' + q + '</li>'; }).join('');
   document.getElementById('tooltipOverlay').classList.add('show');
 }
 function closeTip(e) {
-  if (!e || e.target===document.getElementById('tooltipOverlay')) document.getElementById('tooltipOverlay').classList.remove('show');
+  if (!e || e.target === document.getElementById('tooltipOverlay')) {
+    document.getElementById('tooltipOverlay').classList.remove('show');
+  }
 }
 
-// EVENTS
-function getEvents() { try{return JSON.parse(localStorage.getItem('scoutEvents')||'[]');}catch(e){return[];} }
-function saveEvents(ev) { localStorage.setItem('scoutEvents',JSON.stringify(ev)); }
-function populateEventDropdowns() {
-  var events = getEvents();
-  ['eventSelect','relabelSelect'].forEach(function(id){
-    var el = document.getElementById(id); if (!el) return;
-    var cur = el.value;
-    while (el.options.length > 1) el.remove(1);
-    events.forEach(function(ev){ var o=document.createElement('option'); o.value=ev; o.textContent=ev; el.appendChild(o); });
-    el.value = cur;
-  });
-}
-function showEventModal() { populateEventDropdowns(); renderEventList(); document.getElementById('eventModal').classList.add('show'); }
-function closeEventModal(e) { if (!e||e.target===document.getElementById('eventModal')) document.getElementById('eventModal').classList.remove('show'); }
-function renderEventList() {
-  var events=getEvents(), el=document.getElementById('eventListEl');
-  if (!events.length) { el.innerHTML='<div style="color:var(--subtext);font-size:.85rem;padding:.5rem 0">No events yet.</div>'; return; }
-  el.innerHTML = events.map(function(ev,i){
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)">'
-      +'<span style="font-size:.9rem">'+ev+'</span>'
-      +'<button onclick="removeEvent('+i+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:.85rem;font-weight:600;">Remove</button></div>';
-  }).join('');
-}
-function addEvent() {
-  var input=document.getElementById('newEventInput'), name=input.value.trim();
-  if (!name) return;
-  var events=getEvents();
-  if (events.indexOf(name)!==-1){showToast('Event already exists.');return;}
-  events.push(name); saveEvents(events); input.value=''; renderEventList(); populateEventDropdowns(); showToast('Event added!');
-}
-function removeEvent(i) { var events=getEvents(); events.splice(i,1); saveEvents(events); renderEventList(); populateEventDropdowns(); }
-
-var relabelEntryId = null;
-function openRelabelModal(id, currentEvent) {
-  relabelEntryId = id; populateEventDropdowns();
-  document.getElementById('relabelSelect').value = currentEvent||'';
-  document.getElementById('relabelModal').classList.add('show');
-}
-function closeRelabelModal(e) {
-  if (!e||e.target===document.getElementById('relabelModal')) { document.getElementById('relabelModal').classList.remove('show'); relabelEntryId=null; }
-}
-function confirmRelabel() {
-  if (!relabelEntryId) return;
-  var newEvent=document.getElementById('relabelSelect').value, id=relabelEntryId;
-  var stored=getStored(); stored.forEach(function(e){if(e.id===id) e.event=newEvent;}); saveStored(stored);
-  cloudPost({action:'relabel',entry:{id:id,event:newEvent}}).catch(function(){});
-  document.getElementById('relabelModal').classList.remove('show'); relabelEntryId=null;
-  renderData(); showToast('Event updated!');
-}
-
-// CANVAS
+// ── CANVAS ─────────────────────────────────────────────────────
 var canvas = document.getElementById('fieldMap');
 var ctx = canvas.getContext('2d');
-var tool='draw', painting=false, lastX=0, lastY=0;
+var tool = 'draw', painting = false, lastX = 0, lastY = 0;
 var drawCanvas = document.createElement('canvas');
-drawCanvas.width=canvas.width; drawCanvas.height=canvas.height;
+drawCanvas.width = canvas.width; drawCanvas.height = canvas.height;
 var dctx = drawCanvas.getContext('2d');
 
-function compositeToMain(){ctx.clearRect(0,0,canvas.width,canvas.height);drawField();ctx.drawImage(drawCanvas,0,0);}
+function compositeToMain() { ctx.clearRect(0,0,canvas.width,canvas.height); drawField(); ctx.drawImage(drawCanvas,0,0); }
 
 function setTool(t) {
-  tool=t;
-  document.querySelectorAll('.tool-btn').forEach(function(b){b.classList.remove('active');});
-  var m={draw:'toolDraw',x:'toolX',erase:'toolErase'};
-  var el=document.getElementById(m[t]); if(el) el.classList.add('active');
+  tool = t;
+  document.querySelectorAll('.tool-btn').forEach(function(b) { b.classList.remove('active'); });
+  var map = { draw:'toolDraw', x:'toolX', erase:'toolErase' };
+  var el = document.getElementById(map[t]);
+  if (el) el.classList.add('active');
 }
 
 function drawField() {
-  var W=canvas.width,H=canvas.height;
-  ctx.fillStyle='#4a5240';ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='#b0b8c8';ctx.lineWidth=4;ctx.strokeRect(2,2,W-4,H-4);
-  var fw=W-8,fh=H-8,ox=4,oy=4,sx=fw/651,sy=fh/317;
+  var W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#4a5240'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle = '#b0b8c8'; ctx.lineWidth = 4; ctx.strokeRect(2,2,W-4,H-4);
+  var fw = W-8, fh = H-8, ox = 4, oy = 4;
+  var sx = fw/651, sy = fh/317;
   function fx(i){return ox+i*sx;} function fy(i){return oy+i*sy;}
   function fw2(i){return i*sx;} function fh2(i){return i*sy;}
-  ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([6,4]);
-  ctx.beginPath();ctx.moveTo(fx(325.6),oy);ctx.lineTo(fx(325.6),oy+fh);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='#cc2222';ctx.fillRect(ox,oy,fw2(8),fh);
-  ctx.fillStyle='#2233cc';ctx.fillRect(fx(643),oy,fw2(8),fh);
-  ctx.strokeStyle='#ff4444';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
-  ctx.beginPath();ctx.moveTo(fx(158.6),oy);ctx.lineTo(fx(158.6),oy+fh);ctx.stroke();
-  ctx.strokeStyle='#4466ff';ctx.beginPath();ctx.moveTo(fx(492.4),oy);ctx.lineTo(fx(492.4),oy+fh);ctx.stroke();ctx.setLineDash([]);
-  var hcy=317/2;
-  rct(fx(135.1),fy(hcy-23.5),fw2(47),fh2(47),'#cc2222','#ff6666',2);lbl(fx(158.6),fy(hcy),'#fff','8','HUB');
-  rct(fx(468.9),fy(hcy-23.5),fw2(47),fh2(47),'#2233cc','#6699ff',2);lbl(fx(492.4),fy(hcy),'#fff','8','HUB');
+  ctx.strokeStyle='#ffffff'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(fx(325.6),oy); ctx.lineTo(fx(325.6),oy+fh); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#cc2222'; ctx.fillRect(ox,oy,fw2(8),fh);
+  ctx.fillStyle='#2233cc'; ctx.fillRect(fx(643),oy,fw2(8),fh);
+  ctx.strokeStyle='#ff4444'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(fx(158.6),oy); ctx.lineTo(fx(158.6),oy+fh); ctx.stroke();
+  ctx.strokeStyle='#4466ff';
+  ctx.beginPath(); ctx.moveTo(fx(492.4),oy); ctx.lineTo(fx(492.4),oy+fh); ctx.stroke();
+  ctx.setLineDash([]);
+  var hubCY = 317/2;
+  rct(fx(158.6-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#cc2222','#ff6666',2); lbl(fx(158.6),fy(hubCY),'#fff','8','HUB');
+  rct(fx(492.4-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#2233cc','#6699ff',2); lbl(fx(492.4),fy(hubCY),'#fff','8','HUB');
   var bd=fw2(44.4),bh=fh2(73);
-  [[158.6,hcy-23.5-73,0],[158.6,hcy+23.5,0],[492.4,hcy-23.5-73,1],[492.4,hcy+23.5,1]].forEach(function(a){
+  [[158.6,hubCY-23.5-73,0],[158.6,hubCY+23.5,0],[492.4,hubCY-23.5-73,1],[492.4,hubCY+23.5,1]].forEach(function(a){
     rct(fx(a[0]-22.2),fy(a[1]),bd,bh,a[2]?'#112299':'#993311',a[2]?'#4466ff':'#ff8844',1.5);
     lbl(fx(a[0]),fy(a[1]+36.5),'#ffcc88','7','BUMP');
   });
   var tw=fw2(65.65),th=fh2(47);
   [[158.6,0],[158.6,317-47],[492.4,0],[492.4,317-47]].forEach(function(a){
-    rct(fx(a[0]-32.825),fy(a[1]),tw,th,'#2a2a3a','#8888aa',1.5);lbl(fx(a[0]),fy(a[1]+23.5),'#aaaacc','7','TRENCH');
+    rct(fx(a[0]-32.825),fy(a[1]),tw,th,'#2a2a3a','#8888aa',1.5);
+    lbl(fx(a[0]),fy(a[1]+23.5),'#aaaacc','7','TRENCH');
   });
-  rct(fx(8),fy(hcy-21),fw2(27),fh2(42),'#775500','#e8a800',1.5);lbl(fx(21.5),fy(hcy),'#ffe066','7','DEPOT');
-  rct(fx(616),fy(hcy-21),fw2(27),fh2(42),'#775500','#e8a800',1.5);lbl(fx(629.5),fy(hcy),'#ffe066','7','DEPOT');
+  rct(fx(8),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5); lbl(fx(8+13.5),fy(hubCY),'#ffe066','7','DEPOT');
+  rct(fx(651-35),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5); lbl(fx(651-21.5),fy(hubCY),'#ffe066','7','DEPOT');
   [[ox,oy],[ox,oy+fh-fh2(71)],[ox+fw-fw2(71),oy],[ox+fw-fw2(71),oy+fh-fh2(71)]].forEach(function(a,i){
-    ctx.fillStyle=i<2?'#661111':'#111166';ctx.fillRect(a[0],a[1],fw2(71),fh2(71));
-    ctx.strokeStyle=i<2?'#ff8888':'#8888ff';ctx.lineWidth=1;ctx.strokeRect(a[0],a[1],fw2(71),fh2(71));
+    ctx.fillStyle=i<2?'#661111':'#111166'; ctx.fillRect(a[0],a[1],fw2(71),fh2(71));
+    ctx.strokeStyle=i<2?'#ff8888':'#8888ff'; ctx.lineWidth=1; ctx.strokeRect(a[0],a[1],fw2(71),fh2(71));
   });
-  ctx.fillStyle='#ffaaaa';ctx.font='bold 7px Segoe UI';ctx.textAlign='center';
-  ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh2(35.5)+3);ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh-fh2(35.5)+3);
+  ctx.fillStyle='#ffaaaa'; ctx.font='bold 7px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh2(35.5)+3); ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh-fh2(35.5)+3);
   ctx.fillStyle='#aaaaff';
-  ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh2(35.5)+3);ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh-fh2(35.5)+3);
-  rct(fx(8),fy(hcy-24.6),fw2(45),fh2(49.25),'#882211','#ff4422',2);lbl(fx(30.5),fy(hcy),'#ffcccc','7','TOWER');
-  rct(fx(598),fy(hcy-24.6),fw2(45),fh2(49.25),'#112288','#2244ff',2);lbl(fx(620.5),fy(hcy),'#ccccff','7','TOWER');
-  var fW=fw2(72),fH=fh2(206),fX=fx(325.6)-fw2(36),fY=fy(hcy)-fh2(103);
-  ctx.fillStyle='rgba(232,168,0,0.18)';ctx.fillRect(fX,fY,fW,fH);
-  ctx.strokeStyle='#e8a800';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.strokeRect(fX,fY,fW,fH);ctx.setLineDash([]);
+  ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh2(35.5)+3); ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh-fh2(35.5)+3);
+  rct(fx(8),fy(hubCY-24.6),fw2(45),fh2(49.25),'#882211','#ff4422',2); lbl(fx(8+22.5),fy(hubCY),'#ffcccc','7','TOWER');
+  rct(fx(651-53),fy(hubCY-24.6),fw2(45),fh2(49.25),'#112288','#2244ff',2); lbl(fx(651-30.5),fy(hubCY),'#ccccff','7','TOWER');
+  var fuelW=fw2(72),fuelH=fh2(206),fuelX=fx(325.6)-fw2(72)/2,fuelY=fy(hubCY)-fh2(206)/2;
+  ctx.fillStyle='rgba(232,168,0,0.18)'; ctx.fillRect(fuelX,fuelY,fuelW,fuelH);
+  ctx.strokeStyle='#e8a800'; ctx.lineWidth=1; ctx.setLineDash([3,3]); ctx.strokeRect(fuelX,fuelY,fuelW,fuelH); ctx.setLineDash([]);
   ctx.fillStyle='#e8a800';
-  for(var r=0;r<14;r++) for(var c=0;c<6;c++){ctx.beginPath();ctx.arc(fX+(c+0.5)*(fW/6),fY+(r+0.5)*(fH/14),3.5,0,Math.PI*2);ctx.fill();}
-  ctx.fillStyle='#ff8888';ctx.font='bold 10px Segoe UI';ctx.textAlign='center';
-  ctx.fillText('RED',fx(80),oy+14);ctx.fillStyle='#8899ff';ctx.fillText('BLUE',fx(571),oy+14);
+  for(var r=0;r<14;r++) for(var c=0;c<6;c++){ctx.beginPath();ctx.arc(fuelX+(c+0.5)*(fuelW/6),fuelY+(r+0.5)*(fuelH/14),3.5,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#ff8888'; ctx.font='bold 10px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText('RED',fx(80),oy+14); ctx.fillStyle='#8899ff'; ctx.fillText('BLUE',fx(571),oy+14);
 }
+
 function rct(x,y,w,h,f,s,lw){ctx.fillStyle=f;ctx.fillRect(x,y,w,h);ctx.strokeStyle=s;ctx.lineWidth=lw;ctx.strokeRect(x,y,w,h);}
 function lbl(x,y,c,sz,t){ctx.fillStyle=c;ctx.font='bold '+sz+'px Segoe UI';ctx.textAlign='center';ctx.fillText(t,x,y+3);}
 drawField();
@@ -454,173 +408,334 @@ function erasePt(x,y){dctx.clearRect(x-14,y-14,28,28);compositeToMain();lastX=x;
 function stampX(x,y){dctx.strokeStyle='#f87171';dctx.lineWidth=2.5;dctx.lineCap='round';dctx.beginPath();dctx.moveTo(x-9,y-9);dctx.lineTo(x+9,y+9);dctx.stroke();dctx.beginPath();dctx.moveTo(x+9,y-9);dctx.lineTo(x-9,y+9);dctx.stroke();compositeToMain();}
 function clearCanvas(){dctx.clearRect(0,0,drawCanvas.width,drawCanvas.height);compositeToMain();}
 
-// LOCAL STORAGE
+// ── LOCAL STORAGE ──────────────────────────────────────────────
 function getStored(){try{return JSON.parse(localStorage.getItem('scoutData')||'[]');}catch(e){return[];}}
 function saveStored(d){localStorage.setItem('scoutData',JSON.stringify(d));}
 function getPending(){try{return JSON.parse(localStorage.getItem('pendingData')||'[]');}catch(e){return[];}}
 function savePending(d){localStorage.setItem('pendingData',JSON.stringify(d));}
 
-// API
-function cloudGet(){
-  return fetch(API_URL).then(function(r){return r.json();})
-    .then(function(j){return{entries:j.entries||[],deleted:j.deleted||[]};})
-    .catch(function(){return{entries:[],deleted:[]};});
-}
-function cloudPost(body){
-  return fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-    .then(function(r){return r.json();})
-    .catch(function(){return{success:false};});
-}
-
-// SUBMIT
-function submitForm() {
-  var entry={
-    id:Date.now(),
-    match:document.getElementById('matchNum').value.trim(),
-    team:document.getElementById('teamNum').value.trim(),
-    position:document.getElementById('alliancePos').value,
-    scouter:document.getElementById('scouterName').value.trim(),
-    event:document.getElementById('eventSelect').value,
-    auton:document.getElementById('autonNotes').value.trim(),
-    hopper:document.getElementById('hopperNotes').value.trim(),
-    intake:document.getElementById('intakeNotes').value.trim(),
-    feeding:document.getElementById('feedingNotes').value.trim(),
-    driver:document.getElementById('driverNotes').value.trim(),
-    climbing:document.getElementById('climbingNotes').value.trim(),
-    defense:document.getElementById('defenseNotes').value.trim(),
-    comments:document.getElementById('commentsNotes').value.trim(),
-    mapImg:canvas.toDataURL(),
-    timestamp:new Date().toLocaleString()
+// ── SUBMIT ─────────────────────────────────────────────────────
+function collectForm() {
+  return {
+    id: Date.now(),
+    match:    document.getElementById('matchNum').value.trim(),
+    team:     document.getElementById('teamNum').value.trim(),
+    position: document.getElementById('alliancePos').value,
+    scouter:  document.getElementById('scouterName').value.trim(),
+    auton:    document.getElementById('autonNotes').value.trim(),
+    hopper:   document.getElementById('hopperNotes').value.trim(),
+    intake:   document.getElementById('intakeNotes').value.trim(),
+    feeding:  document.getElementById('feedingNotes').value.trim(),
+    driver:   document.getElementById('driverNotes').value.trim(),
+    climbing: document.getElementById('climbingNotes').value.trim(),
+    defense:  document.getElementById('defenseNotes').value.trim(),
+    comments: document.getElementById('commentsNotes').value.trim(),
+    mapImg:   canvas.toDataURL(),
+    timestamp: new Date().toLocaleString()
   };
-  if (!entry.match||!entry.team){showToast('Match # and Team # are required.');return;}
-  var stored=getStored();stored.push(entry);saveStored(stored);
-  ['matchNum','teamNum','scouterName','autonNotes','hopperNotes','intakeNotes','feedingNotes','driverNotes','climbingNotes','defenseNotes','commentsNotes'].forEach(function(id){document.getElementById(id).value='';});
+}
+
+function submitForm() {
+  var entry = collectForm();
+  if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
+  var stored = getStored(); stored.push(entry); saveStored(stored);
+  showToast('✅ Saved locally!');
+  resetForm();
+  var stripped = Object.assign({}, entry); delete stripped.mapImg;
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'add', entry: stripped })
+  }).then(function() {
+    showToast('✅ Synced to cloud!');
+  }).catch(function(e) { console.warn('Cloud sync failed:', e); });
+}
+
+function resetForm() {
+  ['matchNum','teamNum','scouterName','autonNotes','hopperNotes','intakeNotes',
+   'feedingNotes','driverNotes','climbingNotes','defenseNotes','commentsNotes'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
   document.getElementById('alliancePos').value='';
-  document.getElementById('eventSelect').value='';
   clearCanvas();
-  if (!navigator.onLine){var pend=getPending();pend.push(entry);savePending(pend);showToast('Saved locally - will sync when online.');return;}
-  cloudPost({action:'add',entry:entry}).then(function(json){showToast(json.success?'Submitted and synced!':'Saved locally.');});
 }
 
-function flushPending(){
-  var pending=getPending();
-  if (!pending.length||!navigator.onLine) return;
-  cloudPost({action:'setAll',data:{entries:pending,deleted:[]}}).then(function(){savePending([]);showToast('Offline data synced!');}).catch(function(){});
+function flushPending() {
+  var pending = getPending();
+  if (!pending.length || !navigator.onLine) return;
+  var stripped = pending.map(function(e) {
+    var copy = Object.assign({}, e); delete copy.mapImg; return copy;
+  });
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'setAll', data: { entries: stripped, deleted: [] } })
+  }).then(function() {
+    savePending([]);
+    showToast('📶 Offline data synced!');
+  }).catch(function(e) { console.warn('flushPending failed', e); });
 }
 
-function uploadAllLocal(){
-  var local=getStored().concat(getPending());
-  if (!local.length){showToast('No local data to upload.');return;}
-  showToast('Uploading...');
-  cloudPost({action:'setAll',data:{entries:local,deleted:[]}}).then(function(json){
-    if(json.success){savePending([]);showToast('All local data uploaded!');renderData();}
-    else showToast('Upload failed.');
-  }).catch(function(){showToast('Upload failed.');});
+function uploadAllLocal() {
+  var local = getStored().concat(getPending());
+  if (!local.length) { showToast('No local data to upload.'); return; }
+  showToast('⬆️ Uploading…');
+  var stripped = local.map(function(e) {
+    var copy = Object.assign({}, e); delete copy.mapImg; return copy;
+  });
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'setAll', data: { entries: stripped, deleted: [] } })
+  }).then(function(res) {
+    console.log('Upload status:', res.status);
+    return res.json();
+  }).then(function(json) {
+    console.log('Upload response:', JSON.stringify(json));
+    if (json.success) {
+      savePending([]);
+      showToast('✅ All local data uploaded!');
+      renderData();
+    } else {
+      showToast('❌ Upload failed: ' + (json.error || 'unknown error'));
+    }
+  }).catch(function(e) {
+    console.error('Upload error:', e);
+    showToast('❌ Upload failed: ' + e.message);
+  });
 }
 
-function uploadSingleEntry(id){
-  var all=getStored().concat(getPending()),entry=null;
-  for(var i=0;i<all.length;i++){if(all[i].id===id){entry=all[i];break;}}
-  if(!entry){showToast('Entry not found.');return;}
-  cloudPost({action:'add',entry:entry}).then(function(json){
-    if(json.success){savePending(getPending().filter(function(e){return e.id!==id;}));showToast('Uploaded!');renderData();}
-  }).catch(function(){showToast('Upload failed.');});
+function uploadSingleEntry(id) {
+  var all = getStored().concat(getPending());
+  var entry = null;
+  for (var i=0;i<all.length;i++) { if (all[i].id===id) { entry=all[i]; break; } }
+  if (!entry) { showToast('Entry not found.'); return; }
+  var stripped = Object.assign({}, entry); delete stripped.mapImg;
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'add', entry: stripped })
+  }).then(function(res) { return res.json(); })
+  .then(function(json) {
+    if (json.success) {
+      savePending(getPending().filter(function(e){return e.id!==id;}));
+      showToast('✅ Uploaded to cloud!');
+      renderData();
+    }
+  }).catch(function(e) { showToast('❌ Upload failed.'); console.warn(e); });
 }
 
-// DATA VIEW
-function renderData(){
-  var view=document.getElementById('dataView');
-  view.innerHTML='<div class="empty-state">Loading data...</div>';
-  cloudGet().then(function(cloud){
-    var entries=cloud.entries||[],deleted=cloud.deleted||[];
-    var cloudIds={};entries.forEach(function(e){cloudIds[e.id]=true;});
-    var seen={};entries.forEach(function(e){seen[e.id]=true;});
+// ── DATA VIEW ──────────────────────────────────────────────────
+function renderData() {
+  var view = document.getElementById('dataView');
+  view.innerHTML = '<div class="empty-state">Loading data…</div>';
+  cloudGet().then(function(cloud) {
+    var entries = cloud.entries || [];
+    var deleted = cloud.deleted || [];
+    var cloudIds = {};
+    entries.forEach(function(e){cloudIds[e.id]=true;});
+    var seen = {};
+    entries.forEach(function(e){seen[e.id]=true;});
     getStored().concat(getPending()).forEach(function(e){if(!seen[e.id]){entries.push(e);seen[e.id]=true;}});
-    var html='';
-    if (!entries.length){html='<div class="empty-state">No data submitted yet.</div>';}
-    else {
-      var evMap={};
-      entries.forEach(function(e){var ev=e.event||'No Event';if(!evMap[ev])evMap[ev]={};var t=e.team||'Unknown';if(!evMap[ev][t])evMap[ev][t]=[];evMap[ev][t].push(e);});
-      Object.keys(evMap).sort().forEach(function(ev){
-        html+='<div class="ev-header">'+ev+'</div>';
-        Object.keys(evMap[ev]).sort().forEach(function(team){
-          var list=evMap[ev][team];
-          var tcId='tc'+ev.replace(/[^a-zA-Z0-9]/g,'')+''+team;
-          html+='<div class="team-card" id="'+tcId+'">'
-            +'<div class="team-header" onclick="toggleTeam(\''+tcId+'\')">'
-            +'<span>Team '+team+' <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+list.length+' match'+(list.length!==1?'es':'')+')</span></span>'
-            +'<span style="font-size:.85rem;color:var(--subtext)">v</span></div>'
-            +'<div class="team-body">';
-          list.forEach(function(e){
-            var inCloud=!!cloudIds[e.id],isPending=getPending().some(function(p){return p.id===e.id;});
-            var safeEvent=(e.event||'').replace(/[^a-zA-Z0-9 ]/g,'');
-            html+='<div class="match-entry">'
-              +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
-              +'<strong style="font-size:.9rem;color:var(--accent)">Match '+(e.match||'?')
-              +(isPending?' <span class="badge badge-yellow">PENDING</span>':'')
-              +(!inCloud?' <span class="badge badge-purple">LOCAL</span>':'')
-              +'</strong>'
-              +'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
-              +'<button class="del-btn" style="border-color:#b45309;color:#b45309" onclick="openRelabelModal('+e.id+', \''+safeEvent+'\')">Event</button>'
-              +(!inCloud?'<button class="del-btn" style="border-color:#6366f1;color:#6366f1" onclick="uploadSingleEntry('+e.id+')">Upload</button>':'')
-              +'<button class="del-btn" onclick="deleteEntry('+e.id+')">Delete</button>'
-              +'</div></div><div class="match-grid">';
-            Object.keys(SEC_LABELS).forEach(function(k){if(e[k])html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>';});
-            if(e.mapImg)html+='<div class="match-item" style="grid-column:1/-1"><strong>Auto Map</strong><img src="'+e.mapImg+'" style="width:100%;border-radius:6px;margin-top:.3rem"></div>';
-            html+='</div></div>';
-          });
-          html+='</div></div>';
+    var html = '';
+    if (!entries.length) {
+      html = '<div class="empty-state">No data submitted yet.</div>';
+    } else {
+      var teams = {};
+      entries.forEach(function(e){var t=e.team||'Unknown';if(!teams[t])teams[t]=[];teams[t].push(e);});
+      Object.keys(teams).sort().forEach(function(team){
+        var list = teams[team];
+        html += '<div class="team-card" id="tc-'+team+'">'
+          +'<div class="team-header" onclick="toggleTeam(\'tc-'+team+'\')">'
+          +'<span>Team '+team+' <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+list.length+' match'+(list.length!==1?'es':'')+')</span></span>'
+          +'<span style="font-size:.85rem;color:var(--subtext)">▼</span></div>'
+          +'<div class="team-body">';
+        list.forEach(function(e){
+          var inCloud = !!cloudIds[e.id];
+          var isPending = getPending().some(function(p){return p.id===e.id;});
+          html += '<div class="match-entry">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
+            +'<strong style="font-size:.9rem;color:var(--accent)">Match '+(e.match||'?')
+            +(isPending?' <span class="badge badge-yellow">PENDING</span>':'')
+            +(!inCloud?' <span class="badge badge-purple">LOCAL</span>':'')
+            +'</strong>'
+            +'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
+            +(!inCloud?'<button class="del-btn" style="border-color:#6366f1;color:#6366f1" onclick="uploadSingleEntry('+e.id+')">⬆️ Upload</button>':'')
+            +'<button class="del-btn" onclick="deleteEntry('+e.id+')">Delete</button>'
+            +'</div></div><div class="match-grid">';
+          Object.keys(SEC_LABELS).forEach(function(k){if(e[k])html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>';});
+          if(e.mapImg)html+='<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="'+e.mapImg+'" style="width:100%;border-radius:6px;margin-top:.3rem"></div>';
+          html += '</div></div>';
         });
+        html += '</div></div>';
       });
     }
-    html+='<div class="team-card" id="tc-deleted" style="margin-top:1rem;border-color:var(--red)">'
+    // Recently Deleted
+    html += '<div class="team-card" id="tc-deleted" style="margin-top:1rem;border-color:var(--red)">'
       +'<div class="team-header" onclick="toggleTeam(\'tc-deleted\')" style="color:var(--red)">'
-      +'<span>Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+deleted.length+' item'+(deleted.length!==1?'s':'')+')</span></span>'
-      +'<span style="font-size:.85rem;color:var(--subtext)">v</span></div><div class="team-body">';
-    if(!deleted.length){html+='<div style="padding:.75rem 1rem;color:var(--subtext);font-size:.85rem">No recently deleted entries.</div>';}
-    else deleted.forEach(function(e){
-      html+='<div class="match-entry"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
-        +'<strong style="font-size:.9rem;color:var(--subtext)">Team '+(e.team||'?')+' - Match '+(e.match||'?')+(e.event?' ('+e.event+')':'')+'</strong>'
-        +'<span style="font-size:.75rem;color:var(--subtext)">'+(e.deletedAt||'')+'</span>'
-        +'<div style="display:flex;gap:.4rem">'
-        +'<button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry('+e.id+')">Restore</button>'
-        +'<button class="del-btn" onclick="permDeleteEntry('+e.id+')">Delete Forever</button>'
-        +'</div></div></div>';
-    });
-    html+='</div></div>';
-    view.innerHTML=html;
-  }).catch(function(){document.getElementById('dataView').innerHTML='<div class="empty-state">Failed to load. Check connection.</div>';});
+      +'<span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+deleted.length+' item'+(deleted.length!==1?'s':'')+')</span></span>'
+      +'<span style="font-size:.85rem;color:var(--subtext)">▼</span></div><div class="team-body">';
+    if(!deleted.length){
+      html+='<div style="padding:.75rem 1rem;color:var(--subtext);font-size:.85rem">No recently deleted entries.</div>';
+    } else {
+      deleted.forEach(function(e){
+        html+='<div class="match-entry">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
+          +'<strong style="font-size:.9rem;color:var(--subtext)">Team '+(e.team||'?')+' — Match '+(e.match||'?')+'</strong>'
+          +'<span style="font-size:.75rem;color:var(--subtext)">'+(e.deletedAt||'')+'</span>'
+          +'<div style="display:flex;gap:.4rem">'
+          +'<button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry('+e.id+')">Restore</button>'
+          +'<button class="del-btn" onclick="permDeleteEntry('+e.id+')">Delete Forever</button>'
+          +'</div></div></div>';
+      });
+    }
+    html += '</div></div>';
+    view.innerHTML = html;
+  }).catch(function(e){
+    console.warn('renderData failed',e);
+    view.innerHTML = '<div class="empty-state">Failed to load data. Check your connection.</div>';
+  });
 }
 
 function toggleTeam(id){var el=document.getElementById(id);if(el)el.classList.toggle('open');}
 
-function deleteEntry(id){
-  if(!confirm('Delete this entry?'))return;
-  var all=getStored().concat(getPending()),entry=null;
-  for(var i=0;i<all.length;i++){if(all[i].id===id){entry=all[i];break;}}
+function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  var all = getStored().concat(getPending());
+  var entry = null;
+  for (var i=0;i<all.length;i++) { if(all[i].id===id){entry=all[i];break;} }
   saveStored(getStored().filter(function(e){return e.id!==id;}));
   savePending(getPending().filter(function(e){return e.id!==id;}));
-  cloudPost({action:'delete',entry:{id:id}}).then(function(){renderData();showToast('Deleted.');}).catch(function(){renderData();});
-}
-function restoreEntry(id){
-  cloudPost({action:'restore',entry:{id:id}}).then(function(json){
-    if(json.success&&json.data){var restored=null;json.data.entries.forEach(function(e){if(e.id===id)restored=e;});if(restored){var s=getStored();s.push(restored);saveStored(s);}}
-    renderData();showToast('Restored!');
-  }).catch(function(){});
-}
-function permDeleteEntry(id){
-  if(!confirm('Permanently delete? Cannot be undone.'))return;
-  cloudPost({action:'permDelete',entry:{id:id}}).then(function(){renderData();showToast('Permanently deleted.');}).catch(function(){});
+  if (entry) {
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', entry: { id: entry.id } })
+    }).then(function() { renderData(); showToast('🗑 Entry deleted.'); })
+    .catch(function(e) { console.warn('deleteEntry failed',e); renderData(); });
+  } else {
+    renderData(); showToast('🗑 Entry deleted.');
+  }
 }
 
-// TOAST
-function showToast(msg){
+function restoreEntry(id) {
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'restore', entry: { id: id } })
+  }).then(function(res) { return res.json(); })
+  .then(function(json) {
+    if (json.success && json.data) {
+      var restored = null;
+      for (var i=0;i<json.data.deleted.length;i++) { } // already removed
+      // find in entries
+      for (var j=0;j<json.data.entries.length;j++) {
+        if (json.data.entries[j].id===id) { restored=json.data.entries[j]; break; }
+      }
+      if (restored) { var s=getStored(); s.push(restored); saveStored(s); }
+    }
+    renderData(); showToast('♻️ Entry restored!');
+  }).catch(function(e) { console.warn('restoreEntry failed',e); });
+}
+
+function permDeleteEntry(id) {
+  if (!confirm('Permanently delete? Cannot be undone.')) return;
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'permDelete', entry: { id: id } })
+  }).then(function() { renderData(); showToast('🗑 Permanently deleted.'); })
+  .catch(function(e) { console.warn('permDelete failed',e); });
+}
+
+function exportPDF() {
+  showToast('📄 Generating PDF…');
+  cloudGet().then(function(cloud) {
+    var entries = cloud.entries || [];
+    var local = getStored().concat(getPending());
+    var seen = {};
+    entries.forEach(function(e){seen[e.id]=true;});
+    local.forEach(function(e){if(!seen[e.id]){entries.push(e);seen[e.id]=true;}});
+
+    if (!entries.length) { showToast('No data to export.'); return; }
+
+    // Group by team
+    var teams = {};
+    entries.forEach(function(e){ var t=e.team||'Unknown'; if(!teams[t])teams[t]=[]; teams[t].push(e); });
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+      + '<title>1403 Scouting Data</title>'
+      + '<style>'
+      + 'body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}'
+      + 'h1{font-size:20px;margin-bottom:4px;}h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #2563eb;padding-bottom:4px;color:#2563eb;}'
+      + 'h3{font-size:12px;margin:12px 0 4px;color:#555;}'
+      + '.entry{border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:10px;page-break-inside:avoid;}'
+      + '.entry-header{display:flex;justify-content:space-between;margin-bottom:8px;}'
+      + '.entry-title{font-weight:700;font-size:13px;}'
+      + '.entry-meta{color:#777;font-size:11px;}'
+      + '.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}'
+      + '.field{background:#f5f5f5;border-radius:4px;padding:5px 7px;}'
+      + '.field strong{display:block;font-size:10px;text-transform:uppercase;color:#888;margin-bottom:2px;}'
+      + '.field span{font-size:11px;}'
+      + '.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}'
+      + '@media print{body{padding:10px;}}'
+      + '</style></head><body>'
+
+```
+  + '<h1>1403 Qualitative Scouting Data</h1>'
+  + '<p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' — ' + entries.length + ' total entries</p>';
+
+Object.keys(teams).sort().forEach(function(team) {
+  var list = teams[team];
+  list.sort(function(a,b){ return (parseInt(a.match)||0)-(parseInt(b.match)||0); });
+  html += '<h2>Team ' + team + ' (' + list.length + ' match' + (list.length!==1?'es':'') + ')</h2>';
+  list.forEach(function(e) {
+    html += '<div class="entry">'
+      + '<div class="entry-header">'
+      + '<span class="entry-title">Match ' + (e.match||'?') + ' — ' + (e.position||'') + '</span>'
+      + '<span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' &nbsp;|&nbsp; ' + (e.timestamp||'') + '</span>'
+      + '</div><div class="grid">';
+    var fields = [
+      ['Autonomous', e.auton], ['Hopper & Scoring', e.hopper],
+      ['Intake', e.intake], ['Feeding', e.feeding],
+      ['Driver', e.driver], ['Climbing', e.climbing],
+      ['Defense', e.defense], ['Comments', e.comments]
+    ];
+    fields.forEach(function(f) {
+      if (f[1]) {
+        html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
+      }
+    });
+    html += '</div>';
+    if (e.mapImg) {
+      html += '<div style="margin-top:8px"><strong style="font-size:10px;text-transform:uppercase;color:#888;">Auto Map</strong><br>'
+        + '<img src="' + e.mapImg + '" style="width:100%;max-width:500px;border-radius:4px;margin-top:4px;border:1px solid #ddd;"></div>';
+    }
+    html += '</div>';
+  });
+});
+
+html += '<div class="footer">1403 Qualitative Scouting App</div></body></html>';
+
+var win = window.open('', '_blank');
+if (!win) { showToast('⚠️ Allow popups to export PDF.'); return; }
+win.document.write(html);
+win.document.close();
+win.focus();
+setTimeout(function() { win.print(); }, 500);
+```
+
+}).catch(function(e) {
+console.warn(‘exportPDF failed’, e);
+showToast(‘❌ Export failed.’);
+});
+}
+function showToast(msg) {
 var t=document.getElementById(‘toast’);
 t.textContent=msg;t.classList.add(‘show’);
 setTimeout(function(){t.classList.remove(‘show’);},3000);
 }
 
-populateEventDropdowns();
 flushPending();
 </script>
 
