@@ -634,6 +634,7 @@ function exportPDF(){
       +'.f strong{display:block;font-size:9px;text-transform:uppercase;color:#888;}'
       +'.f span{font-size:11px;}</style></head><body>'
 
+```
   +'<h1>1403 Qualitative Scouting Data</h1>'
   +'<p style="color:#777;font-size:11px;margin-bottom:16px">Generated: '+new Date().toLocaleString()+' - '+entries.length+' entries</p>';
 Object.keys(evMap).sort().forEach(function(ev){
@@ -656,6 +657,7 @@ var win=window.open('','_blank');
 if(!win){showToast('Allow popups to export PDF.');return;}
 win.document.write(html);win.document.close();win.focus();
 setTimeout(function(){win.print();},500);
+```
 
 }).catch(function(){showToast(‘Export failed.’);});
 }
