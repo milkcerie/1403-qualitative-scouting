@@ -104,6 +104,89 @@ return { entries: val.entries || [], deleted: val.deleted || [] };
 }
 
 async function kvSet(data) {
+const r = await fetch(`${KV_URL}/pipeline`, {
+method: ‘POST’,
+headers: { Authorization: `Bearer ${KV_TOKEN}`, ‘Content-Type’: ‘application/json’ },
+body: JSON.stringify([[‘SET’, KEY, JSON.stringify(data)]])
+});
+return r.json();
+}
+
+try {
+if (req.method === ‘GET’) {
+const data = await kvGet();
+return res.status(200).json(data);
+}
+
+
+if (req.method === 'POST') {
+  const { action, entry, data } = req.body;
+
+  if (action === 'setAll') {
+    const existing = await kvGet();
+    const seen = {};
+    existing.entries.forEach(function(e) { seen[e.id] = true; });
+    data.entries.forEach(function(e) {
+      if (!seen[e.id]) { existing.entries.push(e); seen[e.id] = true; }
+    });
+    await kvSet(existing);
+    return res.status(200).json({ success: true });
+  }
+
+  const current = await kvGet();
+
+  if (action === 'add') {
+    const exists = current.entries.some(function(e) { return e.id === entry.id; });
+    if (!exists) current.entries.push(entry);
+  } else if (action === 'delete') {
+    const idx = current.entries.findIndex(function(e) { return e.id === entry.id; });
+    if (idx !== -1) {
+      const deleted = Object.assign({}, current.entries[idx], { deletedAt: new Date().toLocaleString() });
+      current.entries.splice(idx, 1);
+      current.deleted = current.deleted || [];
+      current.deleted.unshift(deleted);
+      current.deleted = current.deleted.slice(0, 20);
+    }
+  } else if (action === 'restore') {
+    const idx = current.deleted.findIndex(function(e) { return e.id === entry.id; });
+    if (idx !== -1) {
+      const restored = Object.assign({}, current.deleted[idx]);
+      delete restored.deletedAt;
+      current.entries.push(restored);
+      current.deleted.splice(idx, 1);
+    }
+  } else if (action === 'relabel') {
+    current.entries.forEach(function(e) {
+      if (e.id === entry.id) e.event = entry.event;
+    });
+  } else if (action === 'permDelete') {
+    current.deleted = current.deleted.filter(function(e) { return e.id !== entry.id; });
+  }
+
+  await kvSet(current);
+  return res.status(200).json({ success: true, data: current });
+}
+
+
+} catch(e) {
+console.error(‘Handler error:’, e);
+return res.status(500).json({ error: e.message });
+}
+}
+
+async function kvGet() {
+const r = await fetch(`${KV_URL}/get/${KEY}`, {
+headers: { Authorization: `Bearer ${KV_TOKEN}` }
+});
+const raw = await r.json();
+if (!raw.result) return { entries: [], deleted: [] };
+try {
+const val = typeof raw.result === ‘object’ ? raw.result : JSON.parse(raw.result);
+return { entries: val.entries || [], deleted: val.deleted || [] };
+} catch(e) { return { entries: [], deleted: [] }; }
+}
+
+async function kvSet(data) {
 // Use pipeline to set value as JSON string
 const r = await fetch(`${KV_URL}/pipeline`, {
 method: ‘POST’,
