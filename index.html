@@ -681,7 +681,7 @@ function exportPDF() {
       + '@media print{body{padding:10px;}}'
       + '</style></head><body>'
 
-```
+
   + '<h1>1403 Qualitative Scouting Data</h1>'
   + '<p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' — ' + entries.length + ' total entries</p>';
 
@@ -723,7 +723,7 @@ win.document.write(html);
 win.document.close();
 win.focus();
 setTimeout(function() { win.print(); }, 500);
-```
+
 
 }).catch(function(e) {
 console.warn(‘exportPDF failed’, e);
