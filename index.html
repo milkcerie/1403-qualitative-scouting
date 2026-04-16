@@ -657,7 +657,6 @@ var win=window.open('','_blank');
 if(!win){showToast('Allow popups to export PDF.');return;}
 win.document.write(html);win.document.close();win.focus();
 setTimeout(function(){win.print();},500);
-```
 
 }).catch(function(){showToast(‘Export failed.’);});
 }
