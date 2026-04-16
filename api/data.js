@@ -83,7 +83,7 @@ if (req.method === 'POST') {
   await kvSet(current);
   return res.status(200).json({ success: true, data: current });
 }
-```
+
 
 } catch(e) {
 console.error(‘Handler error:’, e);
@@ -122,7 +122,7 @@ const data = await kvGet();
 return res.status(200).json(data);
 }
 
-```
+
 if (req.method === 'POST') {
   const { action, entry, data } = req.body;
 
