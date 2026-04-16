@@ -35,7 +35,7 @@ const data = await kvGet();
 return res.status(200).json(data);
 }
 
-```
+
 if (req.method === 'POST') {
   const { action, entry, data } = req.body;
 
