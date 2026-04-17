@@ -16,11 +16,11 @@ export default async function handler(req, res) {
     return fetch(getUrl, { headers: { Authorization: authHeader } })
       .then(function(r) { return r.json(); })
       .then(function(raw) {
-        if (!raw.result) return { entries: [], deleted: [] };
+        if (!raw.result) return { entries: [], deleted: [], events: [] };
         var val = typeof raw.result === 'object' ? raw.result : JSON.parse(raw.result);
-        return { entries: val.entries || [], deleted: val.deleted || [] };
+        return { entries: val.entries || [], deleted: val.deleted || [], events: val.events || [] };
       })
-      .catch(function() { return { entries: [], deleted: [] }; });
+      .catch(function() { return { entries: [], deleted: [], events: [] }; });
   }
 
   function kvSet(data) {
@@ -77,6 +77,12 @@ export default async function handler(req, res) {
         });
       } else if (action === 'permDelete') {
         current.deleted = current.deleted.filter(function(e) { return e.id !== entry.id; });
+      } else if (action === 'addEvent') {
+        var newEvent = req.body.event;
+        current.events = current.events || [];
+        if (newEvent && !current.events.includes(newEvent)) {
+          current.events.push(newEvent);
+        }
       }
 
       await kvSet(current);
