@@ -19,7 +19,7 @@
   nav button:hover:not(.active){background:var(--bg);}
   .page{display:none;padding:1rem;max-width:900px;margin:0 auto;}
   .page.active{display:block;}
-  .meta-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;}
+  .meta-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.5rem;}
   .meta-field{flex:1;min-width:140px;}
   .meta-field label{display:block;font-size:.78rem;font-weight:600;color:var(--subtext);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.05em;}
   .meta-field input,.meta-field select{width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s;}
@@ -53,7 +53,7 @@
   .data-view{max-width:900px;margin:0 auto;padding:0 1rem 1rem;}
   .action-bar{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:.85rem 1rem;margin-bottom:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;}
   .team-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:.75rem;box-shadow:var(--shadow);overflow:hidden;}
-  .team-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;font-weight:700;font-size:1rem;cursor:pointer;}
+  .team-header{display:flex;align-items:center;padding:.85rem 1rem;font-weight:700;font-size:1rem;cursor:pointer;}
   .team-header:hover{background:var(--bg);}
   .team-body{display:none;border-top:1px solid var(--border);}
   .team-card.open .team-body{display:block;}
@@ -73,10 +73,9 @@
   .badge{font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:5px;color:#fff;vertical-align:middle;}
   .badge-yellow{background:#f59e0b;}
   .badge-purple{background:#6366f1;}
-  .star-btn{background:none;border:none;font-size:1rem;cursor:pointer;opacity:.25;transition:opacity .15s;padding:.2rem;line-height:1;}
+  .star-btn{background:none;border:none;font-size:1rem;cursor:pointer;opacity:.25;transition:opacity .15s;padding:.1rem .3rem;line-height:1;flex-shrink:0;}
   .star-btn.starred{opacity:1;}
-  .star-btn{background:none;border:none;font-size:1.1rem;cursor:pointer;opacity:.3;transition:opacity .15s;padding:0 .2rem;vertical-align:middle;line-height:1;}
-  .star-btn.starred{opacity:1;}
+  .event-label{display:inline-block;font-size:.72rem;font-weight:600;padding:.15rem .5rem;border-radius:5px;background:var(--accent);color:#fff;margin-left:.4rem;vertical-align:middle;}
   @media(min-width:640px){header h1{font-size:1.4rem;}.page,.data-view,.submit-bar{padding:1.5rem;}}
 </style>
 </head>
@@ -86,13 +85,13 @@
   <h1>1403 Qualitative Data</h1>
   <div style="display:flex;gap:.5rem;align-items:center">
     <span id="offlineBadge" class="badge badge-yellow" style="display:none">OFFLINE</span>
-    <button class="icon-btn" onclick="toggleDark()">🌙</button>
+    <button class="icon-btn" onclick="toggleDark()">&#127769;</button>
   </div>
 </header>
 
 <nav>
-  <button class="active" onclick="switchTab('form',this)">📋 Scout</button>
-  <button onclick="switchTab('data',this)">📊 Data</button>
+  <button class="active" onclick="switchTab('form',this)">&#128203; Scout</button>
+  <button onclick="switchTab('data',this)">&#128202; Data</button>
 </nav>
 
 <div id="formPage" class="page active">
@@ -102,7 +101,7 @@
     <div class="meta-field">
       <label>Position</label>
       <select id="alliancePos">
-        <option value="">Select…</option>
+        <option value="">Select...</option>
         <option>Red 1</option><option>Red 2</option><option>Red 3</option>
         <option>Blue 1</option><option>Blue 2</option><option>Blue 3</option>
       </select>
@@ -111,16 +110,16 @@
     <div class="meta-field">
       <label>Event</label>
       <div style="display:flex;gap:.3rem;">
-        <select id="eventSelect" style="flex:1;width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s;">
-          <option value="">Select event…</option>
+        <select id="eventSelect" style="flex:1;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;">
+          <option value="">Select event...</option>
         </select>
-        <button onclick="showAddEvent()" style="padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--accent);font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;">+</button>
+        <button onclick="showAddEvent()" style="padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--accent);font-size:1rem;font-weight:700;cursor:pointer;">+</button>
       </div>
     </div>
   </div>
-  <div id="addEventBar" style="display:none;margin-bottom:.75rem;display:none;">
+  <div id="addEventBar" style="display:none;margin-bottom:.75rem;">
     <div style="display:flex;gap:.3rem;">
-      <input type="text" id="newEventName" placeholder="New event name…" style="flex:1;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;">
+      <input type="text" id="newEventName" placeholder="New event name..." style="flex:1;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;">
       <button onclick="addEvent()" style="padding:.6rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">Add</button>
       <button onclick="hideAddEvent()" style="padding:.6rem .75rem;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);border-radius:8px;font-size:.85rem;cursor:pointer;">Cancel</button>
     </div>
@@ -128,19 +127,19 @@
 
   <div class="section-card" id="sec-auton">
     <button class="section-toggle" onclick="toggleSection('sec-auton')">
-      <span style="display:flex;align-items:center;gap:.6rem">🤖 Autonomous</span><span class="chevron">▼</span>
+      <span>&#129302; Autonomous</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row" style="margin-bottom:.75rem">
-        <div class="field-wrap"><textarea id="autonNotes" placeholder="Notes on autonomous…"></textarea></div>
+        <div class="field-wrap"><textarea id="autonNotes" placeholder="Notes on autonomous..."></textarea></div>
         <button class="i-btn" onclick="showTip('Autonomous','auton')">i</button>
       </div>
-      <div style="font-size:.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem">Field Map <span style="font-weight:400;text-transform:none">— draw path &amp; stamp X for shooting spots</span></div>
+      <div style="font-size:.78rem;font-weight:600;color:var(--subtext);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem">Field Map <span style="font-weight:400;text-transform:none">&#8212; draw path &amp; stamp X for shooting spots</span></div>
       <div class="map-tools">
-        <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">✏️ Draw</button>
-        <button class="tool-btn" id="toolX" onclick="setTool('x')">✕ Mark X</button>
-        <button class="tool-btn" id="toolErase" onclick="setTool('erase')">🧹 Erase</button>
-        <button class="tool-btn" onclick="clearCanvas()">🗑 Clear</button>
+        <button class="tool-btn active" id="toolDraw" onclick="setTool('draw')">&#9999;&#65039; Draw</button>
+        <button class="tool-btn" id="toolX" onclick="setTool('x')">&#10005; Mark X</button>
+        <button class="tool-btn" id="toolErase" onclick="setTool('erase')">&#129529; Erase</button>
+        <button class="tool-btn" onclick="clearCanvas()">&#128465; Clear</button>
       </div>
       <canvas id="fieldMap" width="560" height="320"></canvas>
     </div>
@@ -148,23 +147,23 @@
 
   <div class="section-card" id="sec-hopper">
     <button class="section-toggle" onclick="toggleSection('sec-hopper')">
-      <span style="display:flex;align-items:center;gap:.6rem">⚙️ Hopper &amp; Scoring</span><span class="chevron">▼</span>
+      <span>&#9881;&#65039; Hopper &amp; Scoring</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="hopperNotes" placeholder="Notes on hopper &amp; scoring…"></textarea></div>
-        <button class="i-btn" onclick="showTip('Hopper & Scoring','hopper')">i</button>
+        <div class="field-wrap"><textarea id="hopperNotes" placeholder="Notes on hopper &amp; scoring..."></textarea></div>
+        <button class="i-btn" onclick="showTip('Hopper &amp; Scoring','hopper')">i</button>
       </div>
     </div>
   </div>
 
   <div class="section-card" id="sec-intake">
     <button class="section-toggle" onclick="toggleSection('sec-intake')">
-      <span style="display:flex;align-items:center;gap:.6rem">🔄 Intake</span><span class="chevron">▼</span>
+      <span>&#128260; Intake</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="intakeNotes" placeholder="Notes on intake…"></textarea></div>
+        <div class="field-wrap"><textarea id="intakeNotes" placeholder="Notes on intake..."></textarea></div>
         <button class="i-btn" onclick="showTip('Intake','intake')">i</button>
       </div>
     </div>
@@ -172,11 +171,11 @@
 
   <div class="section-card" id="sec-feeding">
     <button class="section-toggle" onclick="toggleSection('sec-feeding')">
-      <span style="display:flex;align-items:center;gap:.6rem">🤝 Feeding</span><span class="chevron">▼</span>
+      <span>&#129309; Feeding</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="feedingNotes" placeholder="Notes on feeding…"></textarea></div>
+        <div class="field-wrap"><textarea id="feedingNotes" placeholder="Notes on feeding..."></textarea></div>
         <button class="i-btn" onclick="showTip('Feeding','feeding')">i</button>
       </div>
     </div>
@@ -184,11 +183,11 @@
 
   <div class="section-card" id="sec-driver">
     <button class="section-toggle" onclick="toggleSection('sec-driver')">
-      <span style="display:flex;align-items:center;gap:.6rem">🕹️ Driver</span><span class="chevron">▼</span>
+      <span>&#128281;&#65039; Driver</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="driverNotes" placeholder="Notes on the driver…"></textarea></div>
+        <div class="field-wrap"><textarea id="driverNotes" placeholder="Notes on the driver..."></textarea></div>
         <button class="i-btn" onclick="showTip('Driver','driver')">i</button>
       </div>
     </div>
@@ -196,11 +195,11 @@
 
   <div class="section-card" id="sec-climbing">
     <button class="section-toggle" onclick="toggleSection('sec-climbing')">
-      <span style="display:flex;align-items:center;gap:.6rem">🧗 Climbing</span><span class="chevron">▼</span>
+      <span>&#129495; Climbing</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="climbingNotes" placeholder="Notes on climbing…"></textarea></div>
+        <div class="field-wrap"><textarea id="climbingNotes" placeholder="Notes on climbing..."></textarea></div>
         <button class="i-btn" onclick="showTip('Climbing','climbing')">i</button>
       </div>
     </div>
@@ -208,11 +207,11 @@
 
   <div class="section-card" id="sec-defense">
     <button class="section-toggle" onclick="toggleSection('sec-defense')">
-      <span style="display:flex;align-items:center;gap:.6rem">🛡️ Defense</span><span class="chevron">▼</span>
+      <span>&#128737;&#65039; Defense</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="defenseNotes" placeholder="Notes on defense…"></textarea></div>
+        <div class="field-wrap"><textarea id="defenseNotes" placeholder="Notes on defense..."></textarea></div>
         <button class="i-btn" onclick="showTip('Defense','defense')">i</button>
       </div>
     </div>
@@ -220,11 +219,11 @@
 
   <div class="section-card" id="sec-comments">
     <button class="section-toggle" onclick="toggleSection('sec-comments')">
-      <span style="display:flex;align-items:center;gap:.6rem">💬 Comments</span><span class="chevron">▼</span>
+      <span>&#128172; Comments</span><span class="chevron">&#9660;</span>
     </button>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-wrap"><textarea id="commentsNotes" placeholder="Anything else notable…"></textarea></div>
+        <div class="field-wrap"><textarea id="commentsNotes" placeholder="Anything else notable..."></textarea></div>
         <button class="i-btn" onclick="showTip('Comments','comments')">i</button>
       </div>
     </div>
@@ -238,9 +237,9 @@
 <div id="dataPage" class="page">
   <div class="data-view">
     <div class="action-bar">
-      <button onclick="uploadAllLocal()" style="padding:.45rem 1rem;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">⬆️ Upload All Local</button>
-      <button onclick="renderData()" style="padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">🔄 Refresh</button>
-      <button onclick="exportPDF()" style="padding:.45rem 1rem;background:#059669;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">📄 Export PDF</button>
+      <button onclick="uploadAllLocal()" style="padding:.45rem 1rem;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">&#11014;&#65039; Upload All Local</button>
+      <button onclick="renderData()" style="padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">&#128260; Refresh</button>
+      <button onclick="exportPDF()" style="padding:.45rem 1rem;background:#059669;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">&#128196; Export PDF</button>
     </div>
     <div id="dataView"></div>
   </div>
@@ -248,7 +247,7 @@
 
 <div class="tooltip-overlay" id="tooltipOverlay" onclick="closeTip(event)">
   <div class="tooltip-box" onclick="event.stopPropagation()">
-    <button class="tooltip-close" onclick="closeTip()">✕</button>
+    <button class="tooltip-close" onclick="closeTip()">&#10005;</button>
     <h4 id="tipTitle"></h4>
     <ul id="tipList"></ul>
   </div>
@@ -272,9 +271,9 @@ async function cloudGet() {
 
 var TIPS = {
   auton:    ['What is their path? (draw on the map)','Where do they shoot from during auto? (mark an X on the map)','Do they climb during auto?'],
-  hopper:   ['Did the hopper stay intact the entire match? If no, when did it break?','Shooting accuracy — low, medium, or high?','Where do they shoot from? (mark X on the map)','How much fuel was missed? (educated guess)','How much fuel was shot total? (educated guess)','Do they get jammed? Specify if possible.'],
+  hopper:   ['Did the hopper stay intact the entire match? If no, when did it break?','Shooting accuracy - low, medium, or high?','Where do they shoot from? (mark X on the map)','How much fuel was missed? (educated guess)','How much fuel was shot total? (educated guess)','Do they get jammed? Specify if possible.'],
   intake:   ['Do they get back to their alliance in time to shoot during active shifts?'],
-  feeding:  ['Do they feed? Are they effective? (Feeding = intaking and shooting fuel to alliance area from neutral zone)','Do they herd? How effective? (Herding = pushing fuel with bumper under the trench)','Do they herd specifically to human players? How effective — low, medium, or high?'],
+  feeding:  ['Do they feed? Are they effective? (Feeding = intaking and shooting fuel to alliance area from neutral zone)','Do they herd? How effective? (Herding = pushing fuel with bumper under the trench)','Do they herd specifically to human players? How effective - low, medium, or high?'],
   driver:   ['Was the driver smooth and confident, or unconfident/confused?','How good was their game sense when a problem occurred?','How did they adapt/act under pressure?'],
   climbing: ['Do they climb? If yes, what level?','Did they attempt to climb (even if unsuccessful)?','Around what time (match clock) did they start to climb?'],
   defense:  ['Where did they go to play defense? (zone? describe location)','Did they target one specific robot? If yes, which team number?','Did they receive any penalties for pinning?'],
@@ -295,154 +294,7 @@ applyDark();
 function updateOnline() {
   document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
 }
-window.addEventListener('online', function() { updateOnline(); 
-
-function setEntryEvent(id) {
-  cloudGet().then(function(cloud) {
-    var events = cloud.events || [];
-    if (!events.length) {
-      showToast('No events yet. Add one first.');
-      return;
-    }
-    // Build a simple prompt-style overlay
-    var overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
-    var box = document.createElement('div');
-    box.style.cssText = 'background:var(--card);border-radius:14px;padding:1.2rem 1.4rem;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1.5px solid var(--border);';
-    var title = document.createElement('div');
-    title.style.cssText = 'font-weight:700;font-size:.95rem;color:var(--accent);margin-bottom:.8rem;';
-    title.textContent = 'Set Event for this entry';
-    var sel = document.createElement('select');
-    sel.style.cssText = 'width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;margin-bottom:.8rem;';
-    var blankOpt = document.createElement('option');
-    blankOpt.value = ''; blankOpt.textContent = '(No Event)';
-    sel.appendChild(blankOpt);
-    events.forEach(function(ev) {
-      var opt = document.createElement('option');
-      opt.value = ev; opt.textContent = ev;
-      sel.appendChild(opt);
-    });
-    // Pre-select current event if any
-    var allEntries = cloud.entries || [];
-    for (var i = 0; i < allEntries.length; i++) {
-      if (allEntries[i].id === id && allEntries[i].event) {
-        sel.value = allEntries[i].event;
-        break;
-      }
-    }
-    var btnRow = document.createElement('div');
-    btnRow.style.cssText = 'display:flex;gap:.4rem;justify-content:flex-end;';
-    var saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Save';
-    saveBtn.style.cssText = 'padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;';
-    var cancelBtn = document.createElement('button');
-    cancelBtn.textContent = 'Cancel';
-    cancelBtn.style.cssText = 'padding:.45rem 1rem;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);border-radius:8px;font-size:.85rem;cursor:pointer;';
-    saveBtn.onclick = function() {
-      document.body.removeChild(overlay);
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'relabel', entry: { id: id, event: sel.value } })
-      }).then(function(res) { return res.json(); })
-      .then(function(json) {
-        if (json.success) {
-          // Also update local copy
-          var stored = getStored();
-          stored.forEach(function(e) { if (e.id === id) e.event = sel.value; });
-          saveStored(stored);
-          showToast('Event updated!');
-          renderData();
-        }
-      }).catch(function(e) { showToast('Failed to update event.'); console.warn(e); });
-    };
-    cancelBtn.onclick = function() { document.body.removeChild(overlay); };
-    btnRow.appendChild(cancelBtn);
-    btnRow.appendChild(saveBtn);
-    box.appendChild(title);
-    box.appendChild(sel);
-    box.appendChild(btnRow);
-    overlay.appendChild(box);
-    overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
-    document.body.appendChild(overlay);
-  });
-}
-
-function makeTeamHeader(team, count, starred) {
-  var starClass = starred ? "star-btn starred" : "star-btn";
-  var matchLabel = count + " match" + (count !== 1 ? "es" : "");
-  var tid = "tc-" + team;
-  var h = "<div class=\"team-card\" id=\"" + tid + "\">";
-  h += "<div class=\"team-header\" style=\"display:flex;align-items:center;\">";
-  h += "<button class=\"" + starClass + "\" data-team=\"" + team + "\" onclick=\"toggleStarBtn(this)\" title=\"Going to District Champs\">&#11088;</button>";
-  h += "<span style=\"flex:1;cursor:pointer;\" onclick=\"toggleTeam('" + tid + "')\">Team " + team + " <span style=\"color:var(--subtext);font-weight:400;font-size:.85rem\">(" + matchLabel + ")</span></span>";
-  h += "<span onclick=\"toggleTeam('" + tid + "')\" style=\"font-size:.85rem;color:var(--subtext);padding:0 .5rem;cursor:pointer;\">&#9660;</span>";
-  h += "</div>";
-  return h;
-}
-
-function getStarredTeams() {
-  try { return JSON.parse(localStorage.getItem('starredTeams') || '[]'); } catch(e) { return []; }
-}
-function toggleStarBtn(btn) {
-  var team = btn.getAttribute("data-team");
-  toggleStar(team);
-}
-
-function toggleStar(team) {
-  var stars = getStarredTeams();
-  var idx = stars.indexOf(team);
-  if (idx === -1) stars.push(team); else stars.splice(idx, 1);
-  localStorage.setItem('starredTeams', JSON.stringify(stars));
-  renderData();
-}
-
-function loadEvents() {
-  cloudGet().then(function(cloud) {
-    var sel = document.getElementById('eventSelect');
-    var current = sel.value;
-    sel.innerHTML = '<option value="">Select event...</option>';
-    (cloud.events||[]).forEach(function(ev) {
-      var opt = document.createElement('option');
-      opt.value = ev; opt.textContent = ev;
-      sel.appendChild(opt);
-    });
-    if (current) sel.value = current;
-  });
-}
-
-function showAddEvent() {
-  document.getElementById('addEventBar').style.display = 'block';
-  document.getElementById('newEventName').focus();
-}
-
-function hideAddEvent() {
-  document.getElementById('addEventBar').style.display = 'none';
-  document.getElementById('newEventName').value = '';
-}
-
-function addEvent() {
-  var name = document.getElementById('newEventName').value.trim();
-  if (!name) { showToast('Please enter an event name.'); return; }
-  fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'addEvent', event: name })
-  }).then(function(res) { return res.json(); })
-  .then(function(json) {
-    if (json.success) {
-      hideAddEvent();
-      loadEvents();
-      setTimeout(function() {
-        document.getElementById('eventSelect').value = name;
-      }, 300);
-      showToast('Event added!');
-    }
-  }).catch(function(e) { showToast('Failed to add event.'); console.warn(e); });
-}
-
-loadEvents();
-flushPending(); });
+window.addEventListener('online', function() { updateOnline(); flushPending(); });
 window.addEventListener('offline', updateOnline);
 updateOnline();
 
@@ -457,7 +309,7 @@ function switchTab(tab, btn) {
 function toggleSection(id) { document.getElementById(id).classList.toggle('open'); }
 
 function showTip(title, key) {
-  document.getElementById('tipTitle').textContent = title + ' — Guided Questions';
+  document.getElementById('tipTitle').textContent = title + ' - Guided Questions';
   document.getElementById('tipList').innerHTML = TIPS[key].map(function(q) { return '<li>' + q + '</li>'; }).join('');
   document.getElementById('tooltipOverlay').classList.add('show');
 }
@@ -557,6 +409,14 @@ function getStored(){try{return JSON.parse(localStorage.getItem('scoutData')||'[
 function saveStored(d){localStorage.setItem('scoutData',JSON.stringify(d));}
 function getPending(){try{return JSON.parse(localStorage.getItem('pendingData')||'[]');}catch(e){return[];}}
 function savePending(d){localStorage.setItem('pendingData',JSON.stringify(d));}
+function getStarredTeams(){try{return JSON.parse(localStorage.getItem('starredTeams')||'[]');}catch(e){return[];}}
+function toggleStar(team){
+  var stars=getStarredTeams();
+  var idx=stars.indexOf(team);
+  if(idx===-1) stars.push(team); else stars.splice(idx,1);
+  localStorage.setItem('starredTeams',JSON.stringify(stars));
+  renderData();
+}
 
 function collectForm() {
   return {
@@ -565,6 +425,7 @@ function collectForm() {
     team:     document.getElementById('teamNum').value.trim(),
     position: document.getElementById('alliancePos').value,
     scouter:  document.getElementById('scouterName').value.trim(),
+    event:    document.getElementById('eventSelect').value,
     auton:    document.getElementById('autonNotes').value.trim(),
     hopper:   document.getElementById('hopperNotes').value.trim(),
     intake:   document.getElementById('intakeNotes').value.trim(),
@@ -573,7 +434,6 @@ function collectForm() {
     climbing: document.getElementById('climbingNotes').value.trim(),
     defense:  document.getElementById('defenseNotes').value.trim(),
     comments: document.getElementById('commentsNotes').value.trim(),
-    event:    document.getElementById('eventSelect').value,
     mapImg:   canvas.toDataURL(),
     timestamp: new Date().toLocaleString()
   };
@@ -581,9 +441,9 @@ function collectForm() {
 
 function submitForm() {
   var entry = collectForm();
-  if (!entry.match || !entry.team) { showToast('⚠️ Match # and Team # are required.'); return; }
+  if (!entry.match || !entry.team) { showToast('Match # and Team # are required.'); return; }
   var stored = getStored(); stored.push(entry); saveStored(stored);
-  showToast('✅ Saved locally!');
+  showToast('Saved locally!');
   resetForm();
   var stripped = Object.assign({}, entry); delete stripped.mapImg;
   fetch(API_URL, {
@@ -591,7 +451,7 @@ function submitForm() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'add', entry: stripped })
   }).then(function() {
-    showToast('✅ Synced to cloud!');
+    showToast('Synced to cloud!');
   }).catch(function(e) { console.warn('Cloud sync failed:', e); });
 }
 
@@ -602,7 +462,6 @@ function resetForm() {
   });
   document.getElementById('alliancePos').value='';
   clearCanvas();
-  loadEvents();
 }
 
 function flushPending() {
@@ -617,14 +476,14 @@ function flushPending() {
     body: JSON.stringify({ action: 'setAll', data: { entries: stripped, deleted: [] } })
   }).then(function() {
     savePending([]);
-    showToast('📶 Offline data synced!');
+    showToast('Offline data synced!');
   }).catch(function(e) { console.warn('flushPending failed', e); });
 }
 
 function uploadAllLocal() {
   var local = getStored().concat(getPending());
   if (!local.length) { showToast('No local data to upload.'); return; }
-  showToast('⬆️ Uploading…');
+  showToast('Uploading...');
   var stripped = local.map(function(e) {
     var copy = Object.assign({}, e); delete copy.mapImg; return copy;
   });
@@ -632,19 +491,16 @@ function uploadAllLocal() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'setAll', data: { entries: stripped, deleted: [] } })
-  }).then(function(res) {
-    return res.json();
-  }).then(function(json) {
+  }).then(function(res) { return res.json(); })
+  .then(function(json) {
     if (json.success) {
       savePending([]);
-      showToast('✅ All local data uploaded!');
+      showToast('All local data uploaded!');
       renderData();
     } else {
-      showToast('❌ Upload failed: ' + (json.error || 'unknown error'));
+      showToast('Upload failed: ' + (json.error || 'unknown error'));
     }
-  }).catch(function(e) {
-    showToast('❌ Upload failed: ' + e.message);
-  });
+  }).catch(function(e) { showToast('Upload failed: ' + e.message); });
 }
 
 function uploadSingleEntry(id) {
@@ -661,15 +517,15 @@ function uploadSingleEntry(id) {
   .then(function(json) {
     if (json.success) {
       savePending(getPending().filter(function(e){return e.id!==id;}));
-      showToast('✅ Uploaded to cloud!');
+      showToast('Uploaded to cloud!');
       renderData();
     }
-  }).catch(function(e) { showToast('❌ Upload failed.'); console.warn(e); });
+  }).catch(function(e) { showToast('Upload failed.'); console.warn(e); });
 }
 
 function renderData() {
   var view = document.getElementById('dataView');
-  view.innerHTML = '<div class="empty-state">Loading data…</div>';
+  view.innerHTML = '<div class="empty-state">Loading data...</div>';
   cloudGet().then(function(cloud) {
     var entries = cloud.entries || [];
     var deleted = cloud.deleted || [];
@@ -678,6 +534,7 @@ function renderData() {
     var seen = {};
     entries.forEach(function(e){seen[e.id]=true;});
     getStored().concat(getPending()).forEach(function(e){if(!seen[e.id]){entries.push(e);seen[e.id]=true;}});
+    var stars = getStarredTeams();
     var html = '';
     if (!entries.length) {
       html = '<div class="empty-state">No data submitted yet.</div>';
@@ -689,47 +546,55 @@ function renderData() {
         byEvent[ev].push(e);
       });
       Object.keys(byEvent).sort().forEach(function(ev){
-        html += '<div style="margin-bottom:.4rem;margin-top:.75rem;padding:.4rem .6rem;background:var(--accent);color:#fff;border-radius:8px;font-size:.85rem;font-weight:700;">📅 '+ev+'</div>';
+        html += '<div style="margin:.75rem 0 .4rem;padding:.4rem .6rem;background:var(--accent);color:#fff;border-radius:8px;font-size:.85rem;font-weight:700;">&#128197; '+ev+'</div>';
         var teams = {};
         byEvent[ev].forEach(function(e){var t=e.team||'Unknown';if(!teams[t])teams[t]=[];teams[t].push(e);});
         Object.keys(teams).sort().forEach(function(team){
-        var list = teams[team];
-        var isStarred = (getStarredTeams().indexOf(team) !== -1);
-        html += makeTeamHeader(team, list.length, isStarred);
-        html += '<div class="team-body">';
-        list.forEach(function(e){
-          var inCloud = !!cloudIds[e.id];
-          var isPending = getPending().some(function(p){return p.id===e.id;});
-          html += '<div class="match-entry">'
-            +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
-            +'<strong style="font-size:.9rem;color:var(--accent)">Match '+(e.match||'?')
-            +(isPending?' <span class="badge badge-yellow">PENDING</span>':'')
-            +(!inCloud?' <span class="badge badge-purple">LOCAL</span>':'')
-            +'</strong>'
-            +'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
-            +(!inCloud?'<button class="del-btn" style="border-color:#6366f1;color:#6366f1" onclick="uploadSingleEntry('+e.id+')">⬆️ Upload</button>':'')
-            +'<button class="del-btn" style="border-color:#059669;color:#059669" onclick="setEntryEvent('+e.id+')">📅 Event</button>'
-            +'<button class="del-btn" onclick="deleteEntry('+e.id+')">Delete</button>'
-            +'</div></div><div class="match-grid">';
-          Object.keys(SEC_LABELS).forEach(function(k){if(e[k])html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>';});
-          if(e.mapImg)html+='<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="'+e.mapImg+'" style="width:100%;border-radius:6px;margin-top:.3rem"></div>';
+          var list = teams[team];
+          var starred = stars.indexOf(team) !== -1;
+          var starCls = starred ? 'star-btn starred' : 'star-btn';
+          var tid = 'tc-'+ev.replace(/[^a-zA-Z0-9]/g,'_')+'-'+team;
+          html += '<div class="team-card" id="'+tid+'">';
+          html += '<div class="team-header">';
+          html += '<button class="'+starCls+'" onclick="event.stopPropagation();toggleStar(\''+team+'\')" title="Mark for District Champs">&#11088;</button>';
+          html += '<span style="flex:1" onclick="toggleTeam(\''+tid+'\')">Team '+team+' <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+list.length+' match'+(list.length!==1?'es':'')+')';
+          if(starred) html += ' <span class="event-label">&#11088; Champs</span>';
+          html += '</span></span>';
+          html += '<span onclick="toggleTeam(\''+tid+'\')" style="font-size:.85rem;color:var(--subtext);">&#9660;</span>';
+          html += '</div><div class="team-body">';
+          list.forEach(function(e){
+            var inCloud = !!cloudIds[e.id];
+            var isPending = getPending().some(function(p){return p.id===e.id;});
+            html += '<div class="match-entry">'
+              +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
+              +'<strong style="font-size:.9rem;color:var(--accent)">Match '+(e.match||'?')
+              +(isPending?' <span class="badge badge-yellow">PENDING</span>':'')
+              +(!inCloud?' <span class="badge badge-purple">LOCAL</span>':'')
+              +'</strong>'
+              +'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
+              +(!inCloud?'<button class="del-btn" style="border-color:#6366f1;color:#6366f1" onclick="uploadSingleEntry('+e.id+')">Upload</button>':'')
+              +'<button class="del-btn" style="border-color:#059669;color:#059669" onclick="setEntryEvent('+e.id+')">&#128197; Event</button>'
+              +'<button class="del-btn" onclick="deleteEntry('+e.id+')">Delete</button>'
+              +'</div></div><div class="match-grid">';
+            Object.keys(SEC_LABELS).forEach(function(k){if(e[k])html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>';});
+            if(e.mapImg)html+='<div class="match-item" style="grid-column:1/-1"><strong>Map</strong><img src="'+e.mapImg+'" style="width:100%;border-radius:6px;margin-top:.3rem"></div>';
+            html += '</div></div>';
+          });
           html += '</div></div>';
-        });
-        html += '</div></div>';
         });
       });
     }
     html += '<div class="team-card" id="tc-deleted" style="margin-top:1rem;border-color:var(--red)">'
       +'<div class="team-header" onclick="toggleTeam(\'tc-deleted\')" style="color:var(--red)">'
-      +'<span>🗑 Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+deleted.length+' item'+(deleted.length!==1?'s':'')+')</span></span>'
-      +'<span style="font-size:.85rem;color:var(--subtext)">▼</span></div><div class="team-body">';
+      +'<span style="flex:1">&#128465; Recently Deleted <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+deleted.length+' item'+(deleted.length!==1?'s':'')+')</span></span>'
+      +'<span style="font-size:.85rem;color:var(--subtext)">&#9660;</span></div><div class="team-body">';
     if(!deleted.length){
       html+='<div style="padding:.75rem 1rem;color:var(--subtext);font-size:.85rem">No recently deleted entries.</div>';
     } else {
       deleted.forEach(function(e){
         html+='<div class="match-entry">'
           +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.4rem">'
-          +'<strong style="font-size:.9rem;color:var(--subtext)">Team '+(e.team||'?')+' — Match '+(e.match||'?')+'</strong>'
+          +'<strong style="font-size:.9rem;color:var(--subtext)">Team '+(e.team||'?')+' - Match '+(e.match||'?')+'</strong>'
           +'<span style="font-size:.75rem;color:var(--subtext)">'+(e.deletedAt||'')+'</span>'
           +'<div style="display:flex;gap:.4rem">'
           +'<button class="del-btn" style="border-color:var(--accent);color:var(--accent)" onclick="restoreEntry('+e.id+')">Restore</button>'
@@ -759,10 +624,10 @@ function deleteEntry(id) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'delete', entry: { id: entry.id } })
-    }).then(function() { renderData(); showToast('🗑 Entry deleted.'); })
+    }).then(function() { renderData(); showToast('Entry deleted.'); })
     .catch(function(e) { console.warn('deleteEntry failed',e); renderData(); });
   } else {
-    renderData(); showToast('🗑 Entry deleted.');
+    renderData(); showToast('Entry deleted.');
   }
 }
 
@@ -774,13 +639,11 @@ function restoreEntry(id) {
   }).then(function(res) { return res.json(); })
   .then(function(json) {
     if (json.success && json.data) {
-      var restored = null;
       for (var j=0;j<json.data.entries.length;j++) {
-        if (json.data.entries[j].id===id) { restored=json.data.entries[j]; break; }
+        if (json.data.entries[j].id===id) { var s=getStored(); s.push(json.data.entries[j]); saveStored(s); break; }
       }
-      if (restored) { var s=getStored(); s.push(restored); saveStored(s); }
     }
-    renderData(); showToast('♻️ Entry restored!');
+    renderData(); showToast('Entry restored!');
   }).catch(function(e) { console.warn('restoreEntry failed',e); });
 }
 
@@ -790,12 +653,106 @@ function permDeleteEntry(id) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'permDelete', entry: { id: id } })
-  }).then(function() { renderData(); showToast('🗑 Permanently deleted.'); })
+  }).then(function() { renderData(); showToast('Permanently deleted.'); })
   .catch(function(e) { console.warn('permDelete failed',e); });
 }
 
+function setEntryEvent(id) {
+  cloudGet().then(function(cloud) {
+    var events = cloud.events || [];
+    if (!events.length) { showToast('No events yet. Add one first.'); return; }
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:var(--card);border-radius:14px;padding:1.2rem 1.4rem;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1.5px solid var(--border);';
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;font-size:.95rem;color:var(--accent);margin-bottom:.8rem;';
+    title.textContent = 'Set Event for this entry';
+    var sel = document.createElement('select');
+    sel.style.cssText = 'width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;margin-bottom:.8rem;';
+    var blankOpt = document.createElement('option');
+    blankOpt.value=''; blankOpt.textContent='(No Event)'; sel.appendChild(blankOpt);
+    events.forEach(function(ev){
+      var opt=document.createElement('option'); opt.value=ev; opt.textContent=ev; sel.appendChild(opt);
+    });
+    var allEntries = cloud.entries || [];
+    for (var i=0;i<allEntries.length;i++) {
+      if (allEntries[i].id===id && allEntries[i].event) { sel.value=allEntries[i].event; break; }
+    }
+    var btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:.4rem;justify-content:flex-end;';
+    var saveBtn = document.createElement('button');
+    saveBtn.textContent='Save';
+    saveBtn.style.cssText='padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;';
+    var cancelBtn = document.createElement('button');
+    cancelBtn.textContent='Cancel';
+    cancelBtn.style.cssText='padding:.45rem 1rem;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);border-radius:8px;font-size:.85rem;cursor:pointer;';
+    saveBtn.onclick = function() {
+      document.body.removeChild(overlay);
+      fetch(API_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'relabel',entry:{id:id,event:sel.value}})
+      }).then(function(res){return res.json();})
+      .then(function(json){
+        if(json.success){
+          var stored=getStored();
+          stored.forEach(function(e){if(e.id===id)e.event=sel.value;});
+          saveStored(stored);
+          showToast('Event updated!');
+          renderData();
+        }
+      }).catch(function(e){showToast('Failed to update event.');console.warn(e);});
+    };
+    cancelBtn.onclick = function() { document.body.removeChild(overlay); };
+    btnRow.appendChild(cancelBtn); btnRow.appendChild(saveBtn);
+    box.appendChild(title); box.appendChild(sel); box.appendChild(btnRow);
+    overlay.appendChild(box);
+    overlay.onclick = function(e) { if(e.target===overlay) document.body.removeChild(overlay); };
+    document.body.appendChild(overlay);
+  });
+}
+
+function loadEvents() {
+  cloudGet().then(function(cloud) {
+    var sel = document.getElementById('eventSelect');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">Select event...</option>';
+    (cloud.events||[]).forEach(function(ev){
+      var opt=document.createElement('option'); opt.value=ev; opt.textContent=ev; sel.appendChild(opt);
+    });
+    if (current) sel.value = current;
+  });
+}
+
+function showAddEvent() {
+  document.getElementById('addEventBar').style.display = 'block';
+  document.getElementById('newEventName').focus();
+}
+function hideAddEvent() {
+  document.getElementById('addEventBar').style.display = 'none';
+  document.getElementById('newEventName').value = '';
+}
+function addEvent() {
+  var name = document.getElementById('newEventName').value.trim();
+  if (!name) { showToast('Please enter an event name.'); return; }
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'addEvent', event: name })
+  }).then(function(res){return res.json();})
+  .then(function(json){
+    if(json.success){
+      hideAddEvent();
+      loadEvents();
+      setTimeout(function(){ document.getElementById('eventSelect').value=name; }, 300);
+      showToast('Event added!');
+    }
+  }).catch(function(e){showToast('Failed to add event.');console.warn(e);});
+}
+
 function exportPDF() {
-  showToast('📄 Generating PDF…');
+  showToast('Generating PDF...');
   cloudGet().then(function(cloud) {
     var entries = cloud.entries || [];
     var local = getStored().concat(getPending());
@@ -805,13 +762,13 @@ function exportPDF() {
     if (!entries.length) { showToast('No data to export.'); return; }
     var teams = {};
     entries.forEach(function(e){ var t=e.team||'Unknown'; if(!teams[t])teams[t]=[]; teams[t].push(e); });
-    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>1403 Scouting Data</title><style>body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}h1{font-size:20px;margin-bottom:4px;}h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #2563eb;padding-bottom:4px;color:#2563eb;}h3{font-size:12px;margin:12px 0 4px;color:#555;}.entry{border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:10px;page-break-inside:avoid;}.entry-header{display:flex;justify-content:space-between;margin-bottom:8px;}.entry-title{font-weight:700;font-size:13px;}.entry-meta{color:#777;font-size:11px;}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}.field{background:#f5f5f5;border-radius:4px;padding:5px 7px;}.field strong{display:block;font-size:10px;text-transform:uppercase;color:#888;margin-bottom:2px;}.field span{font-size:11px;}.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}@media print{body{padding:10px;}}</style></head><body><h1>1403 Qualitative Scouting Data</h1><p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' — ' + entries.length + ' total entries</p>';
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>1403 Scouting Data</title><style>body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}h1{font-size:20px;margin-bottom:4px;}h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #2563eb;padding-bottom:4px;color:#2563eb;}.entry{border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:10px;page-break-inside:avoid;}.entry-header{display:flex;justify-content:space-between;margin-bottom:8px;}.entry-title{font-weight:700;font-size:13px;}.entry-meta{color:#777;font-size:11px;}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}.field{background:#f5f5f5;border-radius:4px;padding:5px 7px;}.field strong{display:block;font-size:10px;text-transform:uppercase;color:#888;margin-bottom:2px;}.field span{font-size:11px;}.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}@media print{body{padding:10px;}}</style></head><body><h1>1403 Qualitative Scouting Data</h1><p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' - ' + entries.length + ' total entries</p>';
     Object.keys(teams).sort().forEach(function(team) {
       var list = teams[team];
       list.sort(function(a,b){ return (parseInt(a.match)||0)-(parseInt(b.match)||0); });
       html += '<h2>Team ' + team + ' (' + list.length + ' match' + (list.length!==1?'es':'') + ')</h2>';
       list.forEach(function(e) {
-        html += '<div class="entry"><div class="entry-header"><span class="entry-title">Match ' + (e.match||'?') + ' — ' + (e.position||'') + '</span><span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' &nbsp;|&nbsp; ' + (e.timestamp||'') + '</span></div><div class="grid">';
+        html += '<div class="entry"><div class="entry-header"><span class="entry-title">Match ' + (e.match||'?') + ' - ' + (e.position||'') + '</span><span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' | ' + (e.timestamp||'') + '</span></div><div class="grid">';
         var fields = [['Autonomous',e.auton],['Hopper & Scoring',e.hopper],['Intake',e.intake],['Feeding',e.feeding],['Driver',e.driver],['Climbing',e.climbing],['Defense',e.defense],['Comments',e.comments]];
         fields.forEach(function(f) {
           if (f[1]) html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
@@ -823,159 +780,22 @@ function exportPDF() {
     });
     html += '<div class="footer">1403 Qualitative Scouting App</div></body></html>';
     var win = window.open('', '_blank');
-    if (!win) { showToast('⚠️ Allow popups to export PDF.'); return; }
+    if (!win) { showToast('Allow popups to export PDF.'); return; }
     win.document.write(html);
     win.document.close();
     win.focus();
     setTimeout(function() { win.print(); }, 500);
-  }).catch(function(e) {
-    console.warn('exportPDF failed', e);
-    showToast('❌ Export failed.');
-  });
+  }).catch(function(e) { console.warn('exportPDF failed', e); showToast('Export failed.'); });
 }
 
 function showToast(msg) {
   var t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  t.textContent=msg; t.classList.add('show');
   setTimeout(function(){t.classList.remove('show');},3000);
-}
-
-
-
-function setEntryEvent(id) {
-  cloudGet().then(function(cloud) {
-    var events = cloud.events || [];
-    if (!events.length) {
-      showToast('No events yet. Add one first.');
-      return;
-    }
-    // Build a simple prompt-style overlay
-    var overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
-    var box = document.createElement('div');
-    box.style.cssText = 'background:var(--card);border-radius:14px;padding:1.2rem 1.4rem;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1.5px solid var(--border);';
-    var title = document.createElement('div');
-    title.style.cssText = 'font-weight:700;font-size:.95rem;color:var(--accent);margin-bottom:.8rem;';
-    title.textContent = 'Set Event for this entry';
-    var sel = document.createElement('select');
-    sel.style.cssText = 'width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;margin-bottom:.8rem;';
-    var blankOpt = document.createElement('option');
-    blankOpt.value = ''; blankOpt.textContent = '(No Event)';
-    sel.appendChild(blankOpt);
-    events.forEach(function(ev) {
-      var opt = document.createElement('option');
-      opt.value = ev; opt.textContent = ev;
-      sel.appendChild(opt);
-    });
-    // Pre-select current event if any
-    var allEntries = cloud.entries || [];
-    for (var i = 0; i < allEntries.length; i++) {
-      if (allEntries[i].id === id && allEntries[i].event) {
-        sel.value = allEntries[i].event;
-        break;
-      }
-    }
-    var btnRow = document.createElement('div');
-    btnRow.style.cssText = 'display:flex;gap:.4rem;justify-content:flex-end;';
-    var saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Save';
-    saveBtn.style.cssText = 'padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;';
-    var cancelBtn = document.createElement('button');
-    cancelBtn.textContent = 'Cancel';
-    cancelBtn.style.cssText = 'padding:.45rem 1rem;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);border-radius:8px;font-size:.85rem;cursor:pointer;';
-    saveBtn.onclick = function() {
-      document.body.removeChild(overlay);
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'relabel', entry: { id: id, event: sel.value } })
-      }).then(function(res) { return res.json(); })
-      .then(function(json) {
-        if (json.success) {
-          // Also update local copy
-          var stored = getStored();
-          stored.forEach(function(e) { if (e.id === id) e.event = sel.value; });
-          saveStored(stored);
-          showToast('Event updated!');
-          renderData();
-        }
-      }).catch(function(e) { showToast('Failed to update event.'); console.warn(e); });
-    };
-    cancelBtn.onclick = function() { document.body.removeChild(overlay); };
-    btnRow.appendChild(cancelBtn);
-    btnRow.appendChild(saveBtn);
-    box.appendChild(title);
-    box.appendChild(sel);
-    box.appendChild(btnRow);
-    overlay.appendChild(box);
-    overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
-    document.body.appendChild(overlay);
-  });
-}
-
-function getStarredTeams() {
-  try { return JSON.parse(localStorage.getItem('starredTeams') || '[]'); } catch(e) { return []; }
-}
-function toggleStarBtn(btn) {
-  var team = btn.getAttribute("data-team");
-  toggleStar(team);
-}
-
-function toggleStar(team) {
-  var stars = getStarredTeams();
-  var idx = stars.indexOf(team);
-  if (idx === -1) stars.push(team); else stars.splice(idx, 1);
-  localStorage.setItem('starredTeams', JSON.stringify(stars));
-  renderData();
-}
-
-function loadEvents() {
-  cloudGet().then(function(cloud) {
-    var sel = document.getElementById('eventSelect');
-    var current = sel.value;
-    sel.innerHTML = '<option value="">Select event...</option>';
-    (cloud.events||[]).forEach(function(ev) {
-      var opt = document.createElement('option');
-      opt.value = ev; opt.textContent = ev;
-      sel.appendChild(opt);
-    });
-    if (current) sel.value = current;
-  });
-}
-
-function showAddEvent() {
-  document.getElementById('addEventBar').style.display = 'block';
-  document.getElementById('newEventName').focus();
-}
-
-function hideAddEvent() {
-  document.getElementById('addEventBar').style.display = 'none';
-  document.getElementById('newEventName').value = '';
-}
-
-function addEvent() {
-  var name = document.getElementById('newEventName').value.trim();
-  if (!name) { showToast('Please enter an event name.'); return; }
-  fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'addEvent', event: name })
-  }).then(function(res) { return res.json(); })
-  .then(function(json) {
-    if (json.success) {
-      hideAddEvent();
-      loadEvents();
-      setTimeout(function() {
-        document.getElementById('eventSelect').value = name;
-      }, 300);
-      showToast('Event added!');
-    }
-  }).catch(function(e) { showToast('Failed to add event.'); console.warn(e); });
 }
 
 loadEvents();
 flushPending();
 </script>
-
 </body>
 </html>
