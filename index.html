@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -347,19 +348,19 @@ function drawField() {
   ctx.strokeStyle='#ffffff'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
   ctx.beginPath(); ctx.moveTo(fx(325.6),oy); ctx.lineTo(fx(325.6),oy+fh); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle='#cc2222'; ctx.fillRect(ox,oy,fw2(8),fh);
-  ctx.fillStyle='#2233cc'; ctx.fillRect(fx(643),oy,fw2(8),fh);
-  ctx.strokeStyle='#ff4444'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+  ctx.fillStyle='#2233cc'; ctx.fillRect(ox,oy,fw2(8),fh);
+  ctx.fillStyle='#cc2222'; ctx.fillRect(fx(643),oy,fw2(8),fh);
+  ctx.strokeStyle='#4466ff'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
   ctx.beginPath(); ctx.moveTo(fx(158.6),oy); ctx.lineTo(fx(158.6),oy+fh); ctx.stroke();
-  ctx.strokeStyle='#4466ff';
+  ctx.strokeStyle='#ff4444';
   ctx.beginPath(); ctx.moveTo(fx(492.4),oy); ctx.lineTo(fx(492.4),oy+fh); ctx.stroke();
   ctx.setLineDash([]);
   var hubCY = 317/2;
-  rct(fx(158.6-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#cc2222','#ff6666',2); lbl(fx(158.6),fy(hubCY),'#fff','8','HUB');
-  rct(fx(492.4-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#2233cc','#6699ff',2); lbl(fx(492.4),fy(hubCY),'#fff','8','HUB');
+  rct(fx(158.6-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#2233cc','#6699ff',2); lbl(fx(158.6),fy(hubCY),'#fff','8','HUB');
+  rct(fx(492.4-23.5),fy(hubCY-23.5),fw2(47),fh2(47),'#cc2222','#ff6666',2); lbl(fx(492.4),fy(hubCY),'#fff','8','HUB');
   var bd=fw2(44.4),bh=fh2(73);
   [[158.6,hubCY-23.5-73,0],[158.6,hubCY+23.5,0],[492.4,hubCY-23.5-73,1],[492.4,hubCY+23.5,1]].forEach(function(a){
-    rct(fx(a[0]-22.2),fy(a[1]),bd,bh,a[2]?'#112299':'#993311',a[2]?'#4466ff':'#ff8844',1.5);
+    rct(fx(a[0]-22.2),fy(a[1]),bd,bh,a[2]?'#993311':'#112299',a[2]?'#ff8844':'#4466ff',1.5);
     lbl(fx(a[0]),fy(a[1]+36.5),'#ffcc88','7','BUMP');
   });
   var tw=fw2(65.65),th=fh2(47);
@@ -370,22 +371,22 @@ function drawField() {
   rct(fx(8),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5); lbl(fx(8+13.5),fy(hubCY),'#ffe066','7','DEPOT');
   rct(fx(651-35),fy(hubCY-21),fw2(27),fh2(42),'#775500','#e8a800',1.5); lbl(fx(651-21.5),fy(hubCY),'#ffe066','7','DEPOT');
   [[ox,oy],[ox,oy+fh-fh2(71)],[ox+fw-fw2(71),oy],[ox+fw-fw2(71),oy+fh-fh2(71)]].forEach(function(a,i){
-    ctx.fillStyle=i<2?'#661111':'#111166'; ctx.fillRect(a[0],a[1],fw2(71),fh2(71));
-    ctx.strokeStyle=i<2?'#ff8888':'#8888ff'; ctx.lineWidth=1; ctx.strokeRect(a[0],a[1],fw2(71),fh2(71));
+    ctx.fillStyle=i<2?'#111166':'#661111'; ctx.fillRect(a[0],a[1],fw2(71),fh2(71));
+    ctx.strokeStyle=i<2?'#8888ff':'#ff8888'; ctx.lineWidth=1; ctx.strokeRect(a[0],a[1],fw2(71),fh2(71));
   });
-  ctx.fillStyle='#ffaaaa'; ctx.font='bold 7px Segoe UI'; ctx.textAlign='center';
+  ctx.fillStyle='#aaaaff'; ctx.font='bold 7px Segoe UI'; ctx.textAlign='center';
   ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh2(35.5)+3); ctx.fillText('OUTPOST',ox+fw2(35.5),oy+fh-fh2(35.5)+3);
-  ctx.fillStyle='#aaaaff';
+  ctx.fillStyle='#ffaaaa';
   ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh2(35.5)+3); ctx.fillText('OUTPOST',ox+fw-fw2(35.5),oy+fh-fh2(35.5)+3);
-  rct(fx(8),fy(hubCY-24.6),fw2(45),fh2(49.25),'#882211','#ff4422',2); lbl(fx(8+22.5),fy(hubCY),'#ffcccc','7','TOWER');
-  rct(fx(651-53),fy(hubCY-24.6),fw2(45),fh2(49.25),'#112288','#2244ff',2); lbl(fx(651-30.5),fy(hubCY),'#ccccff','7','TOWER');
+  rct(fx(8),fy(hubCY-24.6),fw2(45),fh2(49.25),'#112288','#2244ff',2); lbl(fx(8+22.5),fy(hubCY),'#ccccff','7','TOWER');
+  rct(fx(651-53),fy(hubCY-24.6),fw2(45),fh2(49.25),'#882211','#ff4422',2); lbl(fx(651-30.5),fy(hubCY),'#ffcccc','7','TOWER');
   var fuelW=fw2(72),fuelH=fh2(206),fuelX=fx(325.6)-fw2(72)/2,fuelY=fy(hubCY)-fh2(206)/2;
   ctx.fillStyle='rgba(232,168,0,0.18)'; ctx.fillRect(fuelX,fuelY,fuelW,fuelH);
   ctx.strokeStyle='#e8a800'; ctx.lineWidth=1; ctx.setLineDash([3,3]); ctx.strokeRect(fuelX,fuelY,fuelW,fuelH); ctx.setLineDash([]);
   ctx.fillStyle='#e8a800';
   for(var r=0;r<14;r++) for(var c=0;c<6;c++){ctx.beginPath();ctx.arc(fuelX+(c+0.5)*(fuelW/6),fuelY+(r+0.5)*(fuelH/14),3.5,0,Math.PI*2);ctx.fill();}
-  ctx.fillStyle='#ff8888'; ctx.font='bold 10px Segoe UI'; ctx.textAlign='center';
-  ctx.fillText('RED',fx(80),oy+14); ctx.fillStyle='#8899ff'; ctx.fillText('BLUE',fx(571),oy+14);
+  ctx.fillStyle='#8899ff'; ctx.font='bold 10px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText('BLUE',fx(80),oy+14); ctx.fillStyle='#ff8888'; ctx.fillText('RED',fx(571),oy+14);
 }
 
 function rct(x,y,w,h,f,s,lw){ctx.fillStyle=f;ctx.fillRect(x,y,w,h);ctx.strokeStyle=s;ctx.lineWidth=lw;ctx.strokeRect(x,y,w,h);}
@@ -763,39 +764,42 @@ function exportPDF() {
     var teams = {};
     entries.forEach(function(e){ var t=e.team||'Unknown'; if(!teams[t])teams[t]=[]; teams[t].push(e); });
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>1403 Scouting Data</title><style>body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}h1{font-size:20px;margin-bottom:4px;}h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #2563eb;padding-bottom:4px;color:#2563eb;}.entry{border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:10px;page-break-inside:avoid;}.entry-header{display:flex;justify-content:space-between;margin-bottom:8px;}.entry-title{font-weight:700;font-size:13px;}.entry-meta{color:#777;font-size:11px;}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}.field{background:#f5f5f5;border-radius:4px;padding:5px 7px;}.field strong{display:block;font-size:10px;text-transform:uppercase;color:#888;margin-bottom:2px;}.field span{font-size:11px;}.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}@media print{body{padding:10px;}}</style></head><body><h1>1403 Qualitative Scouting Data</h1><p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' - ' + entries.length + ' total entries</p>';
-    Object.keys(teams).sort().forEach(function(team) {
-      var list = teams[team];
-      list.sort(function(a,b){ return (parseInt(a.match)||0)-(parseInt(b.match)||0); });
-      html += '<h2>Team ' + team + ' (' + list.length + ' match' + (list.length!==1?'es':'') + ')</h2>';
-      list.forEach(function(e) {
-        html += '<div class="entry"><div class="entry-header"><span class="entry-title">Match ' + (e.match||'?') + ' - ' + (e.position||'') + '</span><span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' | ' + (e.timestamp||'') + '</span></div><div class="grid">';
-        var fields = [['Autonomous',e.auton],['Hopper & Scoring',e.hopper],['Intake',e.intake],['Feeding',e.feeding],['Driver',e.driver],['Climbing',e.climbing],['Defense',e.defense],['Comments',e.comments]];
-        fields.forEach(function(f) {
-          if (f[1]) html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
-        });
-        html += '</div>';
-        if (e.mapImg) html += '<div style="margin-top:8px"><strong style="font-size:10px;text-transform:uppercase;color:#888;">Auto Map</strong><br><img src="' + e.mapImg + '" style="width:100%;max-width:500px;border-radius:4px;margin-top:4px;border:1px solid #ddd;"></div>';
-        html += '</div>';
-      });
+
+Object.keys(teams).sort().forEach(function(team) {
+  var list = teams[team];
+  list.sort(function(a,b){ return (parseInt(a.match)||0)-(parseInt(b.match)||0); });
+  html += '<h2>Team ' + team + ' (' + list.length + ' match' + (list.length!==1?'es':'') + ')</h2>';
+  list.forEach(function(e) {
+    html += '<div class="entry"><div class="entry-header"><span class="entry-title">Match ' + (e.match||'?') + ' - ' + (e.position||'') + '</span><span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' | ' + (e.timestamp||'') + '</span></div><div class="grid">';
+    var fields = [['Autonomous',e.auton],['Hopper & Scoring',e.hopper],['Intake',e.intake],['Feeding',e.feeding],['Driver',e.driver],['Climbing',e.climbing],['Defense',e.defense],['Comments',e.comments]];
+    fields.forEach(function(f) {
+      if (f[1]) html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
     });
-    html += '<div class="footer">1403 Qualitative Scouting App</div></body></html>';
-    var win = window.open('', '_blank');
-    if (!win) { showToast('Allow popups to export PDF.'); return; }
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    setTimeout(function() { win.print(); }, 500);
-  }).catch(function(e) { console.warn('exportPDF failed', e); showToast('Export failed.'); });
+    html += '</div>';
+    if (e.mapImg) html += '<div style="margin-top:8px"><strong style="font-size:10px;text-transform:uppercase;color:#888;">Auto Map</strong><br><img src="' + e.mapImg + '" style="width:100%;max-width:500px;border-radius:4px;margin-top:4px;border:1px solid #ddd;"></div>';
+    html += '</div>';
+  });
+});
+html += '<div class="footer">1403 Qualitative Scouting App</div></body></html>';
+var win = window.open('', '_blank');
+if (!win) { showToast('Allow popups to export PDF.'); return; }
+win.document.write(html);
+win.document.close();
+win.focus();
+setTimeout(function() { win.print(); }, 500);
+
+}).catch(function(e) { console.warn(‘exportPDF failed’, e); showToast(‘Export failed.’); });
 }
 
 function showToast(msg) {
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},3000);
+var t=document.getElementById(‘toast’);
+t.textContent=msg; t.classList.add(‘show’);
+setTimeout(function(){t.classList.remove(‘show’);},3000);
 }
 
 loadEvents();
 flushPending();
 </script>
+
 </body>
 </html>
