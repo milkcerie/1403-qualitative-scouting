@@ -104,6 +104,22 @@
       </select>
     </div>
     <div class="meta-field"><label>Scouter</label><input type="text" id="scouterName" placeholder="Your name"></div>
+    <div class="meta-field">
+      <label>Event</label>
+      <div style="display:flex;gap:.3rem;">
+        <select id="eventSelect" style="flex:1;width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s;">
+          <option value="">Select event…</option>
+        </select>
+        <button onclick="showAddEvent()" style="padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--accent);font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;">+</button>
+      </div>
+    </div>
+  </div>
+  <div id="addEventBar" style="display:none;margin-bottom:.75rem;display:none;">
+    <div style="display:flex;gap:.3rem;">
+      <input type="text" id="newEventName" placeholder="New event name…" style="flex:1;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;">
+      <button onclick="addEvent()" style="padding:.6rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">Add</button>
+      <button onclick="hideAddEvent()" style="padding:.6rem .75rem;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);border-radius:8px;font-size:.85rem;cursor:pointer;">Cancel</button>
+    </div>
   </div>
 
   <div class="section-card" id="sec-auton">
@@ -243,10 +259,10 @@ async function cloudGet() {
   try {
     var res = await fetch(API_URL);
     var json = await res.json();
-    return { entries: json.entries||[], deleted: json.deleted||[] };
+    return { entries: json.entries||[], deleted: json.deleted||[], events: json.events||[] };
   } catch(e) {
     console.warn('cloudGet failed', e);
-    return { entries:[], deleted:[] };
+    return { entries:[], deleted:[], events:[] };
   }
 }
 
@@ -275,7 +291,125 @@ applyDark();
 function updateOnline() {
   document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'inline-block';
 }
-window.addEventListener('online', function() { updateOnline(); flushPending(); });
+window.addEventListener('online', function() { updateOnline(); 
+
+function setEntryEvent(id) {
+  cloudGet().then(function(cloud) {
+    var events = cloud.events || [];
+    if (!events.length) {
+      showToast('No events yet. Add one first.');
+      return;
+    }
+    // Build a simple prompt-style overlay
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:var(--card);border-radius:14px;padding:1.2rem 1.4rem;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1.5px solid var(--border);';
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;font-size:.95rem;color:var(--accent);margin-bottom:.8rem;';
+    title.textContent = 'Set Event for this entry';
+    var sel = document.createElement('select');
+    sel.style.cssText = 'width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;margin-bottom:.8rem;';
+    var blankOpt = document.createElement('option');
+    blankOpt.value = ''; blankOpt.textContent = '(No Event)';
+    sel.appendChild(blankOpt);
+    events.forEach(function(ev) {
+      var opt = document.createElement('option');
+      opt.value = ev; opt.textContent = ev;
+      sel.appendChild(opt);
+    });
+    // Pre-select current event if any
+    var allEntries = cloud.entries || [];
+    for (var i = 0; i < allEntries.length; i++) {
+      if (allEntries[i].id === id && allEntries[i].event) {
+        sel.value = allEntries[i].event;
+        break;
+      }
+    }
+    var btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:.4rem;justify-content:flex-end;';
+    var saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    saveBtn.style.cssText = 'padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;';
+    var cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = 'padding:.45rem 1rem;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);border-radius:8px;font-size:.85rem;cursor:pointer;';
+    saveBtn.onclick = function() {
+      document.body.removeChild(overlay);
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'relabel', entry: { id: id, event: sel.value } })
+      }).then(function(res) { return res.json(); })
+      .then(function(json) {
+        if (json.success) {
+          // Also update local copy
+          var stored = getStored();
+          stored.forEach(function(e) { if (e.id === id) e.event = sel.value; });
+          saveStored(stored);
+          showToast('Event updated!');
+          renderData();
+        }
+      }).catch(function(e) { showToast('Failed to update event.'); console.warn(e); });
+    };
+    cancelBtn.onclick = function() { document.body.removeChild(overlay); };
+    btnRow.appendChild(cancelBtn);
+    btnRow.appendChild(saveBtn);
+    box.appendChild(title);
+    box.appendChild(sel);
+    box.appendChild(btnRow);
+    overlay.appendChild(box);
+    overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
+    document.body.appendChild(overlay);
+  });
+}
+
+function loadEvents() {
+  cloudGet().then(function(cloud) {
+    var sel = document.getElementById('eventSelect');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">Select event...</option>';
+    (cloud.events||[]).forEach(function(ev) {
+      var opt = document.createElement('option');
+      opt.value = ev; opt.textContent = ev;
+      sel.appendChild(opt);
+    });
+    if (current) sel.value = current;
+  });
+}
+
+function showAddEvent() {
+  document.getElementById('addEventBar').style.display = 'block';
+  document.getElementById('newEventName').focus();
+}
+
+function hideAddEvent() {
+  document.getElementById('addEventBar').style.display = 'none';
+  document.getElementById('newEventName').value = '';
+}
+
+function addEvent() {
+  var name = document.getElementById('newEventName').value.trim();
+  if (!name) { showToast('Please enter an event name.'); return; }
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'addEvent', event: name })
+  }).then(function(res) { return res.json(); })
+  .then(function(json) {
+    if (json.success) {
+      hideAddEvent();
+      loadEvents();
+      setTimeout(function() {
+        document.getElementById('eventSelect').value = name;
+      }, 300);
+      showToast('Event added!');
+    }
+  }).catch(function(e) { showToast('Failed to add event.'); console.warn(e); });
+}
+
+loadEvents();
+flushPending(); });
 window.addEventListener('offline', updateOnline);
 updateOnline();
 
@@ -406,6 +540,7 @@ function collectForm() {
     climbing: document.getElementById('climbingNotes').value.trim(),
     defense:  document.getElementById('defenseNotes').value.trim(),
     comments: document.getElementById('commentsNotes').value.trim(),
+    event:    document.getElementById('eventSelect').value,
     mapImg:   canvas.toDataURL(),
     timestamp: new Date().toLocaleString()
   };
@@ -434,6 +569,7 @@ function resetForm() {
   });
   document.getElementById('alliancePos').value='';
   clearCanvas();
+  loadEvents();
 }
 
 function flushPending() {
@@ -513,9 +649,17 @@ function renderData() {
     if (!entries.length) {
       html = '<div class="empty-state">No data submitted yet.</div>';
     } else {
-      var teams = {};
-      entries.forEach(function(e){var t=e.team||'Unknown';if(!teams[t])teams[t]=[];teams[t].push(e);});
-      Object.keys(teams).sort().forEach(function(team){
+      var byEvent = {};
+      entries.forEach(function(e){
+        var ev = (e.event && e.event.trim()) ? e.event.trim() : '(No Event)';
+        if(!byEvent[ev]) byEvent[ev]=[];
+        byEvent[ev].push(e);
+      });
+      Object.keys(byEvent).sort().forEach(function(ev){
+        html += '<div style="margin-bottom:.4rem;margin-top:.75rem;padding:.4rem .6rem;background:var(--accent);color:#fff;border-radius:8px;font-size:.85rem;font-weight:700;">📅 '+ev+'</div>';
+        var teams = {};
+        byEvent[ev].forEach(function(e){var t=e.team||'Unknown';if(!teams[t])teams[t]=[];teams[t].push(e);});
+        Object.keys(teams).sort().forEach(function(team){
         var list = teams[team];
         html += '<div class="team-card" id="tc-'+team+'">'
           +'<div class="team-header" onclick="toggleTeam(\'tc-'+team+'\')">'
@@ -533,6 +677,7 @@ function renderData() {
             +'</strong>'
             +'<div style="display:flex;gap:.4rem;flex-wrap:wrap">'
             +(!inCloud?'<button class="del-btn" style="border-color:#6366f1;color:#6366f1" onclick="uploadSingleEntry('+e.id+')">⬆️ Upload</button>':'')
+            +'<button class="del-btn" style="border-color:#059669;color:#059669" onclick="setEntryEvent('+e.id+')">📅 Event</button>'
             +'<button class="del-btn" onclick="deleteEntry('+e.id+')">Delete</button>'
             +'</div></div><div class="match-grid">';
           Object.keys(SEC_LABELS).forEach(function(k){if(e[k])html+='<div class="match-item"><strong>'+SEC_LABELS[k]+'</strong>'+e[k]+'</div>';});
@@ -540,6 +685,7 @@ function renderData() {
           html += '</div></div>';
         });
         html += '</div></div>';
+        });
       });
     }
     html += '<div class="team-card" id="tc-deleted" style="margin-top:1rem;border-color:var(--red)">'
@@ -663,6 +809,124 @@ function showToast(msg) {
   setTimeout(function(){t.classList.remove('show');},3000);
 }
 
+
+
+function setEntryEvent(id) {
+  cloudGet().then(function(cloud) {
+    var events = cloud.events || [];
+    if (!events.length) {
+      showToast('No events yet. Add one first.');
+      return;
+    }
+    // Build a simple prompt-style overlay
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:var(--card);border-radius:14px;padding:1.2rem 1.4rem;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1.5px solid var(--border);';
+    var title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;font-size:.95rem;color:var(--accent);margin-bottom:.8rem;';
+    title.textContent = 'Set Event for this entry';
+    var sel = document.createElement('select');
+    sel.style.cssText = 'width:100%;padding:.6rem .75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--ibg);color:var(--text);font-size:.95rem;outline:none;margin-bottom:.8rem;';
+    var blankOpt = document.createElement('option');
+    blankOpt.value = ''; blankOpt.textContent = '(No Event)';
+    sel.appendChild(blankOpt);
+    events.forEach(function(ev) {
+      var opt = document.createElement('option');
+      opt.value = ev; opt.textContent = ev;
+      sel.appendChild(opt);
+    });
+    // Pre-select current event if any
+    var allEntries = cloud.entries || [];
+    for (var i = 0; i < allEntries.length; i++) {
+      if (allEntries[i].id === id && allEntries[i].event) {
+        sel.value = allEntries[i].event;
+        break;
+      }
+    }
+    var btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:.4rem;justify-content:flex-end;';
+    var saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    saveBtn.style.cssText = 'padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;';
+    var cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = 'padding:.45rem 1rem;border:1.5px solid var(--border);background:var(--ibg);color:var(--text);border-radius:8px;font-size:.85rem;cursor:pointer;';
+    saveBtn.onclick = function() {
+      document.body.removeChild(overlay);
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'relabel', entry: { id: id, event: sel.value } })
+      }).then(function(res) { return res.json(); })
+      .then(function(json) {
+        if (json.success) {
+          // Also update local copy
+          var stored = getStored();
+          stored.forEach(function(e) { if (e.id === id) e.event = sel.value; });
+          saveStored(stored);
+          showToast('Event updated!');
+          renderData();
+        }
+      }).catch(function(e) { showToast('Failed to update event.'); console.warn(e); });
+    };
+    cancelBtn.onclick = function() { document.body.removeChild(overlay); };
+    btnRow.appendChild(cancelBtn);
+    btnRow.appendChild(saveBtn);
+    box.appendChild(title);
+    box.appendChild(sel);
+    box.appendChild(btnRow);
+    overlay.appendChild(box);
+    overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
+    document.body.appendChild(overlay);
+  });
+}
+
+function loadEvents() {
+  cloudGet().then(function(cloud) {
+    var sel = document.getElementById('eventSelect');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">Select event...</option>';
+    (cloud.events||[]).forEach(function(ev) {
+      var opt = document.createElement('option');
+      opt.value = ev; opt.textContent = ev;
+      sel.appendChild(opt);
+    });
+    if (current) sel.value = current;
+  });
+}
+
+function showAddEvent() {
+  document.getElementById('addEventBar').style.display = 'block';
+  document.getElementById('newEventName').focus();
+}
+
+function hideAddEvent() {
+  document.getElementById('addEventBar').style.display = 'none';
+  document.getElementById('newEventName').value = '';
+}
+
+function addEvent() {
+  var name = document.getElementById('newEventName').value.trim();
+  if (!name) { showToast('Please enter an event name.'); return; }
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'addEvent', event: name })
+  }).then(function(res) { return res.json(); })
+  .then(function(json) {
+    if (json.success) {
+      hideAddEvent();
+      loadEvents();
+      setTimeout(function() {
+        document.getElementById('eventSelect').value = name;
+      }, 300);
+      showToast('Event added!');
+    }
+  }).catch(function(e) { showToast('Failed to add event.'); console.warn(e); });
+}
+
+loadEvents();
 flushPending();
 </script>
 
