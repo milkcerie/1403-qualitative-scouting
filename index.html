@@ -73,6 +73,10 @@
   .badge{font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:5px;color:#fff;vertical-align:middle;}
   .badge-yellow{background:#f59e0b;}
   .badge-purple{background:#6366f1;}
+  .star-btn{background:none;border:none;font-size:1rem;cursor:pointer;opacity:.25;transition:opacity .15s;padding:.2rem;line-height:1;}
+  .star-btn.starred{opacity:1;}
+  .star-btn{background:none;border:none;font-size:1.1rem;cursor:pointer;opacity:.3;transition:opacity .15s;padding:0 .2rem;vertical-align:middle;line-height:1;}
+  .star-btn.starred{opacity:1;}
   @media(min-width:640px){header h1{font-size:1.4rem;}.page,.data-view,.submit-bar{padding:1.5rem;}}
 </style>
 </head>
@@ -362,6 +366,35 @@ function setEntryEvent(id) {
     overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
     document.body.appendChild(overlay);
   });
+}
+
+function makeTeamHeader(team, count, starred) {
+  var starClass = starred ? "star-btn starred" : "star-btn";
+  var matchLabel = count + " match" + (count !== 1 ? "es" : "");
+  var tid = "tc-" + team;
+  var h = "<div class=\"team-card\" id=\"" + tid + "\">";
+  h += "<div class=\"team-header\" style=\"display:flex;align-items:center;\">";
+  h += "<button class=\"" + starClass + "\" data-team=\"" + team + "\" onclick=\"toggleStarBtn(this)\" title=\"Going to District Champs\">&#11088;</button>";
+  h += "<span style=\"flex:1;cursor:pointer;\" onclick=\"toggleTeam('" + tid + "')\">Team " + team + " <span style=\"color:var(--subtext);font-weight:400;font-size:.85rem\">(" + matchLabel + ")</span></span>";
+  h += "<span onclick=\"toggleTeam('" + tid + "')\" style=\"font-size:.85rem;color:var(--subtext);padding:0 .5rem;cursor:pointer;\">&#9660;</span>";
+  h += "</div>";
+  return h;
+}
+
+function getStarredTeams() {
+  try { return JSON.parse(localStorage.getItem('starredTeams') || '[]'); } catch(e) { return []; }
+}
+function toggleStarBtn(btn) {
+  var team = btn.getAttribute("data-team");
+  toggleStar(team);
+}
+
+function toggleStar(team) {
+  var stars = getStarredTeams();
+  var idx = stars.indexOf(team);
+  if (idx === -1) stars.push(team); else stars.splice(idx, 1);
+  localStorage.setItem('starredTeams', JSON.stringify(stars));
+  renderData();
 }
 
 function loadEvents() {
@@ -661,11 +694,9 @@ function renderData() {
         byEvent[ev].forEach(function(e){var t=e.team||'Unknown';if(!teams[t])teams[t]=[];teams[t].push(e);});
         Object.keys(teams).sort().forEach(function(team){
         var list = teams[team];
-        html += '<div class="team-card" id="tc-'+team+'">'
-          +'<div class="team-header" onclick="toggleTeam(\'tc-'+team+'\')">'
-          +'<span>Team '+team+' <span style="color:var(--subtext);font-weight:400;font-size:.85rem">('+list.length+' match'+(list.length!==1?'es':'')+')</span></span>'
-          +'<span style="font-size:.85rem;color:var(--subtext)">▼</span></div>'
-          +'<div class="team-body">';
+        var isStarred = (getStarredTeams().indexOf(team) !== -1);
+        html += makeTeamHeader(team, list.length, isStarred);
+        html += '<div class="team-body">';
         list.forEach(function(e){
           var inCloud = !!cloudIds[e.id];
           var isPending = getPending().some(function(p){return p.id===e.id;});
@@ -880,6 +911,22 @@ function setEntryEvent(id) {
     overlay.onclick = function(e) { if (e.target === overlay) document.body.removeChild(overlay); };
     document.body.appendChild(overlay);
   });
+}
+
+function getStarredTeams() {
+  try { return JSON.parse(localStorage.getItem('starredTeams') || '[]'); } catch(e) { return []; }
+}
+function toggleStarBtn(btn) {
+  var team = btn.getAttribute("data-team");
+  toggleStar(team);
+}
+
+function toggleStar(team) {
+  var stars = getStarredTeams();
+  var idx = stars.indexOf(team);
+  if (idx === -1) stars.push(team); else stars.splice(idx, 1);
+  localStorage.setItem('starredTeams', JSON.stringify(stars));
+  renderData();
 }
 
 function loadEvents() {
