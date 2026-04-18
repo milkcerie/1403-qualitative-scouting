@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -764,43 +763,39 @@ function exportPDF() {
     var teams = {};
     entries.forEach(function(e){ var t=e.team||'Unknown'; if(!teams[t])teams[t]=[]; teams[t].push(e); });
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>1403 Scouting Data</title><style>body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}h1{font-size:20px;margin-bottom:4px;}h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #2563eb;padding-bottom:4px;color:#2563eb;}.entry{border:1px solid #ddd;border-radius:6px;padding:10px;margin-bottom:10px;page-break-inside:avoid;}.entry-header{display:flex;justify-content:space-between;margin-bottom:8px;}.entry-title{font-weight:700;font-size:13px;}.entry-meta{color:#777;font-size:11px;}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}.field{background:#f5f5f5;border-radius:4px;padding:5px 7px;}.field strong{display:block;font-size:10px;text-transform:uppercase;color:#888;margin-bottom:2px;}.field span{font-size:11px;}.footer{margin-top:20px;font-size:10px;color:#aaa;text-align:right;}@media print{body{padding:10px;}}</style></head><body><h1>1403 Qualitative Scouting Data</h1><p style="color:#777;font-size:11px;margin-bottom:16px">Generated: ' + new Date().toLocaleString() + ' - ' + entries.length + ' total entries</p>';
-
-```
-Object.keys(teams).sort().forEach(function(team) {
-  var list = teams[team];
-  list.sort(function(a,b){ return (parseInt(a.match)||0)-(parseInt(b.match)||0); });
-  html += '<h2>Team ' + team + ' (' + list.length + ' match' + (list.length!==1?'es':'') + ')</h2>';
-  list.forEach(function(e) {
-    html += '<div class="entry"><div class="entry-header"><span class="entry-title">Match ' + (e.match||'?') + ' - ' + (e.position||'') + '</span><span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' | ' + (e.timestamp||'') + '</span></div><div class="grid">';
-    var fields = [['Autonomous',e.auton],['Hopper & Scoring',e.hopper],['Intake',e.intake],['Feeding',e.feeding],['Driver',e.driver],['Climbing',e.climbing],['Defense',e.defense],['Comments',e.comments]];
-    fields.forEach(function(f) {
-      if (f[1]) html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
+    Object.keys(teams).sort().forEach(function(team) {
+      var list = teams[team];
+      list.sort(function(a,b){ return (parseInt(a.match)||0)-(parseInt(b.match)||0); });
+      html += '<h2>Team ' + team + ' (' + list.length + ' match' + (list.length!==1?'es':'') + ')</h2>';
+      list.forEach(function(e) {
+        html += '<div class="entry"><div class="entry-header"><span class="entry-title">Match ' + (e.match||'?') + ' - ' + (e.position||'') + '</span><span class="entry-meta">Scouted by ' + (e.scouter||'Unknown') + ' | ' + (e.timestamp||'') + '</span></div><div class="grid">';
+        var fields = [['Autonomous',e.auton],['Hopper & Scoring',e.hopper],['Intake',e.intake],['Feeding',e.feeding],['Driver',e.driver],['Climbing',e.climbing],['Defense',e.defense],['Comments',e.comments]];
+        fields.forEach(function(f) {
+          if (f[1]) html += '<div class="field"><strong>' + f[0] + '</strong><span>' + f[1].replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span></div>';
+        });
+        html += '</div>';
+        if (e.mapImg) html += '<div style="margin-top:8px"><strong style="font-size:10px;text-transform:uppercase;color:#888;">Auto Map</strong><br><img src="' + e.mapImg + '" style="width:100%;max-width:500px;border-radius:4px;margin-top:4px;border:1px solid #ddd;"></div>';
+        html += '</div>';
+      });
     });
-    html += '</div>';
-    if (e.mapImg) html += '<div style="margin-top:8px"><strong style="font-size:10px;text-transform:uppercase;color:#888;">Auto Map</strong><br><img src="' + e.mapImg + '" style="width:100%;max-width:500px;border-radius:4px;margin-top:4px;border:1px solid #ddd;"></div>';
-    html += '</div>';
-  });
-});
-html += '<div class="footer">1403 Qualitative Scouting App</div></body></html>';
-var win = window.open('', '_blank');
-if (!win) { showToast('Allow popups to export PDF.'); return; }
-win.document.write(html);
-win.document.close();
-win.focus();
-setTimeout(function() { win.print(); }, 500);
-
-}).catch(function(e) { console.warn(‘exportPDF failed’, e); showToast(‘Export failed.’); });
+    html += '<div class="footer">1403 Qualitative Scouting App</div></body></html>';
+    var win = window.open('', '_blank');
+    if (!win) { showToast('Allow popups to export PDF.'); return; }
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(function() { win.print(); }, 500);
+  }).catch(function(e) { console.warn('exportPDF failed', e); showToast('Export failed.'); });
 }
 
 function showToast(msg) {
-var t=document.getElementById(‘toast’);
-t.textContent=msg; t.classList.add(‘show’);
-setTimeout(function(){t.classList.remove(‘show’);},3000);
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
 }
 
 loadEvents();
 flushPending();
 </script>
-
 </body>
 </html>
